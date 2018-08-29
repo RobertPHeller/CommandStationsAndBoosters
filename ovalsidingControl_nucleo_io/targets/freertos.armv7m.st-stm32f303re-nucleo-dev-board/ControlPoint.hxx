@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Aug 27 21:28:14 2018
-//  Last Modified : <180828.1206>
+//  Last Modified : <180828.2158>
 //
 //  Description	
 //
@@ -187,6 +187,7 @@ public:
     void factory_reset(int fd) OVERRIDE
     {
         cfg_.description().write(fd, "");
+        CDI_FACTORY_RESET(cfg_.debounce);
     }
 private:
     SwitchLeverBits producer_;
