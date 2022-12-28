@@ -1,15 +1,3 @@
-[submodule "ESP32-D0WD-V3-MultiFunctionOpenMRNIDF/components/OpenMRNIDF"]
-	path = ESP32-D0WD-V3-MultiFunctionOpenMRNIDF/components/OpenMRNIDF
-	url = git@github.com:atanisoft/OpenMRNIDF.git
-[submodule "ESP32-S3-MultiFunctionOpenMRNIDF/components/OpenMRNIDF"]
-	path = ESP32-S3-MultiFunctionOpenMRNIDF/components/OpenMRNIDF
-	url = git@github.com:atanisoft/OpenMRNIDF.git
-[submodule "ESP32-PWMHalfSidingOpenMRNIDF/components/OpenMRNIDF"]
-	path = ESP32-PWMHalfSidingOpenMRNIDF/components/OpenMRNIDF
-	url = git@github.com:atanisoft/OpenMRNIDF.git
 [submodule "OpenMRNIDF"]
 	path = OpenMRNIDF
 	url = git@github.com:atanisoft/OpenMRNIDF.git
-[submodule "SVTmaker.pretty"]
-	path = SVTmaker.pretty
-	url = git@github.com:stanleyseow/SVTmaker.pretty.git
