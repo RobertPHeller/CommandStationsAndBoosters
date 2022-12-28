@@ -8,7 +8,6 @@
   (lib (name SOP65P640X120)(type KiCad)(uri "$(KIPRJMOD)/../CustomFootprints/SOP65P640X120.pretty")(options "")(descr ""))
   (lib (name RJ45-8N-S)(type Legacy)(uri "$(KIPRJMOD)/../CustomFootprints/RJ45-8N-S.mod")(options "")(descr ""))
   (lib (name PTS647SN70SMTR2LFS)(type KiCad)(uri "$(KIPRJMOD)/../CustomFootprints/PTS647SN70SMTR2LFS.pretty")(options "")(descr ""))
-  (lib (name FA_20H)(type KiCad)(uri "$(KIPRJMOD)/../CustomFootprints/FA_20H.pretty")(options "")(descr ""))
   (lib (name DWSLogoBCU)(type Legacy)(uri "$(KIPRJMOD)/../CustomFootprints/DWSLogoBCU.mod")(options "")(descr ""))
   (lib (name LCC_LOGO)(type KiCad)(uri "$(KIPRJMOD)/../CustomFootprints/LCC_LOGO.pretty")(options "")(descr ""))
   (lib (name PowerLabels)(type KiCad)(uri "$(KIPRJMOD)/../CustomFootprints/PowerLabels.pretty")(options "")(descr ""))
