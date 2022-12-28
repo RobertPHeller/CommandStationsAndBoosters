@@ -60,7 +60,7 @@ SpiceUseNetNumbers=0
 LabSize=60
 [eeschema]
 version=1
-LibDir=../../RRCircuits
+LibDir=../CustomLibraries
 [eeschema/libraries]
 LibName1=power
 LibName2=device
@@ -97,7 +97,7 @@ LibName32=DRV8801PWP
 LibName33=74ahc1g08
 LibName34=mcp9701at
 LibName35=INA2180A1IDGKR
-LibName36=/home/heller/RRCircuits/lm2574n-5
+LibName36=lm2574n-5
 LibName37=mechanical
 LibName38=references
 LibName39=motors
@@ -105,4 +105,4 @@ LibName40=graphic_symbols
 LibName41=motor_drivers
 LibName42=irf7351pbf
 LibName43=MCP9700T-E_LT
-LibName44=ESP32-S3-MultiFunction/USBLC6-2SC6
+LibName44=USBLC6-2SC6

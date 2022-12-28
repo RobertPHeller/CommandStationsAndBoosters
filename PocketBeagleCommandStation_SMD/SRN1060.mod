@@ -1,0 +1,1 @@
+../CustomFootprints/SRN1060.mod

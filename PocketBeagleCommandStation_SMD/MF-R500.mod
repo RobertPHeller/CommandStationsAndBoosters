@@ -1,0 +1,1 @@
+../CustomFootprints/MF-R500.mod
