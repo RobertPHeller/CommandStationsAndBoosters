@@ -1,4 +1,4 @@
-update=Thu 08 Dec 2022 11:32:12 AM EST
+update=Wed 28 Dec 2022 12:34:26 PM EST
 version=1
 last_client=kicad
 [pcbnew]
@@ -27,7 +27,7 @@ NetIExt=net
 version=1
 [eeschema]
 version=1
-LibDir=
+LibDir=../CustomLibraries
 [eeschema/libraries]
 LibName1=power
 LibName2=device
@@ -61,14 +61,13 @@ LibName29=opto
 LibName30=atmel
 LibName31=contrib
 LibName32=valves
-LibName33=ESP32-C3FN4
-LibName34=/home/heller/RRCircuits/ESP32-S3-MultiFunction/USBLC6-2SC6
-LibName35=/home/heller/RRCircuits/sn65hvd233-ht
-LibName36=/home/heller/RRCircuits/lm2574n-5
-LibName37=/home/heller/RRCircuits/PocketBeagleCommandStation_SMD/DRV8873HPWPR
-LibName38=/home/heller/RRCircuits/PocketBeagleCommandStation_SMD/mcp9701at
-LibName39=/home/heller/RRCircuits/PocketBeagleCommandStation_SMD/MCP9700T-E_LT
-LibName40=ina180b
-LibName41=mechanical
-LibName42=/home/heller/RRCircuits/esp32-c3-wroom-2
-LibName43=/home/heller/RRCircuits/gct_usb4105
+LibName33=USBLC6-2SC6
+LibName34=sn65hvd233-ht
+LibName35=lm2574n-5
+LibName36=DRV8873HPWPR
+LibName37=mcp9701at
+LibName38=MCP9700T-E_LT
+LibName39=ina180b
+LibName40=mechanical
+LibName41=esp32-c3-wroom-2
+LibName42=gct_usb4105
