@@ -1,1 +1,0 @@
-../CustomFootprints/DWSLogoBCU.mod

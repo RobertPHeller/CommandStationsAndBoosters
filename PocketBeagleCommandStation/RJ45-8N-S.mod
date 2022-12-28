@@ -1,1 +1,0 @@
-../CustomFootprints/RJ45-8N-S.mod

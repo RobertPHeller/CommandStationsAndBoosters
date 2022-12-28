@@ -1,1 +1,0 @@
-../CustomFootprints/DWSLogoSilk.mod

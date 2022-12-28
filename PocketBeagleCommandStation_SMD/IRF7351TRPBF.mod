@@ -1,1 +1,0 @@
-../CustomFootprints/IRF7351TRPBF.mod

@@ -1,1 +1,0 @@
-../CustomFootprints/TO220_11Pin.mod

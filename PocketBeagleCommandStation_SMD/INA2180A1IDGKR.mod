@@ -1,1 +1,0 @@
-../CustomFootprints/INA2180A1IDGKR.mod
