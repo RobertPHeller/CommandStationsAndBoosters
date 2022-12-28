@@ -10,7 +10,7 @@ EquName1=devcms
 version=1
 [eeschema]
 version=1
-LibDir=../../RRCircuits
+LibDir=../CustomLibraries
 [eeschema/libraries]
 LibName1=power
 LibName2=device
@@ -42,10 +42,10 @@ LibName27=atmel
 LibName28=contrib
 LibName29=valves
 LibName30=pocketbeagle
-LibName31=/home/heller/RRCircuits/lm2574n-5
-LibName32=/home/heller/RRCircuits/lmd18200
-LibName33=/home/heller/RRCircuits/BBBCommandStation/tmp36
-LibName34=/home/heller/RRCircuits/sn65hvd233-ht
+LibName31=lm2574n-5
+LibName32=lmd18200
+LibName33=tmp36
+LibName34=sn65hvd233-ht
 LibName35=L298N
 [pcbnew]
 version=1

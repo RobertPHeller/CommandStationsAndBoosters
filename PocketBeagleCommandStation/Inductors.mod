@@ -1,0 +1,1 @@
+../CustomFootprints/Inductors.mod
