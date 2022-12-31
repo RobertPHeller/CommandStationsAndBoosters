@@ -1089,10 +1089,6 @@ Wire Wire Line
 	2100 750  2100 2050
 Wire Wire Line
 	2100 1850 2400 1850
-Wire Wire Line
-	2400 1950 2300 1950
-Wire Wire Line
-	2300 1950 2300 1850
 Connection ~ 2300 1850
 Wire Wire Line
 	2100 2450 2100 2250
@@ -1379,4 +1375,8 @@ Wire Wire Line
 	2000 2400 1800 2400
 Wire Wire Line
 	1950 1600 1950 1700
+Wire Wire Line
+	2300 1850 2300 1650
+Wire Wire Line
+	2300 1650 2400 1650
 $EndSCHEMATC
