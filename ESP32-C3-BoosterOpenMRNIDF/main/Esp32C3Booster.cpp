@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sun Sep 25 13:58:44 2022
-//  Last Modified : <220925.2108>
+//  Last Modified : <230103.1658>
 //
 //  Description	
 //
@@ -44,6 +44,7 @@ static const char rcsid[] = "@(#) : $Id$";
 
 #include "sdkconfig.h"
 #include "cdi.hxx"
+#include "cdidata.hxx"
 #include "DelayRebootHelper.hxx"
 #include "EventBroadcastHelper.hxx"
 #include "FactoryResetHelper.hxx"
@@ -51,7 +52,8 @@ static const char rcsid[] = "@(#) : $Id$";
 #include "fs.hxx"
 #include "hardware.hxx"
 #include "NodeRebootHelper.hxx"
-#include "nvs_config.hxx"
+#include "NvsManager.hxx"
+#include "freertos_drivers/esp32/Esp32WiFiConfiguration.hxx"
 
 #include <algorithm>
 #include <driver/i2c.h>
@@ -65,9 +67,9 @@ static const char rcsid[] = "@(#) : $Id$";
 #include <esp32c3/rom/rtc.h>
 #include <freertos_includes.h>   
 #include <openlcb/SimpleStack.hxx>
-#include <CDIXMLGenerator.hxx>
 #include <freertos_drivers/esp32/Esp32HardwareTwai.hxx>
 #include <freertos_drivers/esp32/Esp32BootloaderHal.hxx>
+#include <freertos_drivers/esp32/Esp32WiFiManager.hxx>
 #include <freertos_drivers/esp32/Esp32SocInfo.hxx>
 #include <openlcb/MemoryConfigClient.hxx>
 #include <openlcb/RefreshLoop.hxx>
@@ -125,7 +127,6 @@ namespace openlcb
         SNIP_HW_VERSION,
         SNIP_SW_VERSION
     };
-    const char CDI_DATA[] = "";
 
 } // namespace openlcb
 
@@ -238,151 +239,124 @@ void app_main()
       , openlcb::SNIP_STATIC_DATA.hardware_version
       , openlcb::SNIP_STATIC_DATA.software_version);
     bool reset_events = false;
+    bool cleanup_config_tree = false;
 
     GpioInit::hw_init();
     TempSense_Pin::hw_init();
     CurrentSense_Pin::hw_init();
 
-    nvs_init();
-
-    // load non-CDI based config from NVS.
-    bool cleanup_config_tree = false;
-    node_config_t config;
-    if (load_config(&config) != ESP_OK)
-    {
-        default_config(&config);
-        cleanup_config_tree = true;
-    }
-    bool run_bootloader = false;
+    Esp32C3Booster::NvsManager nvs;
+    nvs.init(reset_reason);
     
     // Ensure the LEDs are both ON for PauseCheck
     LED_ACT1_Pin::instance()->set();
     LED_ACT2_Pin::instance()->set();
     
     LOG(INFO, "[BootPauseHelper] starting...");
-    BootPauseHelper pause(&config);
+    
+    Esp32C3Booster::BootPauseHelper pause;
     
     pause.CheckPause();
     LOG(INFO, "[BootPauseHelper] returned...");
-    load_config(&config);// Reload config -- CheckPause() might update things.
-    
     // Ensure the LEDs are both OFF when we startup.
     LED_ACT1_Pin::instance()->clr();
     LED_ACT2_Pin::instance()->clr();
     
     // Check for and reset factory reset flag.
-    if (config.force_reset)
+    if (nvs.should_reset_config())
     {
         cleanup_config_tree = true;
-        config.force_reset = false;
-        save_config(&config);
-    }
-
-    if (config.bootloader_req)
-    {
-        run_bootloader = true;
-        // reset the flag so we start in normal operating mode next time.
-        config.bootloader_req = false;
-        save_config(&config);
+        nvs.clear_factory_reset();
     }
     
-    if (config.reset_events_req)
+    if (nvs.should_reset_events())
     {
         reset_events = true;
         // reset the flag so we start in normal operating mode next time.
-        config.reset_events_req = false;
-        save_config(&config);
+        nvs.clear_reset_events();
     }
-
-
-    if (run_bootloader)
-    {
-        LOG(VERBOSE, "[Bootloader] bootloader_hw_set_to_safe");                     
-        LED_ACT1_Pin::hw_init();                                                    
-        LED_ACT2_Pin::hw_init();
-        esp32_bootloader_run(config.node_id, CONFIG_TWAI_TX_PIN, CONFIG_TWAI_RX_PIN, true);
-        esp_restart();
-    }
-    else
-    {
-        dump_config(&config);
-        mount_fs(cleanup_config_tree);
-        LOG(INFO, "[Esp32C3Booster] about to start the Simple Can Stack");
-        openlcb::SimpleCanStack stack(config.node_id);
-        LOG(INFO, "[Esp32C3Booster] stack started");
-        stack.set_tx_activity_led(LED_ACT1_Pin::instance());
-        LOG(INFO, "[Esp32C3Booster] set activity led");
+    nvs.CheckPersist();
+    
+    nvs.DisplayNvsConfiguration();
+    
+    mount_fs(cleanup_config_tree);
+    LOG(INFO, "[Esp32C3Booster] about to start the Simple Can Stack");
+    openlcb::SimpleCanStack stack(nvs.node_id());
+    LOG(INFO, "[Esp32C3Booster] stack started");
+    stack.set_tx_activity_led(LED_ACT1_Pin::instance());
+    LOG(INFO, "[Esp32C3Booster] set activity led");
 #if CONFIG_OLCB_PRINT_ALL_PACKETS
-        stack.print_all_packets();
+    stack.print_all_packets();
 #endif
-        openlcb::MemoryConfigClient memory_client(stack.node(), stack.memory_config_handler());
-        LOG(INFO, "[Esp32C3Booster] MemoryConfigClient done.");
-        Esp32C3Booster::FactoryResetHelper factory_reset_helper();
-        LOG(INFO, "[Esp32C3Booster] FactoryResetHelper done.");
-        Esp32C3Booster::EventBroadcastHelper event_helper();
-        LOG(INFO, "[Esp32C3Booster] EventBroadcastHelper done.");
-        Esp32C3Booster::DelayRebootHelper delayed_reboot(stack.service());
-        LOG(INFO, "[Esp32C3Booster] DelayRebootHelper done.");
-        Esp32C3Booster::HealthMonitor health_mon(stack.service());
-        LOG(INFO, "[Esp32C3Booster] HealthMonitor done.");
-        
-        FanControl fan(stack.node(), cfg.seg().fancontrol(), 
-                       TempSense::instance(),
-                       FAN_Control_Pin::instance());
-        HBridgeControl mains(stack.node(),cfg.seg().maindcc(), 
-                             CurrentSense::instance(),
-                             MAIN_MAX_MILLIAMPS, MAIN_LIMIT_MILLIAMPS, 
-                             Brake_Pin::instance());
-        
-        openlcb::RefreshLoop refresh_loop(stack.node(), {
-                                          fan.polling()
-                                          , mains.polling() 
-                                      });
-        
-        // Create / update CDI, if the CDI is out of date a factory reset will be
-        // forced.
-        bool reset_cdi = CDIXMLGenerator::create_config_descriptor_xml(
-                                                                       cfg, openlcb::CDI_FILENAME, &stack);
-        LOG(INFO, "[Esp32C3Booster] CDIXMLGenerator done.");
-        if (reset_cdi)
-        {
-            LOG(WARNING, "[CDI] Forcing factory reset due to CDI update");
-            unlink(openlcb::CONFIG_FILENAME);
-        }
-        
-        // Create config file and initiate factory reset if it doesn't exist or is
-        // otherwise corrupted.
-        int config_fd =
-              stack.create_config_file_if_needed(cfg.seg().internal_config(),
-                                                  CDI_VERSION,
-                                                  openlcb::CONFIG_FILE_SIZE);
-        Esp32C3Booster::NodeRebootHelper node_reboot_helper(&stack, config_fd);
-        
-        if (reset_events)
-        {
-            LOG(WARNING, "[CDI] Resetting event IDs");
-            stack.factory_reset_all_events(
-                    cfg.seg().internal_config(), config.node_id, config_fd);
-            fsync(config_fd);
-        }
-        
-        
-        // Initialize the TWAI driver.
-        twai.hw_init();
-        
-        // Add the TWAI port to the stack.
-        stack.add_can_port_select("/dev/twai/twai0");
-        
-        // if a brownout was detected send an event as part of node startup.
-        if (reset_reason == RTCWDT_BROWN_OUT_RESET)
-        {
-            //event_helper.send_event(openlcb::Defs::NODE_POWER_BROWNOUT_EVENT);
-        }
-        
-        // Start the stack in the background using it's own task.
-        stack.loop_executor();
-        //stackrunning = true;
+    nvs.register_virtual_memory_spaces(&stack);
+    openlcb::MemoryConfigClient memory_client(stack.node(), stack.memory_config_handler());
+    LOG(INFO, "[Esp32C3Booster] MemoryConfigClient done.");
+#ifdef CONFIG_ESP32_WIFI_ENABLED
+    openmrn_arduino::Esp32WiFiManager wifi_manager(nvs.station_ssid(),
+                                                   nvs.station_pass(),
+                                                   &stack,
+                                                   cfg.seg().olbcwifi(),
+                                                   nvs.wifi_mode(),
+                                                   (uint8_t)CONFIG_OLCB_WIFI_MODE, /* uplink / hub mode */
+                                                   nvs.hostname_prefix());
+#endif
+    Esp32C3Booster::FactoryResetHelper factory_reset_helper();
+    LOG(INFO, "[Esp32C3Booster] FactoryResetHelper done.");
+    Esp32C3Booster::EventBroadcastHelper event_helper();
+    LOG(INFO, "[Esp32C3Booster] EventBroadcastHelper done.");
+    Esp32C3Booster::DelayRebootHelper delayed_reboot(stack.service());
+    LOG(INFO, "[Esp32C3Booster] DelayRebootHelper done.");
+    Esp32C3Booster::HealthMonitor health_mon(stack.service());
+    LOG(INFO, "[Esp32C3Booster] HealthMonitor done.");
+    
+    FanControl fan(stack.node(), cfg.seg().fancontrol(), 
+                   TempSense::instance(),
+                   FAN_Control_Pin::instance());
+    HBridgeControl mains(stack.node(),cfg.seg().maindcc(), 
+                         CurrentSense::instance(),
+                         MAIN_MAX_MILLIAMPS, MAIN_LIMIT_MILLIAMPS, 
+                         Brake_Pin::instance());
+    
+    openlcb::RefreshLoop refresh_loop(stack.node(), {
+                                      fan.polling()
+                                      , mains.polling() 
+                                  });
+    
+    // Create config file and initiate factory reset if it doesn't exist or is
+    // otherwise corrupted.
+    int config_fd =
+          stack.create_config_file_if_needed(cfg.seg().internal_config(),
+                                             CDI_VERSION,
+                                             openlcb::CONFIG_FILE_SIZE);
+    stack.check_version_and_factory_reset(cfg.seg().internal_config(),
+                                          CDI_VERSION,
+                                          cleanup_config_tree);
+    Esp32C3Booster::NodeRebootHelper node_reboot_helper(&stack, config_fd);
+    
+    if (reset_events)
+    {
+        LOG(WARNING, "[CDI] Resetting event IDs");
+        stack.factory_reset_all_events(
+                                       cfg.seg().internal_config(), nvs.node_id(), config_fd);
+        fsync(config_fd);
     }
+    
+    
+    // Initialize the TWAI driver.
+    twai.hw_init();
+    
+    // Add the TWAI port to the stack.
+    stack.add_can_port_select("/dev/twai/twai0");
+    
+    // if a brownout was detected send an event as part of node startup.
+    if (reset_reason == RTCWDT_BROWN_OUT_RESET)
+    {
+        //event_helper.send_event(openlcb::Defs::NODE_POWER_BROWNOUT_EVENT);
+    }
+    
+    // Start the stack in the background using it's own task.
+    stack.loop_executor();
+    //stackrunning = true;
     // At this point the OpenMRN stack is running in it's own task and we can
     // safely exit from this one. We do not need to cleanup as that will be
     // handled automatically by ESP-IDF.

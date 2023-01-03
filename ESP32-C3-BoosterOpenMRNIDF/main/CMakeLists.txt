@@ -6,10 +6,12 @@ set(deps
     app_update
     spiffs
     OpenMRNIDF
+    Config
+    NvsManager
     json
 )
 
-idf_component_register(SRCS  BootPauseHelper.cpp FanControl.cpp nvs_config.cpp
+idf_component_register(SRCS  FanControl.cpp 
                         Esp32C3Booster.cpp HBridgeControl.cpp fs.cpp
                         REQUIRES "${deps}")
 
@@ -29,5 +31,24 @@ set_source_files_properties(HBridgeControl.cpp PROPERTIES COMPILE_FLAGS "-Wno-er
 set_source_files_properties(Esp32C3Booster.cpp PROPERTIES COMPILE_FLAGS "-Wno-error=maybe-uninitialized -Wno-implicit-fallthrough -Wno-ignored-qualifiers")
 set_source_files_properties(Esp32C3Booster.cpp PROPERTIES COMPILE_DEFINITIONS "SNIP_PROJECT_PAGE=\"${SNIP_PROJECT_PAGE}\"; SNIP_HW_VERSION=\"${SNIP_HW_VERSION}\"; SNIP_SW_VERSION=\"${SNIP_SW_VERSION}\"; SNIP_PROJECT_NAME=\"${SNIP_PROJECT_NAME}\"; CDI_VERSION=${CDI_VERSION}")
 set_source_files_properties(fs.cpp PROPERTIES COMPILE_FLAGS "-Wno-error=maybe-uninitialized -Wno-implicit-fallthrough -Wno-ignored-qualifiers")
-set_source_files_properties(nvs_config.cpp PROPERTIES COMPILE_FLAGS "-Wno-error=maybe-uninitialized -Wno-implicit-fallthrough -Wno-ignored-qualifiers")
-set_source_files_properties(BootPauseHelper.cpp PROPERTIES COMPILE_FLAGS "-Wno-error=maybe-uninitialized -Wno-implicit-fallthrough -Wno-ignored-qualifiers")
+
+set(CDIDEPS
+    ${CMAKE_CURRENT_SOURCE_DIR}/../components/Config/include/FanControlConfig.hxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/../components/Config/include/HBridgeControlConfig.hxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/../components/Config/include/NodeIdConfigurationGroup.hxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/../components/Config/include/WiFiConfigurationGroup.hxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/../components/Config/include/cdi.hxx
+   )
+
+add_custom_command(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/../components/Config/include/cdidata.hxx"
+                   COMMAND make -C ${CMAKE_CURRENT_SOURCE_DIR}/../components/Config/CDI 
+                   DEPENDS "${CDIDEPS}"
+                   VERBATIM
+                  )
+
+add_custom_target(FORCE 
+                  ALL
+                  DEPENDS                                                     
+                  "${CMAKE_CURRENT_SOURCE_DIR}/../components/Config/include/cdidata.hxx"
+                 )
+

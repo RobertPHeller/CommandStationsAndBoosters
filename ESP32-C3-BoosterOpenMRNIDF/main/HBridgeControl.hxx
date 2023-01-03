@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:15 2019
-//  Last Modified : <220925.2049>
+//  Last Modified : <230103.1633>
 //
 //  Description	
 //
@@ -56,39 +56,10 @@
 #include <utils/ConfigUpdateListener.hxx>
 #include <utils/Debouncer.hxx>
 #include "ADCWrapper.hxx"
+#include "HBridgeControlConfig.hxx"
 
 #define BIT_(n) (1 << n)
 
-/// CDI Configuration for a @ref HBridgeControl.
-CDI_GROUP(HBridgeControlConfig);
-CDI_GROUP_ENTRY(event_short,
-                openlcb::EventConfigEntry,
-                Name("Short Detected"),
-                Description("This event will be produced when a short has "
-                            "been detected on the track output."));
-CDI_GROUP_ENTRY(event_short_cleared,
-                openlcb::EventConfigEntry,
-                Name("Short Cleared"),
-                Description("This event will be produced when a short has "
-                            "been cleared on the track output."));
-CDI_GROUP_ENTRY(event_shutdown,
-                openlcb::EventConfigEntry,
-                Name("H-Bridge Shutdown"),
-                Description("This event will be produced when the track "
-                            "output power has exceeded the safety threshold "
-                            "of the H-Bridge."));
-CDI_GROUP_ENTRY(event_shutdown_cleared,
-                openlcb::EventConfigEntry,
-                Name("H-Bridge Shutdown Cleared"),
-                Description("This event will be produced when the track "
-                            "output power has returned to safe levels."));
-CDI_GROUP_ENTRY(event_thermflagon,
-                openlcb::EventConfigEntry,
-                Name("Thermal Flag on"));
-CDI_GROUP_ENTRY(event_thermflagoff,
-                openlcb::EventConfigEntry,
-                Name("Thermal Flag off"));
-CDI_GROUP_END();
 
 class HBridgeControl : public ConfigUpdateListener, public openlcb::Polling {
 public:

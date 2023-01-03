@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sun Sep 25 20:20:23 2022
-//  Last Modified : <220925.2109>
+//  Last Modified : <230103.1638>
 //
 //  Description	
 //
@@ -44,14 +44,17 @@
 #define __CDI_HXX
 
 #include <freertos_drivers/esp32/Esp32WiFiConfiguration.hxx>
+#include "NodeIdConfigurationGroup.hxx"
+#include "freertos_drivers/esp32/Esp32WiFiConfiguration.hxx"
+#include "WiFiConfigurationGroup.hxx"
+
 #include <openlcb/ConfigRepresentation.hxx>
 #include "openlcb/ConfiguredConsumer.hxx"
 #include "openlcb/ConfiguredProducer.hxx"
 #include "openlcb/MemoryConfig.hxx"
-#include <driver/adc.h>                                                         
 
-#include "HBridgeControl.hxx"
-#include "FanControl.hxx"
+#include "HBridgeControlConfig.hxx"
+#include "FanControlConfig.hxx"
 
 namespace Esp32C3Booster
 {
@@ -62,6 +65,9 @@ CDI_GROUP(IoBoard, Segment(openlcb::MemoryConfigDefs::SPACE_CONFIG),
 CDI_GROUP_ENTRY(internal_config, openlcb::InternalConfigData);
 CDI_GROUP_ENTRY(maindcc,HBridgeControlConfig,Name("Main DCC"));
 CDI_GROUP_ENTRY(fancontrol,FanControlConfig,Name("Fan Control"));
+#ifdef CONFIG_ESP32_WIFI_ENABLED
+CDI_GROUP_ENTRY(olbcwifi, openmrn_arduino::WiFiConfiguration, Name("OLBC WiFi Configuration"));
+#endif
 CDI_GROUP_END();
 
 /// This segment is only needed temporarily until there is program code to set
@@ -84,6 +90,10 @@ CDI_GROUP_ENTRY(acdi, openlcb::Acdi);
 CDI_GROUP_ENTRY(userinfo, openlcb::UserInfoSegment);
 /// Adds the main configuration segment.
 CDI_GROUP_ENTRY(seg, IoBoard, Name("Main Configuration"));
+CDI_GROUP_ENTRY(node, NodeIdConfig, Name("Node ID"));
+#if defined(CONFIG_ESP32_WIFI_ENABLED)
+CDI_GROUP_ENTRY(wifi, WiFiConfiguration, Name("WiFi Configuration"));
+#endif
 /// Adds the versioning segment.
 CDI_GROUP_ENTRY(version, VersionSeg);
 CDI_GROUP_END();

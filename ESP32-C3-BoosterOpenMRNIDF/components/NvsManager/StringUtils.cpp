@@ -1,4 +1,4 @@
-// -!- c++ -!- //////////////////////////////////////////////////////////////
+// -!- C++ -!- //////////////////////////////////////////////////////////////
 //
 //  System        : 
 //  Module        : 
@@ -7,8 +7,8 @@
 //  Date          : $Date$
 //  Author        : $Author$
 //  Created By    : Robert Heller
-//  Created       : Mon Jul 18 13:17:23 2022
-//  Last Modified : <220925.2054>
+//  Created       : Sun Dec 18 12:09:00 2022
+//  Last Modified : <221218.1323>
 //
 //  Description	
 //
@@ -40,49 +40,45 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __BOOTPAUSEHELPER_HXX
-#define __BOOTPAUSEHELPER_HXX
+static const char rcsid[] = "@(#) : $Id$";
 
-#include <algorithm>
-#include <driver/i2c.h>
-#include <driver/uart.h>
-#include <esp_err.h>
-#include <esp_log.h>
-#include <esp_ota_ops.h>
-#include <esp_system.h>
-#include <esp_task_wdt.h>
-#include <esp32c3/rom/rtc.h>
-#include "nvs_config.hxx"
-#include "hardware.hxx"
-#include <freertos_includes.h>
+#include <string>
+#include <string.h>
+#include <stdio.h>
 
-class BootPauseHelper {
-public:
-    enum {
-        PauseLoopCount = 100,
-        PauseLoopDelay_us = 100*1000,
-        RXBufferLength = 256,
-        TXBufferLength = 256,
-        EOL = '\r',
-        SETNODE = 'N',
-        BOOTLOADER = 'B',
-        EVENTRESET = 'E',
-        FACTORYRESET = 'F',
-        RESUME = 'R'
-    };
-    BootPauseHelper(node_config_t *config) : config_(config)
+using std::string;
+
+namespace utils
+{
+
+string node_id_to_string(uint64_t node_id)
+{
+    string result = "";
+    char buffer[8];
+    string dot = "";
+    for (int i=0; i<6; i++)
     {
+        snprintf(buffer,sizeof(buffer),"%02X",(unsigned)(node_id&0x0FF));
+        result = buffer + dot + result;
+        dot = ".";
+        node_id >>= 8;
     }
-    
-    void CheckPause();
-private:
-    void PauseConsole();
-    uint64_t ParseNode(char *buffer,size_t bufferlen);
-    size_t ReadLine(uart_port_t uart_num,char *buffer, size_t bufferlen);
-    node_config_t *config_;
-};
-    
+    return result;
+}
+
+uint64_t string_to_uint64(const string node_string)
+{
+    uint64_t result = 0LL;
+    for (int i=0; i<6; i++)
+    {
+        int index = i*3;
+        unsigned byte=0;
+        sscanf(node_string.substr(index,2).c_str(),"%02X",&byte);
+        result <<= 8;
+        result |= byte;
+    }
+    return result;
+}
 
 
-#endif // __BOOTPAUSEHELPER_HXX
-
+}

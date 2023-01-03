@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:43 2019
-//  Last Modified : <220925.2046>
+//  Last Modified : <230103.1631>
 //
 //  Description	
 //
@@ -54,32 +54,7 @@
 #include <utils/ConfigUpdateListener.hxx>
 #include <utils/Debouncer.hxx>
 #include "ADCWrapper.hxx"
-
-/// CDI Configuration for a @ref FanControl.
-CDI_GROUP(FanControlConfig);
-CDI_GROUP_ENTRY(alarmtemperaturethresh,
-                openlcb::Uint16ConfigEntry,
-                Name("Alarm Temperature threshold, in tenths of degrees Centitrade."),
-                Default(350),Min(250),Max(500),
-                Description("This is the temperature level to issue an event."));
-CDI_GROUP_ENTRY(alarmon,
-                openlcb::EventConfigEntry,
-                Name("Alarm On Event"));
-CDI_GROUP_ENTRY(alarmoff,
-                openlcb::EventConfigEntry,
-                Name("Alarm Off Event"));
-CDI_GROUP_ENTRY(fantemperaturethresh,
-                openlcb::Uint16ConfigEntry,
-                Name("Fan Temperature threshold, in tenths of degrees Centitrade."),
-                Default(250),Min(250),Max(500),
-                Description("This is the temperature level to turn on the fan."));
-CDI_GROUP_ENTRY(fanon,
-                openlcb::EventConfigEntry,
-                Name("Fan On Event"));
-CDI_GROUP_ENTRY(fanoff,
-                openlcb::EventConfigEntry,
-                Name("Fan Off Event"));
-CDI_GROUP_END();
+#include "FanControlConfig.hxx"
 
 class FanControl : public ConfigUpdateListener, public openlcb::Polling {
 public:
