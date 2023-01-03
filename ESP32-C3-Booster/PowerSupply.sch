@@ -31,7 +31,6 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:ESP32-C3FN4
 LIBS:USBLC6-2SC6
 LIBS:sn65hvd233-ht
 LIBS:lm2574n-5
