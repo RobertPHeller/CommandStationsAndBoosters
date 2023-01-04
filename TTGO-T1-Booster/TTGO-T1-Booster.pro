@@ -1,4 +1,4 @@
-update=Wed 04 Jan 2023 02:48:13 PM EST
+update=Wed 04 Jan 2023 03:42:10 PM EST
 version=1
 last_client=kicad
 [pcbnew]
@@ -64,3 +64,6 @@ LibName32=valves
 LibName33=sn65hvd233-ht
 LibName34=lm2574n-5
 LibName35=MCP9700T-E_LT
+LibName36=DRV8873HPWPR
+LibName37=ina180b
+LibName38=esp32_devboards
