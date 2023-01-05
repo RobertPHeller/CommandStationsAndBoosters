@@ -13,4 +13,5 @@
   (lib (name PowerLabels)(type KiCad)(uri "$(KIPRJMOD)/../CustomFootprints/PowerLabels.pretty")(options "")(descr ""))
   (lib (name ESP32-WROOM)(type KiCad)(uri "$(KIPRJMOD)/../CustomFootprints/ESP32-WROOM.pretty")(options "")(descr ""))
   (lib (name GCT_USB)(type KiCad)(uri "$(KIPRJMOD)/../CustomFootprints/GCT_USB.pretty")(options "")(descr ""))
+  (lib (name SOIC_Wide)(type KiCad)(uri "$(KIPRJMOD)/../CustomFootprints/SOIC_Wide.pretty")(options "")(descr ""))
 )
