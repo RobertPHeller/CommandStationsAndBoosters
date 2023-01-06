@@ -14,8 +14,8 @@ endif()
 
 set(EXTRA_COMPONENT_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../OpenMRNIDF")
 
-set(SUPPORTED_TARGETS esp32c3)
-project(Esp32C3Booster)
+set(SUPPORTED_TARGETS esp32 esp32S3 esp32c3)
+project(Esp32Booster)
 
 ###############################################################################
 # Switch from GNU++11 to GNU++14
@@ -59,11 +59,11 @@ if (NOT CONFIG_FREERTOS_HZ EQUAL 1000)
     message(FATAL_ERROR "FreeRTOS tick rate (hz) is required to be 1000.")
 endif()
 
-if (NOT CONFIG_PARTITION_TABLE_FILENAME STREQUAL "esp32c3booster-partitions.csv")
+if (NOT CONFIG_PARTITION_TABLE_FILENAME STREQUAL "esp32booster-partitions.csv")
     message(FATAL_ERROR "The custom partition table option is not enabled in menuconfig and is required for compilation.")
 endif()
 
-if (NOT CONFIG_PARTITION_TABLE_CUSTOM_FILENAME STREQUAL "esp32c3booster-partitions.csv")
+if (NOT CONFIG_PARTITION_TABLE_CUSTOM_FILENAME STREQUAL "esp32booster-partitions.csv")
     message(FATAL_ERROR "The custom partition table option is not enabled in menuconfig and is required for compilation.")
 endif()
 

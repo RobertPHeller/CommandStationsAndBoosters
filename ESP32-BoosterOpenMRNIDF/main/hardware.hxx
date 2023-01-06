@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sun Sep 25 18:43:26 2022
-//  Last Modified : <220925.2108>
+//  Last Modified : <230106.1526>
 //
 //  Description	
 //
@@ -50,7 +50,11 @@
 #include <driver/adc.h>
 #include "ADCWrapper.hxx"
 
+#define FANPin GpioOutputSafeLow
+#define EnablePin GpioOutputSafeHigh
+#define ActPin GpioOutputSafeHighInvert
 
+#if CONFIG_ESP32_C3_WROOM
 #define MAIN_MAX_MILLIAMPS 2800
 #define MAIN_LIMIT_MILLIAMPS 2800
 ADC_PIN(CurrentSense, ADC1_CHANNEL_0, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12);
@@ -64,26 +68,48 @@ typedef ADCWrapper<TempSense_Pin> TempSense;
 #define TempFromAIN(val) ((((val)*.0004639448)/.01)+(-50))
 
 
-#define FANPin GpioOutputSafeLow
-#define EnablePin GpioOutputSafeHigh
-
 GPIO_PIN(FAN_Control, FANPin, 2); // high is fan on
 GPIO_PIN(Brake, EnablePin, 5); // low is track power on
 
-#define ActPin GpioOutputSafeHighInvert
-
 GPIO_PIN(LED_ACT1, ActPin, 8); 
 GPIO_PIN(LED_ACT2, ActPin, 10);
-
-// Create an initializer that can initialize all the GPIO pins in one shot
-typedef GpioInitializer<FAN_Control_Pin, Brake_Pin, LED_ACT1_Pin, 
-                        LED_ACT2_Pin> GpioInit;
 
 /// GPIO Pin connected to the TWAI (CAN) Transceiver RX pin.
 static constexpr gpio_num_t CONFIG_TWAI_RX_PIN = GPIO_NUM_7;
 
 /// GPIO Pin connected to the TWAI (CAN) Transceiver TX pin.
 static constexpr gpio_num_t CONFIG_TWAI_TX_PIN = GPIO_NUM_6;
+#else
+#ifdef CONFIG_TTGO_T1
+#define MAIN_MAX_MILLIAMPS 2800
+#define MAIN_LIMIT_MILLIAMPS 2800
+ADC_PIN(CurrentSense, ADC1_CHANNEL_6, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12);
+typedef ADCWrapper<CurrentSense_Pin> CurrentSense;
+#define CurrentFromAIN(val) ((val)*.002185075)
+ADC_PIN(TempSense, ADC1_CHANNEL_7, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12);
+typedef ADCWrapper<TempSense_Pin> TempSense;
+// MCP9700T-E/LT: .5V == 0C, .01V/Degree C, 125C == 1.75V, 1.9V Vref,
+// 12bit ADC (0 <= val <= 4095).
+#define TempFromAIN(val) ((((val)*.0004639448)/.01)+(-50))
+
+GPIO_PIN(FAN_Control, FANPin, 27); // high is fan on
+GPIO_PIN(Brake, EnablePin, 26); // low is track power on
+
+GPIO_PIN(LED_ACT1, ActPin, 22); // on-board LED
+GPIO_PIN(LED_ACT2, ActPin, 23); // unused.
+
+/// GPIO Pin connected to the TWAI (CAN) Transceiver RX pin.
+static constexpr gpio_num_t CONFIG_TWAI_RX_PIN = GPIO_NUM_4;
+/// GPIO Pin connected to the TWAI (CAN) Transceiver TX pin.
+static constexpr gpio_num_t CONFIG_TWAI_TX_PIN = GPIO_NUM_5;
+
+#endif
+#endif
+
+// Create an initializer that can initialize all the GPIO pins in one shot
+typedef GpioInitializer<FAN_Control_Pin, Brake_Pin, LED_ACT1_Pin, 
+                        LED_ACT2_Pin> GpioInit;
+
 
 
 

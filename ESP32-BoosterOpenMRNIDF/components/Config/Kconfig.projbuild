@@ -111,6 +111,18 @@ menu "OpenLCB Configuration"
     endmenu
 endmenu
 
+menu "Board Selection"
+    choice BOARD_SELECTION
+        bool "Board"
+        default ESP32_C3_WROOM if IDF_TARGET_ESP32C3
+        default TTGO_T1  if IDF_TARGET_ESP32
+        config ESP32_C3_WROOM
+            bool "ESP32C3 WROOM"
+        config TTGO_T1
+            bool "ESP32 TTGO-T1"
+            
+    endchoice
+endmenu
 
 menu "WiFi Configuration"
     choice WIFI_MODE
