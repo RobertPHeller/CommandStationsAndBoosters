@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sat Dec 17 13:49:15 2022
-//  Last Modified : <230103.1600>
+//  Last Modified : <230106.1415>
 //
 //  Description	
 //
@@ -48,7 +48,13 @@
 #include <esp_ota_ops.h>
 #include <esp_system.h>
 #include <esp_task_wdt.h>
+#if defined(CONFIG_IDF_TARGET_ESP32)
 #include <esp32/rom/rtc.h>
+#elif defined(CONFIG_IDF_TARGET_ESP32S3)
+#include <esp32s3/rom/rtc.h>
+#elif defined(CONFIG_IDF_TARGET_ESP32C3)
+#include <esp32c3/rom/rtc.h>
+#endif
 #include <esp_wifi_types.h>
 #include <driver/uart.h>
 #include <utils/Singleton.hxx>
