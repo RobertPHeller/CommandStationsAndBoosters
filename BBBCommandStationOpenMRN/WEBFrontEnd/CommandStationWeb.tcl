@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Wed Feb 5 13:04:24 2025
-#  Last Modified : <250205.1742>
+#  Last Modified : <250205.1807>
 #
 #  Description	
 #
@@ -43,7 +43,9 @@
 
 package require httpd
 
-::httpd::server create HTTPD port 9090
+set root [file normalize [file dirname [info script]]]
+
+::httpd::server create HTTPD port 9090 myaddr 0.0.0.0 doc_root $root
 
 ::tool::define ::httpd::server {
     
@@ -66,10 +68,10 @@ proc quoteArg {string} {
 
 tool::define ::command.station {
     method CommonHeader {title} {
-        my puts "<HTML><HEADER><TITLE>$title</TITLE>"
+        my puts "<HTML><HEAD><TITLE>$title</TITLE>"
         my puts {<link rel="stylesheet" href="/CSS/cs.css" />}
         my puts {<script id="cs" type="text/javascript" src="/JS/cs.js"></script>}
-        my puts "</HEADER>"
+        my puts "</HEAD>"
     }
     method DisplayMain {} {
         my reply set Status 200
@@ -198,8 +200,15 @@ tool::define ::command.station {
     }
 }
 
+
+
+HTTPD add_uri /CSS/* [list path [file join $root CSS] mixin ::httpd::content.file]
+HTTPD add_uri /JS/*  [list path [file join $root JS] mixin ::httpd::content.file]
+HTTPD add_uri /help/* [list path [file join $root help] mixin ::httpd::content.file]
+
 HTTPD add_uri /* [list mixin ::command.station]
 
 puts [list LISTENING on [HTTPD port_listening]]
+puts [list Doc_root is [HTTPD cget doc_root]]
 cron::main
 
