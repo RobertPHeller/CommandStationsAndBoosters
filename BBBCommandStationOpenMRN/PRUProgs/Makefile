@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Thu Oct 24 19:39:06 2019
-#  Last Modified : <210318.1138>
+#  Last Modified : <250201.1622>
 #
 #  Description	
 #
@@ -46,7 +46,7 @@ COMMON:=$(abspath $(lastword $(MAKEFILE_LIST)/..))
 PRU_CGT:=/usr/share/ti/cgt-pru
 PRU_SUPPORT:=/usr/lib/ti/pru-software-support-package
 MODEL:=$(shell cat /proc/device-tree/model | sed 's/ /_/g' | tr -d '\000')
-$(warning MODEL=$(MODEL),TARGET=$(TARGET),COMMON=$(COMMON))
+$(info MODEL=$(MODEL),TARGET=$(TARGET),COMMON=$(COMMON))
 
 # Variables defined:
 #   CHIP - target system-on-chip (am57xx, am335x)

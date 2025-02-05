@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sun Oct 20 13:40:14 2019
-//  Last Modified : <220822.1135>
+//  Last Modified : <250201.1603>
 //
 //  Description	
 //
@@ -628,19 +628,19 @@ Console::CommandStatus CommandStationConsole::writeopscvbit_command(FILE *fp, in
 
 
 
-//DccOutput *get_dcc_output(DccOutput::Type type)
-//{
-//#ifdef DccOutputDefined
-//    switch (type)
-//    {
-//    case DccOutput::Type::TRACK:
-//        return DccOutputImpl<BeagleCS::DccHardware::OPSDccOutput>::instance();
-//    case DccOutput::Type::PGM:
-//        return DccOutputImpl<BeagleCS::DccHardware::PROGDccOutput>::instance();
-//    case DccOutput::Type::LCC:
-//        return DccOutputImpl<BeagleCS::DccHardware::LCCDccOutput>::instance();
-//    }
-//#endif
-//    return nullptr;
-//}
+DccOutput *get_dcc_output(DccOutput::Type type)
+{
+#ifdef DccOutputDefined
+    switch (type)
+    {
+    case DccOutput::Type::TRACK:
+        return DccOutputImpl<BeagleCS::DccHardware::OPSDccOutput>::instance();
+    case DccOutput::Type::PGM:
+        return DccOutputImpl<BeagleCS::DccHardware::PROGDccOutput>::instance();
+    case DccOutput::Type::LCC:
+        return DccOutputImpl<BeagleCS::DccHardware::LCCDccOutput>::instance();
+    }
+#endif
+    return nullptr;
+}
 
