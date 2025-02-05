@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Wed Feb 5 13:04:24 2025
-#  Last Modified : <250205.1436>
+#  Last Modified : <250205.1742>
 #
 #  Description	
 #
@@ -65,14 +65,35 @@ proc quoteArg {string} {
  }
 
 tool::define ::command.station {
+    method CommonHeader {title} {
+        my puts "<HTML><HEADER><TITLE>$title</TITLE>"
+        my puts {<link rel="stylesheet" href="/CSS/cs.css" />}
+        my puts {<script id="cs" type="text/javascript" src="/JS/cs.js"></script>}
+        my puts "</HEADER>"
+    }
+    method DisplayMain {} {
+        my reply set Status 200
+        my reply set Content-Type {text/html}
+        my CommonHeader "Command Station"
+        my puts "<BODY>"
+        my puts {<div id="tools">}
+        my puts { <button type="button" name="Load" value="Load" onclick="CS_Load()">Load</button>}
+        my puts { <button type="button" name="Save" value="Save" onclick="CS_Save()">Save</button>}
+        my puts { <button type="button" name="Service" value="Service" onclick="CS_Service()">Service</button>}
+        my puts { <button type="button" name="Help" value="Help" onclick="CS_Help()">Help</button> }
+        my puts {</div>}
+        
+        my puts "</BODY></HTML>"
+    }
     method DisplayHelp {} {
         my reply set Status 200
         my reply set Content-Type {text/html}
-        my puts "<HTML><HEADER><TITLE>Help</TITLE></HEADER>"
+        my CommonHeader Help
         my puts "<BODY>"
-        my puts "Nothing Yet"
+        my puts "Nothing Yet."
         my puts "</BODY></HTML>"
     }
+        
     method content {} {
         set request [my http_info get REQUEST_URI]
         puts stderr "($request)"
@@ -85,6 +106,9 @@ tool::define ::command.station {
         set queryArgs [my FormData]
         switch $mode {
             {} {
+                my DisplayMain
+            }
+            help {
                 my DisplayHelp
             }
             define {
@@ -95,20 +119,76 @@ tool::define ::command.station {
                 puts stderr $cmd
                 my reply set Status 200
                 my reply set Content-Type {text/html}
-                my puts "<HTML><HEADER><TITLE>define locomotive</TITLE></HEADER>"
+                my CommonHeader "define locomotive"
                 my puts "<BODY>"
                 my puts "$cmd"
                 my puts "</BODY></HTML>"
             }
-            test {
+            undefine {
+                set cmd "undefine locomotive"
+                append cmd " [dict get $queryArgs address]"
+                puts stderr $cmd
                 my reply set Status 200
                 my reply set Content-Type {text/html}
-                my puts "<HTML><HEADER><TITLE>Mode</TITLE></HEADER>"
+                my CommonHeader "undefine locomotive"
                 my puts "<BODY>"
-                my puts "Mode is $mode"
-                my puts "Opts are $opts"
+                my puts "$cmd"
                 my puts "</BODY></HTML>"
             }
+            list {
+                set cmd "list locomotives"
+                puts stderr $cmd
+                my reply set Status 200
+                my reply set Content-Type {text/html}
+                my CommonHeader "list locomotives"
+                my puts "<BODY>"
+                my puts "$cmd"
+                my puts "</BODY></HTML>"
+            }
+            describe {
+                set cmd "describe locomotive"
+                append cmd " [dict get $queryArgs address]"
+                puts stderr $cmd
+                my reply set Status 200
+                my reply set Content-Type {text/html}
+                my CommonHeader "Describe locomotive"
+                my puts "<BODY>"
+                my puts "$cmd"
+                my puts "</BODY></HTML>"
+            }
+            status {
+                set cmd "status"
+                puts stderr $cmd
+                my reply set Status 200
+                my reply set Content-Type {text/html}
+                my CommonHeader "status"
+                my puts "<BODY>"
+                my puts "$cmd"
+                my puts "</BODY></HTML>"
+            }
+            power {
+                set cmd "power"
+                if {[dict get $queryArgs on]} {
+                    append cmd " on"
+                } else {
+                    append cmd " off"
+                }
+                puts stderr $cmd
+                my reply set Status 200
+                my reply set Content-Type {text/html}
+                my CommonHeader "Power"
+                my puts "<BODY>"
+                my puts "$cmd"
+                my puts "</BODY></HTML>"
+            }
+            estop
+            shutdown
+            readcv
+            readcvword
+            writeprogcvbyte
+            writeprogcvbit
+            writeopscvbyte
+            writeopscvbit
             default {
                 my reply set Status 404
                 return
