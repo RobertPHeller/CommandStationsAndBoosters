@@ -1,0 +1,48 @@
+/*
+  Command Station styles
+  */
+
+#tools {
+    background-color: green;
+}
+
+#upper {
+    width: 100%;
+    background-color: #cccccc;
+}
+
+#describe {
+    width: 50%;
+    float: left;
+    background-color: #cccccc;
+}
+
+span.labelEntry {
+    width: 100%;
+}
+
+#locolist {
+    width: 20%;
+    float: left;
+    height: 300px;
+}
+
+ul.listbox {
+    background-color: white;
+}
+
+ul.listbox li ::marker {
+    display: none;
+}
+
+ul.listbox li {
+    display: block;
+}
+
+
+#StatusWindow {
+    width: 30%;
+    float: right;
+    background-color: #cccccc;
+}
+

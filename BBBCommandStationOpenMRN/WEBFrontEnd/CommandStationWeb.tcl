@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Wed Feb 5 13:04:24 2025
-#  Last Modified : <250206.1402>
+#  Last Modified : <250206.1621>
 #
 #  Description	
 #
@@ -74,7 +74,7 @@ tool::define ::command.station {
         my puts "</HEAD>"
     }
     method ToolBar {} {
-        my puts {<div id="tools">}
+        my puts {<div id="tools" class="toolbar">}
         my puts { <button type="button" name="Load" value="Load" onclick="CS.Load()">Load</button>}
         my puts { <button type="button" name="Save" value="Save" onclick="CS.Save()">Save</button>}
         my puts { <button type="button" name="Service" value="Service" onclick="CS.Service()">Service</button>}
@@ -86,21 +86,57 @@ tool::define ::command.station {
     }
     method Describe {} {
         my puts {<div id="describe">}
-        my puts {<label for="address">Address</label><input type="text" id="address" value="" /><br />}
-        my puts {<label for="steps">Steps</label><input type="text" id="steps" value="" /><br />}
-        my puts {<label for="name">Name</label><input type="text" id="name" value="" /><br />}
-        my puts {<label for="description">Description</label><input type="text" id="description" value="" /><br />}
-        my puts {<label for="speed">Speed and Dir</label><input type="text" id="speed" value="" /><br />}
+        my puts {<span class="labelEntry"><label for="address">Address</label><input type="text" id="address" value="" /></span><br />}
+        my puts {<span class="labelEntry"><label for="steps">Steps</label><input type="text" id="steps" value="" /></span><br />}
+        my puts {<span class="labelEntry"><label for="name">Name</label><input type="text" id="name" value="" /></span><br />}
+        my puts {<span class="labelEntry"><label for="description">Description</label><input type="text" id="description" value="" /></span><br />}
+        my puts {<span class="labelEntry"><label for="speed">Speed and Dir</label><input type="text" id="speed" value="" /></span><br />}
         my puts {<div id="functions">Functions}
         for {set i 0} {$i <= 28} {incr i} {
             my FunctionLight $i
         }
         my puts {</div>}
+        my puts {<span class="labelEntry"><label for="controller">Controller</label><input type="text" id="controller" value="" /></span><br />}
+        my puts {<span class="labelEntry"><label for="consist">Consist</label><input type="text" id="consist" value="" /></span><br />}
         my puts {</div>}
     }
     method LocoList {} {
+        my puts {<div id="locolist">}
+        my puts {<ul id="locolistbox" class="listbox">}
+        my puts {</ul>}
+        my puts {<div id="ll_buttons" class="buttonbox">}
+        my puts {<button id="describe_loco" type="button" name="Describe" value="Describe" onclick="CS.describeLoco()">Describe</button>}
+        my puts {<button id="delete_loco" type="button" name="Delete" value="Delete" onclick="CS.deleteLoco()">Delete</button>}
+        my puts {<button id="add_loco" type="button" name="Add" value=Add" onclick="CS.addLoco()">Add</button>}
+        my puts {</div>}
+        my puts {</div>}
+    }
+    method TrackStatus {label idprefix} {
+        my puts [format {<div id="%s_status" class="TrackStatus">%s<br />} $idprefix $label]
+        my puts [format {<span id="%s_status" class="TrackCurrent">Current <span id="$s_current">000.000</span>A</span><br />} \
+                 $idprefix $idprefix]
+        my puts [format {<span id="%s_flags">} $idprefix]
+        my puts [format {Enabled<img id="$s_enabled" src="/images/off.png" />} $idprefix]
+        my puts [format {Thermal Flag<img id="$s_therm" src="/images/off.png" />} $idprefix]
+        my puts [format {Over Current<img id="$s_over" src="/images/off.png" />} $idprefix]
+        my puts {</span><br />}
+        my puts {</div>}
+    }
+    method HeatSinkStatus {} {
+        my puts {<div id="heatsink_status" class="TrackStatus">Heat Sink<br />}
+        my puts {<span id="heatsink_status" class="TrackCurrent">Temperature <span id="heatsink_temp">000.000</span>C<br />}
+        my puts {<span id="heatsink_flags">}
+        my puts {Fan On<img id="heatsink_fan" src="/images/off.png" />}
+        my puts {Alarm<img id="heatsink_alarm" src="/images/off.png" />}
+        my puts {</span><br />}
+        my puts {</div>}
     }
     method StatusWindow {} {
+        my puts {<div id="StatusWindow">}
+        my TrackStatus Mains mains
+        my TrackStatus {Prog Track} programming
+        my HeatSinkStatus
+        my puts {</div>} 
     }
     method Upper {} {
         my puts {<div id="upper">}
