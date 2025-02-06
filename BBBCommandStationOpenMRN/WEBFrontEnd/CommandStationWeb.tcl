@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Wed Feb 5 13:04:24 2025
-#  Last Modified : <250205.2240>
+#  Last Modified : <250206.1402>
 #
 #  Description	
 #
@@ -73,26 +73,52 @@ tool::define ::command.station {
         my puts {<script id="cs" type="text/javascript" src="/JS/cs.js"></script>}
         my puts "</HEAD>"
     }
-    method DisplayMain {} {
-        my reply set Status 200
-        my reply set Content-Type {text/html}
-        my CommonHeader "Command Station"
-        my puts "<BODY>"
+    method ToolBar {} {
         my puts {<div id="tools">}
         my puts { <button type="button" name="Load" value="Load" onclick="CS.Load()">Load</button>}
         my puts { <button type="button" name="Save" value="Save" onclick="CS.Save()">Save</button>}
         my puts { <button type="button" name="Service" value="Service" onclick="CS.Service()">Service</button>}
         my puts { <button type="button" name="Help" value="Help" onclick="CS.Help()">Help</button> }
         my puts {</div>}
-        my puts {<div id="upper" style="width: 100%;">}
-        my puts {<div id="describe" style="width: 50%;float: left;">}
+    }
+    method FunctionLight {i} {
+        my puts "<span id='FunctionLight$i' class='functionlight'>$i<img src='/images/off.png' /></span>"
+    }
+    method Describe {} {
+        my puts {<div id="describe">}
         my puts {<label for="address">Address</label><input type="text" id="address" value="" /><br />}
         my puts {<label for="steps">Steps</label><input type="text" id="steps" value="" /><br />}
         my puts {<label for="name">Name</label><input type="text" id="name" value="" /><br />}
         my puts {<label for="description">Description</label><input type="text" id="description" value="" /><br />}
         my puts {<label for="speed">Speed and Dir</label><input type="text" id="speed" value="" /><br />}
-        my puts {</div>} 
+        my puts {<div id="functions">Functions}
+        for {set i 0} {$i <= 28} {incr i} {
+            my FunctionLight $i
+        }
         my puts {</div>}
+        my puts {</div>}
+    }
+    method LocoList {} {
+    }
+    method StatusWindow {} {
+    }
+    method Upper {} {
+        my puts {<div id="upper">}
+        my Describe
+        my LocoList
+        my StatusWindow
+        my puts {</div>}
+    }
+    method Lower {} {
+    }
+    method DisplayMain {} {
+        my reply set Status 200
+        my reply set Content-Type {text/html}
+        my CommonHeader "Command Station"
+        my puts "<BODY>"
+        my ToolBar
+        my Upper
+        my Lower
         my puts "</BODY>"
         my puts "</HTML>"
     }
@@ -214,6 +240,7 @@ tool::define ::command.station {
 HTTPD add_uri /CSS/* [list path [file join $root CSS] mixin ::httpd::content.file]
 HTTPD add_uri /JS/*  [list path [file join $root JS] mixin ::httpd::content.file]
 HTTPD add_uri /help/* [list path [file join $root help] mixin ::httpd::content.file]
+HTTPD add_uri /images/* [list path [file join $root images] mixin ::httpd::content.file]
 
 HTTPD add_uri /* [list mixin ::command.station]
 
