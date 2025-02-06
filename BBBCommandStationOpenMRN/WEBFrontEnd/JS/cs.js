@@ -8,7 +8,7 @@
      Created By    : Robert Heller, Deepwoods Software
      Created       : Wed Feb 5 17:08:40 2025
 
-     Last Modified : <250205.1728>
+     Last Modified : <250205.2217>
      ID            : $Id$
      Source        : $Source$
      Description	
@@ -18,16 +18,17 @@ var ns4 = document.layers;
 var ie4 = document.all;
 var nn6 = document.getElementById && !document.all;
 
-function CS_Load() {
+var CS = {};
+
+CS.Load = function () {
 }
 
-
-function CS_Save() {
+CS.Save = function () {
 }
 
-function CS_Service() {
+CS.Service = function () {
 }
 
-fuction CS_Help() {
+CS.Help = function () {
     window.open('http://cs.deepsoft.com/help/','_blank');
 }

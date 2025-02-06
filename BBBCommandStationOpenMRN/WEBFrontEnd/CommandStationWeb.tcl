@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Wed Feb 5 13:04:24 2025
-#  Last Modified : <250205.1807>
+#  Last Modified : <250205.2240>
 #
 #  Description	
 #
@@ -79,13 +79,22 @@ tool::define ::command.station {
         my CommonHeader "Command Station"
         my puts "<BODY>"
         my puts {<div id="tools">}
-        my puts { <button type="button" name="Load" value="Load" onclick="CS_Load()">Load</button>}
-        my puts { <button type="button" name="Save" value="Save" onclick="CS_Save()">Save</button>}
-        my puts { <button type="button" name="Service" value="Service" onclick="CS_Service()">Service</button>}
-        my puts { <button type="button" name="Help" value="Help" onclick="CS_Help()">Help</button> }
+        my puts { <button type="button" name="Load" value="Load" onclick="CS.Load()">Load</button>}
+        my puts { <button type="button" name="Save" value="Save" onclick="CS.Save()">Save</button>}
+        my puts { <button type="button" name="Service" value="Service" onclick="CS.Service()">Service</button>}
+        my puts { <button type="button" name="Help" value="Help" onclick="CS.Help()">Help</button> }
         my puts {</div>}
-        
-        my puts "</BODY></HTML>"
+        my puts {<div id="upper" style="width: 100%;">}
+        my puts {<div id="describe" style="width: 50%;float: left;">}
+        my puts {<label for="address">Address</label><input type="text" id="address" value="" /><br />}
+        my puts {<label for="steps">Steps</label><input type="text" id="steps" value="" /><br />}
+        my puts {<label for="name">Name</label><input type="text" id="name" value="" /><br />}
+        my puts {<label for="description">Description</label><input type="text" id="description" value="" /><br />}
+        my puts {<label for="speed">Speed and Dir</label><input type="text" id="speed" value="" /><br />}
+        my puts {</div>} 
+        my puts {</div>}
+        my puts "</BODY>"
+        my puts "</HTML>"
     }
     method DisplayHelp {} {
         my reply set Status 200
