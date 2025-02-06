@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Wed Feb 5 13:04:24 2025
-#  Last Modified : <250206.1621>
+#  Last Modified : <250206.1634>
 #
 #  Description	
 #
@@ -145,7 +145,9 @@ tool::define ::command.station {
         my StatusWindow
         my puts {</div>}
     }
-    method Lower {} {
+    method LogMessages {} {
+        my puts {<div id="logmessages">}
+        my puts {</div>}
     }
     method DisplayMain {} {
         my reply set Status 200
@@ -154,7 +156,7 @@ tool::define ::command.station {
         my puts "<BODY>"
         my ToolBar
         my Upper
-        my Lower
+        my LogMessages
         my puts "</BODY>"
         my puts "</HTML>"
     }

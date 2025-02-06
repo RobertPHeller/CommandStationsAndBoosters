@@ -3,7 +3,8 @@
   */
 
 #tools {
-    background-color: green;
+    background-color: #cccccc;
+    padding: 10px;
 }
 
 #upper {
@@ -44,5 +45,10 @@ ul.listbox li {
     width: 30%;
     float: right;
     background-color: #cccccc;
+}
+
+#logmessages {
+    width:100%;
+    overflow: scroll;
 }
 
