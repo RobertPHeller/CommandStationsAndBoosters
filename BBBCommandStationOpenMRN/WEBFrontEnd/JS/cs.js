@@ -8,7 +8,7 @@
      Created By    : Robert Heller, Deepwoods Software
      Created       : Wed Feb 5 17:08:40 2025
 
-     Last Modified : <250205.2217>
+     Last Modified : <250206.1927>
      ID            : $Id$
      Source        : $Source$
      Description	
@@ -32,3 +32,13 @@ CS.Service = function () {
 CS.Help = function () {
     window.open('http://cs.deepsoft.com/help/','_blank');
 }
+
+CS.describeLoco = function () {
+}
+
+CS.deleteLoco = function () {
+}
+
+CS.addLoco = function () {
+}
+

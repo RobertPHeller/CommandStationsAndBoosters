@@ -1,0 +1,106 @@
+<HTML>
+    <HEAD>
+        <TITLE>Command Station</TITLE>
+        <link rel="stylesheet" href="/CSS/cs.css" />
+        <link rel="stylesheet" href="/CSS/UI.css" />
+        <script id="cs" type="text/javascript" src="/JS/cs.js"></script>
+    </HEAD>
+    <BODY>
+        <div id="tools" class="toolbar">
+            <button type="button" name="Load" value="Load" onclick="CS.Load()">Load</button>
+            <button type="button" name="Save" value="Save" onclick="CS.Save()">Save</button>
+            <button type="button" name="Service" value="Service" onclick="CS.Service()">Service</button>
+            <button type="button" name="Help" value="Help" onclick="CS.Help()">Help</button>
+        </div>
+        <div id="upper">
+            <div id="describe">
+                <span class="labelEntry"><label for="address">Address</label><input type="text" id="address" value="" /></span><br />
+                <span class="labelEntry"><label for="steps">Steps</label><input type="text" id="steps" value="" /></span><br />
+                <span class="labelEntry"><label for="name">Name</label><input type="text" id="name" value="" /></span><br />
+                <span class="labelEntry"><label for="description">Description</label><input type="text" id="description" value="" /></span><br />
+                <span class="labelEntry"><label for="speed">Speed and Dir</label><input type="text" id="speed" value="" /></span><br />
+                <div id="functions">Functions
+                    <span id="FunctionLight0" class="functionlight">0<img id="functionlight_0"src="/images/off.png" /></span>
+                    <span id="FunctionLight1" class="functionlight">1<img src="/images/off.png" id="functionlight_1" /></span>
+                    <span id="FunctionLight2" class="functionlight">2<img src="/images/off.png" id="functionlight_2" /></span>
+                    <span id="FunctionLight3" class="functionlight">3<img src="/images/off.png" id="functionlight_3" /></span>
+                    <span id="FunctionLight4" class="functionlight">4<img src="/images/off.png" id="functionlight_4" /></span>
+                    <span id="FunctionLight5" class="functionlight">5<img src="/images/off.png" id="functionlight_5" /></span>
+                    <span id="FunctionLight6" class="functionlight">6<img src="/images/off.png" id="functionlight_6" /></span>
+                    <span id="FunctionLight7" class="functionlight">7<img src="/images/off.png" id="functionlight_7" /></span>
+                    <span id="FunctionLight8" class="functionlight">8<img src="/images/off.png" id="functionlight_8" /></span>
+                    <span id="FunctionLight9" class="functionlight">9<img src="/images/off.png" id="functionlight_9" /></span>
+                    <span id="FunctionLight10" class="functionlight">10<img src="/images/off.png" id="functionlight_10" /></span>
+                    <span id="FunctionLight11" class="functionlight">11<img src="/images/off.png" id="functionlight_11" /></span>
+                    <span id="FunctionLight12" class="functionlight">12<img src="/images/off.png" id="functionlight_12" /></span>
+                    <span id="FunctionLight13" class="functionlight">13<img src="/images/off.png" id="functionlight_13" /></span>
+                    <span id="FunctionLight14" class="functionlight">14<img src="/images/off.png" id="functionlight_14" /></span>
+                    <span id="FunctionLight15" class="functionlight">15<img src="/images/off.png" id="functionlight_15" /></span>
+                    <span id="FunctionLight16" class="functionlight">16<img src="/images/off.png" id="functionlight_16" /></span>
+                    <span id="FunctionLight17" class="functionlight">17<img src="/images/off.png" id="functionlight_17" /></span>
+                    <span id="FunctionLight18" class="functionlight">18<img src="/images/off.png" id="functionlight_18" /></span>
+                    <span id="FunctionLight19" class="functionlight">19<img src="/images/off.png" id="functionlight_19" /></span>
+                    <span id="FunctionLight20" class="functionlight">20<img src="/images/off.png" id="functionlight_20" /></span>
+                    <span id="FunctionLight21" class="functionlight">21<img src="/images/off.png" id="functionlight_21" /></span>
+                    <span id="FunctionLight22" class="functionlight">22<img src="/images/off.png" id="functionlight_22" /></span>
+                    <span id="FunctionLight23" class="functionlight">23<img src="/images/off.png" id="functionlight_23" /></span>
+                    <span id="FunctionLight24" class="functionlight">24<img src="/images/off.png" id="functionlight_24" /></span>
+                    <span id="FunctionLight25" class="functionlight">25<img src="/images/off.png" id="functionlight_25" /></span>
+                    <span id="FunctionLight26" class="functionlight">26<img src="/images/off.png" id="functionlight_26" /></span>
+                    <span id="FunctionLight27" class="functionlight">27<img src="/images/off.png" id="functionlight_27" /></span>
+                    <span id="FunctionLight28" class="functionlight">28<img src="/images/off.png" id="functionlight_28" /></span>
+                </div>
+                <span class="labelEntry"><label for="controller">Controller</label><input type="text" id="controller" value="" /></span><br />
+                <span class="labelEntry"><label for="consist">Consist</label><input type="text" id="consist" value="" /></span><br />
+            </div>
+            <div id="locolist">
+                <ul id="locolistbox" class="listbox">
+                </ul>
+                <div id="ll_buttons" class="buttonbox">
+                    <button id="describe_loco" type="button" name="Describe" value="Describe" onclick="CS.describeLoco()">Describe</button>
+                    <button id="delete_loco" type="button" name="Delete" value="Delete" onclick="CS.deleteLoco()">Delete</button>
+                    <button id="add_loco" type="button" name="Add" value=Add" onclick="CS.addLoco()">Add</button>
+                </div>
+            </div>
+            <div id="StatusWindow">
+                <div id="mains_status" class="TrackStatus">Mains<br />
+                    <span id="mains_status" class="TrackCurrent">Current <span id="$s_current">000.000</span>A</span><br />
+                    <span id="mains_flags">
+                        Enabled<img id="mains_enabled" src="/images/off.png" />
+                        Thermal Flag<img id="mains_therm" src="/images/off.png" />
+                        Over Current<img id="mains_over" src="/images/off.png" />
+                    </span><br />
+                </div>
+                <div id="programming_status" class="TrackStatus">Prog Track<br />
+                    <span id="programming_status" class="TrackCurrent">Current <span id="$s_current">000.000</span>A</span><br />
+                    <span id="programming_flags">
+                        Enabled<img id="programming_enabled" src="/images/off.png" />
+                        Thermal Flag<img id="programming_therm" src="/images/off.png" />
+                        Over Current<img id="programming_over" src="/images/off.png" />
+                    </span><br />
+                </div>
+                <div id="heatsink_status" class="TrackStatus">Heat Sink<br />
+                    <span id="heatsink_status" class="TrackCurrent">Temperature <span id="heatsink_temp">000.000</span>C</span><br />
+                    <span id="heatsink_flags">
+                        Fan On<img id="heatsink_fan" src="/images/off.png" />
+                        Alarm<img id="heatsink_alarm" src="/images/off.png" />
+                    </span><br />
+                </div>
+            </div>
+        </div>
+        <div id="logmessages">
+        </div>
+        <div id="overlayForModals" class="overlay"></div>
+        <div id="addNewLocoModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span id="addNewLocoModalHeader_span"></span>
+                    <span class="closeModal" id="closeModalBoards">&times;</span>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+        </div>
+    </BODY>
+</HTML>
+
