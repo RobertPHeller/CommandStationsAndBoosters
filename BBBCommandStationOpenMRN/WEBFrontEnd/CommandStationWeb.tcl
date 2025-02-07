@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Wed Feb 5 13:04:24 2025
-#  Last Modified : <250207.1003>
+#  Last Modified : <250207.1527>
 #
 #  Description	
 #
@@ -68,11 +68,11 @@ proc quoteArg {string} {
  
 set ::CS_Socket [socket 127.0.0.1 9900]
  
-puts stderr "*** CS_Socket is $::CS_Socket"
+#puts stderr "*** CS_Socket is $::CS_Socket"
  
 proc SendMessageToCS {message} {
-    puts stderr "*** SendMessageToCS \{$message\}"
-    puts stderr "*** SendMessageToCS CS_Socket is $::CS_Socket"
+    #puts stderr "*** SendMessageToCS \{$message\}"
+    #puts stderr "*** SendMessageToCS CS_Socket is $::CS_Socket"
     puts $::CS_Socket $message
     flush $::CS_Socket
     return [gets $::CS_Socket]
@@ -92,11 +92,11 @@ tool::define ::command.station {
         
     method content {} {
         set request [my http_info get REQUEST_URI]
-        puts stderr "($request)"
+        #puts stderr "($request)"
         set length [my request get Content-Length]
         if {[regexp {^/command/([^?]*)\?(.*)$} $request => mode opts] < 1} {
             regexp {^/command/([^?]*)$} $request => mode
-            puts stderr "($request) mode is $mode"
+            #puts stderr "($request) mode is $mode"
             set opts {}
         }
         set queryArgs [my FormData]
@@ -107,9 +107,9 @@ tool::define ::command.station {
                 append cmd " steps [dict get $queryArgs steps]"
                 append cmd " [quoteArg [dict get $queryArgs name]]"
                 append cmd " [quoteArg [dict get $queryArgs description]]"
-                puts stderr $cmd
+                #puts stderr $cmd
                 set fromcs [SendMessageToCS $cmd]
-                puts stderr $fromcs
+                #puts stderr $fromcs
                 my reply set Status 200
                 my reply set Content-Type {text/plain}
                 my puts "$fromcs"
@@ -117,18 +117,18 @@ tool::define ::command.station {
             undefine {
                 set cmd "undefine locomotive"
                 append cmd " [dict get $queryArgs address]"
-                puts stderr $cmd
+                #puts stderr $cmd
                 set fromcs [SendMessageToCS $cmd]
-                puts stderr $fromcs
+                #puts stderr $fromcs
                 my reply set Status 200
                 my reply set Content-Type {text/plain}
                 my puts "$fromcs"
             }
             list {
                 set cmd "list locomotives"
-                puts stderr $cmd
+                #puts stderr $cmd
                 set fromcs [SendMessageToCS $cmd]
-                puts stderr $fromcs
+                #puts stderr $fromcs
                 my reply set Status 200
                 my reply set Content-Type {text/plain}
                 my puts "$fromcs"
@@ -136,18 +136,18 @@ tool::define ::command.station {
             describe {
                 set cmd "describe locomotive"
                 append cmd " [dict get $queryArgs address]"
-                puts stderr $cmd
+                #puts stderr $cmd
                 set fromcs [SendMessageToCS $cmd]
-                puts stderr $fromcs
+                #puts stderr $fromcs
                 my reply set Status 200
                 my reply set Content-Type {text/plain}
                 my puts "$fromcs"
             }
             status {
                 set cmd "status"
-                puts stderr $cmd
+                #puts stderr $cmd
                 set fromcs [SendMessageToCS $cmd]
-                puts stderr $fromcs
+                #puts stderr $fromcs
                 my reply set Status 200
                 my reply set Content-Type {text/plain}
                 my puts "$fromcs"
