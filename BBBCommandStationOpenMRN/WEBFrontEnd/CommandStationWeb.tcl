@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Wed Feb 5 13:04:24 2025
-#  Last Modified : <250206.2100>
+#  Last Modified : <250207.1003>
 #
 #  Description	
 #
@@ -65,9 +65,23 @@ proc quoteArg {string} {
          return "\"$string\""
      }
  }
+ 
+set ::CS_Socket [socket 127.0.0.1 9900]
+ 
+puts stderr "*** CS_Socket is $::CS_Socket"
+ 
+proc SendMessageToCS {message} {
+    puts stderr "*** SendMessageToCS \{$message\}"
+    puts stderr "*** SendMessageToCS CS_Socket is $::CS_Socket"
+    puts $::CS_Socket $message
+    flush $::CS_Socket
+    return [gets $::CS_Socket]
+}
 
+ 
 tool::define ::command.station {
-
+    
+        
     method CommonHeader {title} {
         my puts "<HTML><HEAD><TITLE>$title</TITLE>"
         my puts {<link rel="stylesheet" href="/CSS/cs.css" />}
@@ -91,56 +105,52 @@ tool::define ::command.station {
                 set cmd "define locomotive"
                 append cmd " [dict get $queryArgs address]"
                 append cmd " steps [dict get $queryArgs steps]"
+                append cmd " [quoteArg [dict get $queryArgs name]]"
                 append cmd " [quoteArg [dict get $queryArgs description]]"
                 puts stderr $cmd
+                set fromcs [SendMessageToCS $cmd]
+                puts stderr $fromcs
                 my reply set Status 200
-                my reply set Content-Type {text/html}
-                my CommonHeader "define locomotive"
-                my puts "<BODY>"
-                my puts "$cmd"
-                my puts "</BODY></HTML>"
+                my reply set Content-Type {text/plain}
+                my puts "$fromcs"
             }
             undefine {
                 set cmd "undefine locomotive"
                 append cmd " [dict get $queryArgs address]"
                 puts stderr $cmd
+                set fromcs [SendMessageToCS $cmd]
+                puts stderr $fromcs
                 my reply set Status 200
-                my reply set Content-Type {text/html}
-                my CommonHeader "undefine locomotive"
-                my puts "<BODY>"
-                my puts "$cmd"
-                my puts "</BODY></HTML>"
+                my reply set Content-Type {text/plain}
+                my puts "$fromcs"
             }
             list {
                 set cmd "list locomotives"
                 puts stderr $cmd
+                set fromcs [SendMessageToCS $cmd]
+                puts stderr $fromcs
                 my reply set Status 200
-                my reply set Content-Type {text/html}
-                my CommonHeader "list locomotives"
-                my puts "<BODY>"
-                my puts "$cmd"
-                my puts "</BODY></HTML>"
+                my reply set Content-Type {text/plain}
+                my puts "$fromcs"
             }
             describe {
                 set cmd "describe locomotive"
                 append cmd " [dict get $queryArgs address]"
                 puts stderr $cmd
+                set fromcs [SendMessageToCS $cmd]
+                puts stderr $fromcs
                 my reply set Status 200
-                my reply set Content-Type {text/html}
-                my CommonHeader "Describe locomotive"
-                my puts "<BODY>"
-                my puts "$cmd"
-                my puts "</BODY></HTML>"
+                my reply set Content-Type {text/plain}
+                my puts "$fromcs"
             }
             status {
                 set cmd "status"
                 puts stderr $cmd
+                set fromcs [SendMessageToCS $cmd]
+                puts stderr $fromcs
                 my reply set Status 200
-                my reply set Content-Type {text/html}
-                my CommonHeader "status"
-                my puts "<BODY>"
-                my puts "$cmd"
-                my puts "</BODY></HTML>"
+                my reply set Content-Type {text/plain}
+                my puts "$fromcs"
             }
             power {
                 set cmd "power"
@@ -151,11 +161,8 @@ tool::define ::command.station {
                 }
                 puts stderr $cmd
                 my reply set Status 200
-                my reply set Content-Type {text/html}
-                my CommonHeader "Power"
-                my puts "<BODY>"
+                my reply set Content-Type {text/plain}
                 my puts "$cmd"
-                my puts "</BODY></HTML>"
             }
             estop
             shutdown
@@ -180,6 +187,7 @@ HTTPD add_uri /CSS/* [list path [file join $root CSS] mixin ::httpd::content.fil
 HTTPD add_uri /JS/*  [list path [file join $root JS] mixin ::httpd::content.file]
 HTTPD add_uri /help/* [list path [file join $root help] mixin ::httpd::content.file]
 HTTPD add_uri /images/* [list path [file join $root images] mixin ::httpd::content.file]
+
 HTTPD add_uri /command/* [list mixin ::command.station]
 HTTPD add_uri /* [list path [file join $root static] mixin ::httpd::content.file]
 

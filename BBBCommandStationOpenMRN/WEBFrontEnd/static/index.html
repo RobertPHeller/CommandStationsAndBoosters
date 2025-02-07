@@ -1,11 +1,13 @@
 <HTML>
     <HEAD>
         <TITLE>Command Station</TITLE>
+        <link rel="stylesheet" href="/CSS/font_awesome_all.min.css" />
         <link rel="stylesheet" href="/CSS/cs.css" />
         <link rel="stylesheet" href="/CSS/UI.css" />
         <script id="cs" type="text/javascript" src="/JS/cs.js"></script>
     </HEAD>
-    <BODY>
+    <BODY  onLoad="CS.RefreshLocoList();setInterval(CS.StatusRefresh, 1000);
+">
         <div id="tools" class="toolbar">
             <button type="button" name="Load" value="Load" onclick="CS.Load()">Load</button>
             <button type="button" name="Save" value="Save" onclick="CS.Save()">Save</button>
@@ -54,8 +56,8 @@
                 <span class="labelEntry"><label for="consist">Consist</label><input type="text" id="consist" value="" /></span><br />
             </div>
             <div id="locolist">
-                <ul id="locolistbox" class="listbox">
-                </ul>
+                <select id="locolistbox" size="7" class="listbox" >
+                </select>
                 <div id="ll_buttons" class="buttonbox">
                     <button id="describe_loco" type="button" name="Describe" value="Describe" onclick="CS.describeLoco()">Describe</button>
                     <button id="delete_loco" type="button" name="Delete" value="Delete" onclick="CS.deleteLoco()">Delete</button>
@@ -64,7 +66,7 @@
             </div>
             <div id="StatusWindow">
                 <div id="mains_status" class="TrackStatus">Mains<br />
-                    <span id="mains_status" class="TrackCurrent">Current <span id="$s_current">000.000</span>A</span><br />
+                    <span id="mains_status" class="TrackCurrent">Current <span id="mains_current">000.000</span>A</span><br />
                     <span id="mains_flags">
                         Enabled<img id="mains_enabled" src="/images/off.png" />
                         Thermal Flag<img id="mains_therm" src="/images/off.png" />
@@ -72,7 +74,7 @@
                     </span><br />
                 </div>
                 <div id="programming_status" class="TrackStatus">Prog Track<br />
-                    <span id="programming_status" class="TrackCurrent">Current <span id="$s_current">000.000</span>A</span><br />
+                    <span id="programming_status" class="TrackCurrent">Current <span id="programming_current">000.000</span>A</span><br />
                     <span id="programming_flags">
                         Enabled<img id="programming_enabled" src="/images/off.png" />
                         Thermal Flag<img id="programming_therm" src="/images/off.png" />
@@ -94,18 +96,17 @@
         <div id="addNewLocoModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
+                    <i class="fas fa-train"></i>
                     <span id="addNewLocoModalHeader_span"></span>
-                    <span class="closeModal" id="closeModalBoards">&times;</span>
+                    <span class="closeModal" id="closeModalBoards" onclick="CS.addNewLocoModalClose()">&times;</span>
                 </div>
                 <div class="modal-body">
-                    <ul class="formbox">
-                        <li><label for="newaddress">Address</label><input id="newaddress" name="newaddress" value="3" /></li>
-                        <li><label for="newsteps">Steps</label><select id="newsteps" name="newsteps">
+                    <span><label for="newaddress">Address</label><input id="newaddress" name="newaddress" value="3" /></span><br />
+                    <span><label for="newsteps">Steps</label><select id="newsteps" name="newsteps">
                             <option value="28" selected="selected">28</option>
-                            <option value="128">128</option></select></li>
-                        <li><label for="newname">Name</label><input id="newname" name="newname" value="" /></li>
-                        <li><label for="newdescription">Description</label><input id="newdescription" name="newdescription" value="" /></li>
-                    </ul>
+                            <option value="128">128</option></select></span><br />
+                    <span><label for="newname">Name</label><input id="newname" name="newname" value="" /></span><br />
+                    <span><label for="newdescription">Description</label><input id="newdescription" name="newdescription" value="" /></span><br />
                 </div>
                 <button id="addNewLocoModalDialogAdd" onclick="CS.addNewLoco()">Add</button>
                 <button id="addNewLocoModalDialogCancel" onclick="CS.addNewLocoModalClose()">Cancel</button>

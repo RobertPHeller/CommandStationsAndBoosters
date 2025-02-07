@@ -26,18 +26,13 @@ span.labelEntry {
     width: 20%;
     float: left;
     height: 300px;
+    display: inline-block;
+    vertical-align: top;
+    overflow: hidden;
 }
 
-ul.listbox {
-    background-color: white;
-}
-
-ul.listbox li ::marker {
-    display: none;
-}
-
-ul.listbox li {
-    display: block;
+#locolist > select {
+    padding: 10px;
 }
 
 
