@@ -8,7 +8,7 @@
      Created By    : Robert Heller, Deepwoods Software
      Created       : Wed Feb 5 17:08:40 2025
 
-     Last Modified : <250206.1927>
+     Last Modified : <250206.2157>
      ID            : $Id$
      Source        : $Source$
      Description	
@@ -40,5 +40,29 @@ CS.deleteLoco = function () {
 }
 
 CS.addLoco = function () {
+    document.getElementById('overlayForModals').style.display = "block";
+    document.getElementById('addNewLocoModal').classList.add('show');
+    window.addEventListener('click',CS.addNewLocoModalHide,'once');
 }
 
+CS.addNewLocoModalHide = function () {
+    if (!document.getElementById('addNewLocoModal').contains(event.target)) {
+        document.getElementById('overlayForModals').style.display = "none";
+        document.getElementById('addNewLocoModal').classList.remove('show');
+    }
+}
+
+CS.addNewLocoModalClose = function () {
+    document.getElementById('overlayForModals').style.display = "none";
+    document.getElementById('addNewLocoModal').classList.remove('show');
+}
+
+CS.addNewLoco = function () {
+    var address = document.getElementById('newaddress').value;
+    var stepsSel= document.getElementById('newsteps');
+    var steps   = stepsSel.options[stepsSel.selectedIndex].value;
+    var name    = document.getElementById('newname').value;
+    var descr   = document.getElementById('newdescription').value;
+    console.log('address = '+address+', steps = '+steps+', name = "'+name+'", descr = "'+descr+'"');
+    CS.addNewLocoModalClose();
+}

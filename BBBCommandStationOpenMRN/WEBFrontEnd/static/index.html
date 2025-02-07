@@ -98,7 +98,17 @@
                     <span class="closeModal" id="closeModalBoards">&times;</span>
                 </div>
                 <div class="modal-body">
+                    <ul class="formbox">
+                        <li><label for="newaddress">Address</label><input id="newaddress" name="newaddress" value="3" /></li>
+                        <li><label for="newsteps">Steps</label><select id="newsteps" name="newsteps">
+                            <option value="28" selected="selected">28</option>
+                            <option value="128">128</option></select></li>
+                        <li><label for="newname">Name</label><input id="newname" name="newname" value="" /></li>
+                        <li><label for="newdescription">Description</label><input id="newdescription" name="newdescription" value="" /></li>
+                    </ul>
                 </div>
+                <button id="addNewLocoModalDialogAdd" onclick="CS.addNewLoco()">Add</button>
+                <button id="addNewLocoModalDialogCancel" onclick="CS.addNewLocoModalClose()">Cancel</button>
             </div>
         </div>
     </BODY>

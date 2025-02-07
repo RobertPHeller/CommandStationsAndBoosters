@@ -92,3 +92,8 @@
     border-top-right-radius: 15px !important;
 }
 
+ul.formbox li ::marker {
+    display: none;
+}
+
+
