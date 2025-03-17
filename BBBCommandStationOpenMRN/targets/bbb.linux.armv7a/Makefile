@@ -12,8 +12,9 @@ sh -c "if [ \"X`printenv OPENMRNPATH`\" != \"X\" ]; then printenv OPENMRNPATH; \
 APP_PATH ?= $(realpath ../..)
 -include ../../config.mk
 INCLUDES += -I$(realpath ../../LCCTrainSearchProtocol/include)
+INCLUDES += -I$(realpath ../../httpd)
 INCLUDES += -I/usr/include/nlohmann
-SUBDIRS = LCCTrainSearchProtocol
+SUBDIRS = LCCTrainSearchProtocol httpd
 include $(OPENMRNPATH)/etc/prog.mk
 
 #SYSLIBRARIES += -lavahi-client -lavahi-common
