@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sun Oct 20 13:40:14 2019
-//  Last Modified : <250201.1603>
+//  Last Modified : <250317.1432>
 //
 //  Description	
 //
@@ -89,71 +89,10 @@ static const char rcsid[] = "@(#) : $Id$";
 #include <unistd.h>
 #include <termios.h>
 #include <sys/ioctl.h>
+#include "RailComHW.hxx"
 
 
-// Railcom driver -- uses a hardware UART
-
-#define RAILCOM_BAUD B230400
-struct RailComHW
-{
-    using HB_BRAKE = MainBRAKE_Pin;
-    using HB_ENABLE = ProgEN_Pin;
-    using RC_ENABLE = RailcomEN_Pin;
-    static void hw_init()
-    {
-    }
-    static int openport()
-    {
-        struct termios railcomtermios;
-        int fd = open(RAILCOM_DATA_PORT,O_RDWR);
-        if (fd < 0) {
-            LOG(FATAL,"RailComHW: Could not open %s (%d)", RAILCOM_DATA_PORT, errno);
-            exit(errno);
-        }
-        tcgetattr(fd,&railcomtermios);
-        cfmakeraw(&railcomtermios);
-        cfsetspeed(&railcomtermios,RAILCOM_BAUD);
-        // 1 stop bit, 8 data bits
-        railcomtermios.c_cflag &= ~CSTOPB;
-        railcomtermios.c_cflag &= ~CSIZE;
-        railcomtermios.c_cflag |= CS8; 
-        tcsetattr(fd,TCSANOW,&railcomtermios);
-        return fd;
-    }
-    static size_t data_avail(int fd)
-    {
-        int bytes = 0;
-        ioctl(fd,TIOCINQ,&bytes);
-        return bytes;
-    }
-    static uint8_t readbyte(int fd)
-    {
-        uint8_t buff;
-        /*size_t s =*/ read(fd,&buff,1);
-        return buff;
-    }
-    static size_t readbuff(int fd,uint8_t *buf, size_t max_len)
-    {
-        return read(fd,buf,max_len);
-    }
-    static int flush(int fd)
-    {
-        return tcflush(fd,TCIFLUSH);
-    }
-  /// Number of microseconds to wait after the final packet bit completes
-  /// before disabling the ENABLE pin on the h-bridge.
-  static constexpr uint32_t RAILCOM_TRIGGER_DELAY_USEC = 1;
-
-  /// Number of microseconds to wait for railcom data on channel 1.
-  static constexpr uint32_t RAILCOM_MAX_READ_DELAY_CH_1 =
-    177 - RAILCOM_TRIGGER_DELAY_USEC;
-
-  /// Number of microseconds to wait for railcom data on channel 2.
-  static constexpr uint32_t RAILCOM_MAX_READ_DELAY_CH_2 =
-    454 - RAILCOM_MAX_READ_DELAY_CH_1;
-};
-
-BBRailComDriver<RailComHW> opsRailComDriver(RAILCOM_FEEDBACK_QUEUE);
+static BBRailComDriver<RailComHW> opsRailComDriver(RAILCOM_FEEDBACK_QUEUE);
 
 
 std::unique_ptr<HBridgeControl> CommandStationConsole::mains;

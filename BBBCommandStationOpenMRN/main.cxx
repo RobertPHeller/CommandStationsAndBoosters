@@ -134,6 +134,12 @@
  * @arg DEFAULT_GRIDCONNECT_HUB_PORT
  * Default port the Grid Connect Hub server should listen on -- normally 12021.
  * 
+ * @arg USEWEBSERVER
+ * Start a webserer instead of opening a Console server
+ * @arg WEBSERVERROOT
+ * Webserver doc root
+ * @arg WEBSERVERPORT
+ * Webserver port to use -- normally 9090
  * @arg TERMINALCONSOLE
  * Use a terminal console. Normally NOT defined -- debug use only.
  * @arg CONSOLEPORT
@@ -188,14 +194,18 @@ OVERRIDE_CONST(num_memory_spaces, 7);
 #include "openlcb/ConfiguredConsumer.hxx"
 #include "openlcb/ConfiguredProducer.hxx"
 
+#include "Hardware.hxx"
 #include "config.hxx"
 #include "freertos_drivers/common/DummyGPIO.hxx"
 #include "freertos_drivers/common/LoggingGPIO.hxx"
 #include "os/LinuxGpio.hxx"
 #include "utils/GpioInitializer.hxx"
 #include "CommandStationStack.hxx"
+#ifdef USEWEBSERVER
+#include "CommandStationHttpd.hxx"
+#else
 #include "CommandStationConsole.hxx"
-#include "Hardware.hxx"
+#endif
 #include "withrottle/Server.hxx"
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -528,6 +538,15 @@ int appl_main(int argc, char *argv[])
 #endif
 #endif
 
+#ifdef USEWEBSERVER
+    // Webserver executor.
+    Executor<1> httpd_executor("httpd_executor", 0, 2048);
+    CommandStationHttpd commandProcessorHttpd(&stack,
+                                              stack.traction_service(),
+                                              &httpd_executor,
+                                              WEBSERVERROOT, 
+                                              WEBSERVERPORT);
+#else
     // Console executor.
     Executor<1> console_executor("console_executor", 0, 2048);
     
@@ -538,17 +557,26 @@ int appl_main(int argc, char *argv[])
                                                   &console_executor,
                                                   Console::FD_STDIN,
                                                   Console::FD_STDOUT);
-#else
+#elsee
     CommandStationConsole commandProcessorConsole(&stack,
                                                   stack.traction_service(),
                                                   &console_executor,
                                                   CONSOLEPORT);
+#endif
 #endif
     
     FactoryResetHelper  factory_reset_helper;
     
     // Create the config file
     stack.create_config_file_if_needed(cfg.seg().internal_config(), openlcb::CANONICAL_VERSION, openlcb::CONFIG_FILE_SIZE);
+#ifdef USEWEBSERVER
+    CommandStationHttpd::Begin(&stack,stack.traction_service(),
+                                 cfg.seg().maindcc(),
+                                 cfg.seg().progdcc(),
+                                 cfg.seg().fancontrol(),
+                                 mainPRUfirmware,
+                                 progPRUfirmware);
+#else
     // Start things up in the Console.
     CommandStationConsole::Begin(&stack,stack.traction_service(),
                                  cfg.seg().maindcc(),
@@ -556,7 +584,7 @@ int appl_main(int argc, char *argv[])
                                  cfg.seg().fancontrol(),
                                  mainPRUfirmware,
                                  progPRUfirmware);
-    
+#endif
     // Connects to a TCP hub on the internet.
     //stack.connect_tcp_gridconnect_hub("28k.ch", 50007);
 #ifdef USE_TCP_GRIDCONNECT_HOST
