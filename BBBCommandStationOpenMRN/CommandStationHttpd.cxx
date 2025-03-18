@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Mar 17 13:52:59 2025
-//  Last Modified : <250317.2040>
+//  Last Modified : <250318.0947>
 //
 //  Description	
 //
@@ -201,6 +201,13 @@ CommandStationHttpd::CommandStationHttpd(openlcb::SimpleStackBase *stack,
                        void *userContext)
                 {
                     ((CommandStationHttpd *)userContext)->writeprogcvbyte_UriHandler(request,reply);
+                },this);
+    server_.add_uri(HTTPD::UriGlob("/command/writeprogcvword?*"),
+                    [](const HTTPD::HttpRequest *request,
+                       HTTPD::HttpReply *reply,
+                       void *userContext)
+                {
+                    ((CommandStationHttpd *)userContext)->writeprogcvword_UriHandler(request,reply);
                 },this);
     server_.add_uri(HTTPD::UriGlob("/command/writeprogcvbit?*"),
                     [](const HTTPD::HttpRequest *request,
@@ -589,19 +596,95 @@ void CommandStationHttpd::readcvword_UriHandler(const HTTPD::HttpRequest *reques
     }
     reply->SendReply();
 }
+
 void CommandStationHttpd::writeprogcvbyte_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply)
 {
-    
+    string Query = request->Query();
+    ParseQuery formdata(Query);
+    uint16_t addrCV = formdata.IValue("address");
+    uint8_t  value  = formdata.IValue("value");
+    bool status = writeProgCVByte(addrCV,value); 
+    reply->SetStatus(200);
+    reply->SetContentType("text/plain");
+    reply->Puts("#servicemode# updatebyte ");
+    reply->Puts(std::to_string(addrCV)+" "+
+                std::to_string(value)+" "+
+                std::to_string(status)+"\r\n");
+    reply->SendReply();
 }
+
+void CommandStationHttpd::writeprogcvword_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply)
+{
+    string Query = request->Query();
+    ParseQuery formdata(Query);
+    uint16_t addrCV = formdata.IValue("address");
+    uint16_t  value  = formdata.IValue("value");
+    uint8_t   b1 = (value >> 8);
+    uint8_t   b2 = value & 0x0ff;
+    bool status = writeProgCVByte(addrCV,b1) && writeProgCVByte(addrCV+1,b2); 
+    reply->SetStatus(200);
+    reply->SetContentType("text/plain");
+    reply->Puts("#servicemode# updateword ");
+    reply->Puts(std::to_string(addrCV)+" "+
+                std::to_string(value)+" "+
+                std::to_string(status)+"\r\n");
+    reply->SendReply();
+}
+
 void CommandStationHttpd::writeprogcvbit_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply)
 {
+    string Query = request->Query();
+    ParseQuery formdata(Query);
+    uint16_t addrCV = formdata.IValue("address");
+    uint8_t  bitno  = formdata.IValue("bitno");
+    bool bit = formdata.Value("bit") == "true";
+    bool status = writeProgCVBit(addrCV,bitno,bit); 
+    reply->SetStatus(200);
+    reply->SetContentType("text/plain");
+    reply->Puts("#servicemode# updatebit ");
+    reply->Puts(std::to_string(addrCV)+" "+
+                std::to_string(bitno)+" "+
+                std::to_string(bit)+" "+
+                std::to_string(status)+"\r\n");
+    reply->SendReply();
 }
+
 void CommandStationHttpd::writeopscvbyte_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply)
 {
+    string Query = request->Query();
+    ParseQuery formdata(Query);
+    uint16_t locoAddress = formdata.IValue("locoAddress");
+    uint16_t addrCV = formdata.IValue("cvAddress");
+    uint8_t value = formdata.IValue("value");
+    writeOpsCVByte(locoAddress,addrCV,value);
+    reply->SetStatus(200);
+    reply->SetContentType("text/plain");
+    reply->Puts("#writeopscvbyte# ");
+    reply->Puts(std::to_string(locoAddress)+" "+
+                std::to_string(addrCV)+" "+
+                std::to_string(value)+"\r\n");
+    reply->SendReply();
 }
+
 void CommandStationHttpd::writeopscvbit_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply)
 {
+    string Query = request->Query();
+    ParseQuery formdata(Query);
+    uint16_t locoAddress = formdata.IValue("locoAddress");
+    uint16_t addrCV = formdata.IValue("cvAddress");
+    uint8_t bit  = formdata.IValue("bit");
+    bool value = formdata.Value("value") == "true";
+    writeOpsCVBit(locoAddress,addrCV,bit,value);
+    reply->SetStatus(200);
+    reply->SetContentType("text/plain");
+    reply->Puts("#writeopscvbit# ");
+    reply->Puts(std::to_string(locoAddress)+" "+
+                std::to_string(addrCV)+" "+
+                std::to_string(bit)+" "+
+                std::to_string(value)+"\r\n");
+    reply->SendReply();
 }
+
 void CommandStationHttpd::staticFile_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply)
 {
     String path = docRoot_ + request->RequestUri();

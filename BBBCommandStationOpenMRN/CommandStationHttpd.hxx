@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Mar 17 12:47:00 2025
-//  Last Modified : <250317.1716>
+//  Last Modified : <250318.0935>
 //
 //  Description	
 //
@@ -235,6 +235,7 @@ private:
     void readcv_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply);
     void readcvword_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply);
     void writeprogcvbyte_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply);
+    void writeprogcvword_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply);
     void writeprogcvbit_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply);
     void writeopscvbyte_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply);
     void writeopscvbit_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply);
