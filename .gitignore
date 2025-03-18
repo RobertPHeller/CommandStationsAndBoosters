@@ -81,3 +81,8 @@ openmrnpath.mk
 #Mac OS X file system artifacts
 .DS_Store
 
+Revision.hxxout
+compile_cdi
+BBBCommandStationOpenMRN_*
+
+
