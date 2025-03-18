@@ -1,5 +1,5 @@
 export TARGET:=linux.armv7a
-export EXECUTABLE:=$(notdir $(realpath $(CURDIR)/../..))_PBNTF_HTTPD
+export EXECUTABLE:=$(notdir $(realpath $(CURDIR)/../..))_PBNTF_HTTPDf
 
 OPENMRNPATH ?= $(shell \
 sh -c "if [ \"X`printenv OPENMRNPATH`\" != \"X\" ]; then printenv OPENMRNPATH; \
