@@ -1,0 +1,13 @@
+(sym_lib_table
+  (lib (name "PocketBeagleCommandStation_SMD-rescue")(type "Legacy")(uri "${KIPRJMOD}/PocketBeagleCommandStation_SMD-rescue.lib")(options "")(descr ""))
+  (lib (name "pocketbeagle")(type "Legacy")(uri "${KIPRJMOD}/pocketbeagle.lib")(options "")(descr ""))
+  (lib (name "DRV8873HPWPR")(type "Legacy")(uri "/home/heller/CommandStationsAndBoosters/CustomLibraries/DRV8873HPWPR.lib")(options "")(descr ""))
+  (lib (name "DRV8801PWP")(type "Legacy")(uri "/home/heller/CommandStationsAndBoosters/CustomLibraries/DRV8801PWP.lib")(options "")(descr ""))
+  (lib (name "74ahc1g08")(type "Legacy")(uri "/home/heller/CommandStationsAndBoosters/CustomLibraries/74ahc1g08.lib")(options "")(descr ""))
+  (lib (name "mcp9701at")(type "Legacy")(uri "/home/heller/CommandStationsAndBoosters/CustomLibraries/mcp9701at.lib")(options "")(descr ""))
+  (lib (name "INA2180A1IDGKR")(type "Legacy")(uri "/home/heller/CommandStationsAndBoosters/CustomLibraries/INA2180A1IDGKR.lib")(options "")(descr ""))
+  (lib (name "lm2574n-5")(type "Legacy")(uri "/home/heller/CommandStationsAndBoosters/CustomLibraries/lm2574n-5.lib")(options "")(descr ""))
+  (lib (name "irf7351pbf")(type "Legacy")(uri "/home/heller/CommandStationsAndBoosters/CustomLibraries/irf7351pbf.lib")(options "")(descr ""))
+  (lib (name "MCP9700T-E_LT")(type "Legacy")(uri "/home/heller/CommandStationsAndBoosters/CustomLibraries/MCP9700T-E_LT.lib")(options "")(descr ""))
+  (lib (name "USBLC6-2SC6")(type "Legacy")(uri "/home/heller/CommandStationsAndBoosters/CustomLibraries/USBLC6-2SC6.lib")(options "")(descr ""))
+)
