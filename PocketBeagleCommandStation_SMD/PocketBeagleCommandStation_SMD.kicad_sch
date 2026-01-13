@@ -4430,9 +4430,6 @@
     (path "/00000000-0000-0000-0000-00006070b3d2/00000000-0000-0000-0000-000060707495"
       (reference "#PWR045") (unit 1) (value "+3.3V") (footprint "")
     )
-    (path "/00000000-0000-0000-0000-00006070b3d2/00000000-0000-0000-0000-0000607075fe"
-      (reference "#PWR046") (unit 1) (value "GND") (footprint "")
-    )
     (path "/00000000-0000-0000-0000-00006070b3d3/00000000-0000-0000-0000-000060707066"
       (reference "#PWR047") (unit 1) (value "GND") (footprint "")
     )
@@ -4820,9 +4817,6 @@
     (path "/00000000-0000-0000-0000-00006070b3d1/00000000-0000-0000-0000-00006070bd95"
       (reference "R13") (unit 1) (value "60") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
-    (path "/00000000-0000-0000-0000-00006070b3d2/00000000-0000-0000-0000-00006070758b"
-      (reference "R14") (unit 1) (value "10K") (footprint "Resistors_SMD:R_0603")
-    )
     (path "/00000000-0000-0000-0000-00006070b3d2/00000000-0000-0000-0000-000060704a7e"
       (reference "R15") (unit 1) (value "10K") (footprint "Resistors_SMD:R_0603")
     )
@@ -5001,7 +4995,7 @@
       (reference "U3") (unit 1) (value "TCAN332DR") (footprint "Housings_SOIC:SOIC-8-1EP_3.9x4.9mm_Pitch1.27mm")
     )
     (path "/00000000-0000-0000-0000-00006070b3d2/00000000-0000-0000-0000-0000606fd60f"
-      (reference "U4") (unit 1) (value "DRV8873HPWPR") (footprint "SOP65P640X120:SOP65P640X120-25N")
+      (reference "U4") (unit 1) (value "DRV8873SPWPRQ1") (footprint "SOP65P640X120-25N")
     )
     (path "/00000000-0000-0000-0000-00006070b3d3/00000000-0000-0000-0000-000060706d15"
       (reference "U5") (unit 1) (value "74AHC1G08") (footprint "TO_SOT_Packages_SMD:SOT-353_SC-70-5")
