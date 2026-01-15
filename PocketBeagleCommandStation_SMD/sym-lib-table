@@ -11,4 +11,5 @@
   (lib (name "MCP9700T-E_LT")(type "Legacy")(uri "/home/heller/CommandStationsAndBoosters/CustomLibraries/MCP9700T-E_LT.lib")(options "")(descr ""))
   (lib (name "USBLC6-2SC6")(type "Legacy")(uri "/home/heller/CommandStationsAndBoosters/CustomLibraries/USBLC6-2SC6.lib")(options "")(descr ""))
   (lib (name "DRV8873SPWPRQ1")(type "Legacy")(uri "/home/heller/CommandStationsAndBoosters/CustomLibraries/DRV8873SPWPRQ1.lib")(options "")(descr ""))
+  (lib (name "ina220")(type "KiCad")(uri "${KIPRJMOD}/ina220.kicad_sym")(options "")(descr ""))
 )
