@@ -4300,7 +4300,7 @@
       (reference "U2") (unit 2) (value "LM358") (footprint "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm")
     )
     (path "/00000000-0000-0000-0000-00006070b3d1/00000000-0000-0000-0000-00006070bd8b"
-      (reference "U3") (unit 1) (value "TCAN332DR") (footprint "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm_ThermalVias")
+      (reference "U3") (unit 1) (value "TCAN332DR") (footprint "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm")
     )
     (path "/00000000-0000-0000-0000-00006070b3d2/00000000-0000-0000-0000-0000606fd60f"
       (reference "U4") (unit 1) (value "DRV8873SPWPRQ1") (footprint "SOP65P640X120-25N")
