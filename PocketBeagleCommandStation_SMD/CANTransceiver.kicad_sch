@@ -1303,7 +1303,7 @@
     (property "Datasheet" "" (id 3) (at 200.66 63.5 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Mouser Part Number" "710-615008144221" (id 4) (at 200.66 63.5 0)
+    (property "Mouser Part Number" "649-54602-908LF" (id 4) (at 200.66 63.5 0)
       (effects (font (size 1.524 1.524)) hide)
     )
     (pin "1" (uuid 17ef4a91-4b5b-4dad-aea4-a0fe2f4d735d))
