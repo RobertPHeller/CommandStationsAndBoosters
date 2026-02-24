@@ -4030,7 +4030,7 @@
       (reference "J5") (unit 1) (value "RJ45") (footprint "Connector_RJ:RJ45_Amphenol_54602-x08_Horizontal")
     )
     (path "/00000000-0000-0000-0000-00006070b3e3/00000000-0000-0000-0000-00006070c31d"
-      (reference "J6") (unit 1) (value "- Fan +") (footprint "TerminalBlock_TE-Connectivity:TerminalBlock_TE_282834-2_1x02_P2.54mm_Horizontal")
+      (reference "J6") (unit 1) (value "+ Fan -") (footprint "TerminalBlock_TE-Connectivity:TerminalBlock_TE_282834-2_1x02_P2.54mm_Horizontal")
     )
     (path "/00000000-0000-0000-0000-00006073a5a8"
       (reference "J7") (unit 1) (value "USB_A") (footprint "Connector_USB:USB_A_TE_292303-7_Horizontal")

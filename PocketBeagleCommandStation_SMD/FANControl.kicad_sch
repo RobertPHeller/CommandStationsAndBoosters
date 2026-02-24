@@ -696,7 +696,7 @@
     (in_bom no) (on_board yes)
     (uuid 00000000-0000-0000-0000-00006070c31d)
     (property "Reference" "J6" (id 0) (at 147.32 63.5 0))
-    (property "Value" "- Fan +" (id 1) (at 147.32 71.12 0))
+    (property "Value" "+ Fan -" (id 1) (at 147.32 71.12 0))
     (property "Footprint" "TerminalBlock_TE-Connectivity:TerminalBlock_TE_282834-2_1x02_P2.54mm_Horizontal" (id 2) (at 147.32 66.04 0)
       (effects (font (size 1.27 1.27)) hide)
     )
