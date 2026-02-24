@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : 2026-02-23 12:02:35
-#  Last Modified : <260223.1341>
+#  Last Modified : <260224.1505>
 #
 #  Description	
 #
@@ -44,7 +44,7 @@
 
 
 import FreeCAD as App
-import Part, TechDraw, Mesh
+import Part, TechDraw, Mesh, Import
 from FreeCAD import Base
 
 import os
@@ -62,6 +62,34 @@ class Board(object):
     __HoleDiameter = 3.2
     __BoardThick = 1.6
     __Color = (0.0,1.0,0.0)
+    #__STL = os.path.join(os.path.dirname(__file__),"PocketBeagleCommandStation_SMD.stl")
+    @classmethod
+    def BoardSize(cls):
+        return (cls.__Width,cls.__Length)
+    @classmethod
+    def BoardThick(cls):
+        return cls.__BoardThick
+    @classmethod
+    def MountingHoleDiameter(cls):
+        return cls.__HoleDiameter
+    @classmethod 
+    def HoleOffsets(cls):
+        hL = (cls.__Width/2)-(cls.__HoleSpaceW/2)
+        hR = (cls.__Width/2)+(cls.__HoleSpaceW/2)
+        hU = (cls.__Length/2)-(cls.__HoleSpaceL/2)
+        hD = (cls.__Length/2)+(cls.__HoleSpaceL/2)
+        return [(hL,hU), (hR,hU), (hL, hD), (hR, hD)]
+    @property
+    def HoleCenters(self):
+        holeOffsets = Board.HoleOffsets()
+        result = list()
+        for hO in holeOffsets:
+            hX, hY = hO
+            result.append(self.origin.add(Base.Vector(hX,hY,0)))
+        return result
+    @classmethod
+    def HoleDiameter(cls):
+        return cls.__HoleDiameter    
     def __init__(self,name,origin=Base.Vector(0,0,0)):
         self.name = name
         if not isinstance(origin,Base.Vector):
@@ -69,17 +97,14 @@ class Board(object):
         self.origin = origin
         board = Part.makePlane(self.__Width,self.__Length,self.origin)\
                 .extrude(Base.Vector(0,0,self.__BoardThick))
-        hL = (self.__Width/2)-(self.__HoleSpaceW/2)
-        hR = (self.__Width/2)+(self.__HoleSpaceW/2)
-        hU = (self.__Length/2)-(self.__HoleSpaceL/2)
-        hD = (self.__Length/2)+(self.__HoleSpaceL/2)
-        holeOffsets = [(hL,hU), (hR,hU), (hL, hD), (hR, hD)]
-        for hO in holeOffsets:
-            hX, hY = hO
-            hole = Part.makeCylinder(self.__HoleDiameter/2,self.__BoardThick,
-                        self.origin.add(Base.Vector(hX,hY,0)))
+        for hO in self.HoleCenters:
+            hole = Part.makeCylinder(self.__HoleDiameter/2,self.__BoardThick,hO)
             board = board.cut(hole)
         self.board = board
+        #board3d = Mesh.read(self.__STL)
+        #board3d.translate(self.origin.x,self.origin.y,self.origin.z)
+        #self.board3d = board3d
+        
     def show(self,doc=None):
         if doc==None:
             doc = App.activeDocument()
@@ -87,7 +112,35 @@ class Board(object):
         obj.Shape = self.board
         obj.Label=self.name
         obj.ViewObject.ShapeColor=self.__Color
+    #def show3D(self,doc=None):
+    #    if doc==None:
+    #        doc = App.activeDocument()
+    #    obj = doc.addObject("Mesh::Feature",self.name+"_3D")
+    #    obj.Mesh = self.board3d
+    #    obj.Label = self.name+"_3D"
 
+class Case(object):
+    __BoardSize = Board.BoardSize()
+    __BoardThick = Board.BoardThick()
+    __BoardMHoleDiameter = Board.MountingHoleDiameter()
+    __WallThick = 2.54
+    __SpaceUnderBoard = 5.08
+    __SpaceAboveBoard = 27.4-2.14
+    @property
+    def CaseWidth(self):
+        w,l = self.__BoardSize
+        return w+(self.__WallThick*2)
+    @property
+    def CaseLength(self):
+        w,l = self.__BoardSize
+        return l+(self.__WallThick*2)
+    @property
+    def CaseBottomHeight(self):
+        return self.__WallThick+self.__SpaceUnderBoard+self.__BoardThick
+    @property
+    def CaseTopHeight(self):
+        return self.__WallThick+self.__SpaceAboveBoard+(self.__WallThick/2)
+    
 if __name__ == '__main__':
     if "RevCBoardCase" in App.listDocuments().keys():
         App.closeDocument("RevCBoardCase")
@@ -95,6 +148,7 @@ if __name__ == '__main__':
     doc = App.activeDocument()
     board = Board("board")
     board.show(doc)
+    #board.show3D(doc)
     Gui.activeDocument().activeView().viewTop()
     Gui.SendMsgToActiveView("ViewFit")
     

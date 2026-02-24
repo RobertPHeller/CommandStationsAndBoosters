@@ -469,8 +469,8 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "",
-      "vrml": ""
+      "step": "PocketBeagleCommandStation_SMD.step",
+      "vrml": "PocketBeagleCommandStation_SMD.wrl"
     },
     "page_layout_descr_file": ""
   },
