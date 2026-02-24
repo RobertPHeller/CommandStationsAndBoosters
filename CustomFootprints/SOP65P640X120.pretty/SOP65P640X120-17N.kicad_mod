@@ -48,4 +48,9 @@
   (pad "17" thru_hole circle (at -1.1 1.1) (size 0.4 0.4) (drill 0.2) (layers *.Cu) (tstamp d510b7ed-8b85-4a49-845f-56217ab09f86))
   (pad "17" thru_hole circle (at 0 0) (size 0.4 0.4) (drill 0.2) (layers *.Cu) (tstamp dd6a717b-27f8-47e9-91d3-35926c47e4b4))
   (pad "17" thru_hole circle (at -1.1 0) (size 0.4 0.4) (drill 0.2) (layers *.Cu) (tstamp fbc9cd84-7b72-4036-b821-9be82bb29b12))
+  (model "${KICAD6_3DMODEL_DIR}/Package_SO.3dshapes/SSOP-16_3.9x4.9mm_P0.635mm.step"
+    (offset (xyz 0 0 0))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 0 0 0))
+  )
 )
