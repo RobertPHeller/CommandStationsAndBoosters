@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : 2026-02-23 12:02:35
-#  Last Modified : <260225.0824>
+#  Last Modified : <260225.1313>
 #
 #  Description	
 #
@@ -129,6 +129,17 @@ class Case(object):
     __MountTabWidth = .375*25.4
     __MountTabLength = .5*25.4
     __MountTabHoleDiameter = 3.2
+    __PostDiameter = 6.4
+    __PostHoleDiameter = Board.HoleDiameter()
+    __PostShoulderDiameter = 8
+    __PostShoulderDepth = 2.52
+    __PostShoulderInnerDiameter = 6
+    @property
+    def PostShoulderLength(self):
+        return self.__WallThick+2.52
+    @property
+    def PostLength(self):
+        return self.CaseBottomHeight-self.__BoardThick
     @property
     def CaseWidth(self):
         w,l = self.__BoardSize
@@ -243,6 +254,22 @@ class Case(object):
         tab = Part.makePlane(self.__MountTabLength+self.__WallThick,
                              self.__MountTabWidth,taborigin)\
                 .extrude(Base.Vector(0,0,self.__WallThick))
+        temp = Part.makePlane(self.__MountTabWidth/2,
+                              self.__MountTabWidth,
+                              taborigin).extrude(Base.Vector(0,0,self.__WallThick))
+        rod = Part.makeCylinder(self.__MountTabWidth/2,
+                                self.__WallThick,
+                                taborigin.add(Base.Vector(self.__MountTabWidth/2,
+                                                          self.__MountTabWidth/2,0)))
+        self.t = temp
+        self.r = rod
+        tab = tab.cut(temp.cut(rod))
+
+        hole = Part.makeCylinder(self.__MountTabHoleDiameter/2,
+                                self.__WallThick,
+                                taborigin.add(Base.Vector(self.__MountTabWidth/2,
+                                                          self.__MountTabWidth/2,0)))
+        tab = tab.cut(hole)
         bot = bot.fuse(tab)
         taborigin = self.origin.add(Base.Vector(-self.__MountTabLength,
                                                 self.MountTabCY2-(self.__MountTabWidth/2),
@@ -250,6 +277,21 @@ class Case(object):
         tab = Part.makePlane(self.__MountTabLength+self.__WallThick,
                              self.__MountTabWidth,taborigin)\
                 .extrude(Base.Vector(0,0,self.__WallThick))
+        temp = Part.makePlane(self.__MountTabWidth/2,
+                              self.__MountTabWidth,
+                              taborigin).extrude(Base.Vector(0,0,self.__WallThick))
+        rod = Part.makeCylinder(self.__MountTabWidth/2,
+                                self.__WallThick,
+                                taborigin.add(Base.Vector(self.__MountTabWidth/2,
+                                                          self.__MountTabWidth/2,0)))
+        self.t = temp
+        self.r = rod
+        tab = tab.cut(temp.cut(rod))
+        hole = Part.makeCylinder(self.__MountTabHoleDiameter/2,
+                                self.__WallThick,
+                                taborigin.add(Base.Vector(self.__MountTabWidth/2,
+                                                          self.__MountTabWidth/2,0)))
+        tab = tab.cut(hole)
         bot = bot.fuse(tab)
         taborigin = self.origin.add(Base.Vector(self.CaseWidth-self.__WallThick,
                                                 self.MountTabCY1-(self.__MountTabWidth/2),
@@ -257,6 +299,23 @@ class Case(object):
         tab = Part.makePlane(self.__MountTabLength+self.__WallThick,
                              self.__MountTabWidth,taborigin)\
                 .extrude(Base.Vector(0,0,self.__WallThick))
+        temp = Part.makePlane(self.__MountTabWidth/2,
+                              self.__MountTabWidth,
+                              taborigin.add(Base.Vector(
+                                self.__MountTabLength+self.__WallThick-self.__MountTabWidth/2,0,0))
+                              ).extrude(Base.Vector(0,0,self.__WallThick))
+        rod = Part.makeCylinder(self.__MountTabWidth/2,
+                                self.__WallThick,
+                                taborigin.add(Base.Vector(self.__MountTabLength+self.__WallThick-self.__MountTabWidth/2,
+                                                          self.__MountTabWidth/2,0)))
+        self.t = temp
+        self.r = rod
+        tab = tab.cut(temp.cut(rod))
+        hole = Part.makeCylinder(self.__MountTabHoleDiameter/2,
+                                self.__WallThick,
+                                taborigin.add(Base.Vector(self.__MountTabLength+self.__WallThick-self.__MountTabWidth/2,
+                                                          self.__MountTabWidth/2,0)))
+        tab = tab.cut(hole)
         bot = bot.fuse(tab)
         taborigin = self.origin.add(Base.Vector(self.CaseWidth-self.__WallThick,
                                                 self.MountTabCY2-(self.__MountTabWidth/2),
@@ -264,7 +323,50 @@ class Case(object):
         tab = Part.makePlane(self.__MountTabLength+self.__WallThick,
                              self.__MountTabWidth,taborigin)\
                 .extrude(Base.Vector(0,0,self.__WallThick))
+        temp = Part.makePlane(self.__MountTabWidth/2,
+                              self.__MountTabWidth,
+                              taborigin.add(Base.Vector(
+                                self.__MountTabLength+self.__WallThick-self.__MountTabWidth/2,0,0))
+                              ).extrude(Base.Vector(0,0,self.__WallThick))
+        rod = Part.makeCylinder(self.__MountTabWidth/2,
+                                self.__WallThick,
+                                taborigin.add(Base.Vector(self.__MountTabLength+self.__WallThick-self.__MountTabWidth/2,
+                                                          self.__MountTabWidth/2,0)))
+        self.t = temp
+        self.r = rod
+        tab = tab.cut(temp.cut(rod))
+        hole = Part.makeCylinder(self.__MountTabHoleDiameter/2,
+                                self.__WallThick,
+                                taborigin.add(Base.Vector(self.__MountTabLength+self.__WallThick-self.__MountTabWidth/2,
+                                                          self.__MountTabWidth/2,0)))
+        self.r = hole
+        tab = tab.cut(hole)
         bot = bot.fuse(tab)
+        boardPostOrigin = self.origin.add(Base.Vector(self.__WallThick,
+                                                      self.__WallThick,
+                                                      0))
+        for post in Board.HoleOffsets():
+            pX, pY = post
+            postOrig = boardPostOrigin.add(Base.Vector(pX,pY,0))
+            post = Part.makeCylinder(self.__PostDiameter/2,
+                                     self.PostLength,
+                                     postOrig)
+            post = post.fuse(
+                Part.makeCylinder(self.__PostShoulderDiameter/2,
+                                  self.PostShoulderLength,
+                                  postOrig)
+            )
+            post = post.cut(
+                Part.makeCylinder(self.__PostHoleDiameter/2,
+                                  self.PostLength,
+                                  postOrig)
+            )
+            bot = bot.fuse(post)
+            bot = bot.cut(
+                Part.makeCylinder(self.__PostShoulderInnerDiameter/2,
+                                  self.__PostShoulderDepth,
+                                  postOrig)
+            )               
         return bot
     def __init__(self,name,origin=Base.Vector(0,0,0)):
         self.name = name
@@ -272,6 +374,10 @@ class Case(object):
             raise RuntimeError("origin is not a Vector!")
         self.origin = origin
         self.bottom = self.__bottom()
+        self.board = Board(name+"_board",
+                           self.origin.add(Base.Vector(self.__WallThick,
+                                                       self.__WallThick,
+                                                       self.CaseBottomHeight-self.__BoardThick)))
     def show(self,doc=None):
         if doc==None:
             doc = App.activeDocument()
@@ -279,6 +385,7 @@ class Case(object):
         obj.Shape = self.bottom
         obj.Label=self.name+"_bottom"
         obj.ViewObject.ShapeColor=(0.5,0.5,0.5)
+        self.board.show(doc)
         #obj = doc.addObject("Part::Feature",self.name+"_r")
         #obj.Shape = self.r
         #obj.ViewObject.ShapeColor=(1.0,0.0,0.0)
