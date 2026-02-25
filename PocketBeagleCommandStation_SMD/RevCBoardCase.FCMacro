@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : 2026-02-23 12:02:35
-#  Last Modified : <260224.1505>
+#  Last Modified : <260224.2037>
 #
 #  Description	
 #
@@ -126,6 +126,9 @@ class Case(object):
     __WallThick = 2.54
     __SpaceUnderBoard = 5.08
     __SpaceAboveBoard = 27.4-2.14
+    __MountTabWidth = .375*25.4
+    __MountTabLength = .5*25.4
+    __MountTabHoleDiameter = 3.2
     @property
     def CaseWidth(self):
         w,l = self.__BoardSize
@@ -135,20 +138,100 @@ class Case(object):
         w,l = self.__BoardSize
         return l+(self.__WallThick*2)
     @property
+    def MountTabCY1(self):
+        self.CaseLength*.25
+    @property
+    def MountTabCY2(self):
+        self.CaseLength*.75
+    @property
     def CaseBottomHeight(self):
         return self.__WallThick+self.__SpaceUnderBoard+self.__BoardThick
     @property
     def CaseTopHeight(self):
         return self.__WallThick+self.__SpaceAboveBoard+(self.__WallThick/2)
-    
+    def __bottom(self):
+        bot = Part.makePlane(self.CaseWidth,self.CaseLength,self.origin) \
+            .extrude(Base.Vector(0,0,self.__WallThick))
+        bot = bot.fuse(
+            Part.makePlane(self.CaseBottomHeight,self.CaseLength,
+                           self.origin.add(Base.Vector(0,self.CaseLength,0)),
+                           Base.Vector(1,0,0)).extrude(Base.Vector(self.__WallThick,0,0))
+        )
+        bot = bot.fuse(
+            Part.makePlane(self.CaseBottomHeight,self.CaseLength,
+                           self.origin.add(Base.Vector(self.CaseWidth-self.__WallThick,
+                                                       self.CaseLength,0)),
+                           Base.Vector(1,0,0)).extrude(Base.Vector(self.__WallThick,0,0))
+        )
+        bot = bot.fuse(
+            Part.makePlane(self.CaseBottomHeight,self.CaseWidth,
+                           self.origin,
+                           Base.Vector(0,1,0)).extrude(Base.Vector(0,self.__WallThick,0))
+        )
+        bot = bot.fuse(
+            Part.makePlane(self.CaseBottomHeight,self.CaseWidth,
+                           self.origin.add(Base.Vector(0,self.CaseLength-self.__WallThick,0)),
+                           Base.Vector(0,1,0)).extrude(Base.Vector(0,self.__WallThick,0))
+        )
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,self.origin,
+                              Base.Vector(0,1,0))\
+                .extrude(Base.Vector(0,self.CaseLength,0))
+        offset = Base.Vector(self.__WallThick,0,self.__WallThick)
+        rod = Part.makeCylinder(self.__WallThick,self.CaseLength,
+                                self.origin.add(offset),Base.Vector(0,1,0))
+        bot = bot.cut(temp.cut(rod))
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              self.origin.add(Base.Vector(self.CaseWidth-self.__WallThick,0,0)),
+                              Base.Vector(0,1,0))\
+                .extrude(Base.Vector(0,self.CaseLength,0))
+        offset = Base.Vector(self.CaseWidth-self.__WallThick,0,self.__WallThick)
+        rod = Part.makeCylinder(self.__WallThick,self.CaseLength,
+                                self.origin.add(offset),Base.Vector(0,1,0))
+        bot = bot.cut(temp.cut(rod))
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              self.origin.add(Base.Vector(0,self.__WallThick,0)),
+                              Base.Vector(1,0,0)).extrude(Base.Vector(self.CaseWidth,0,0))
+        offset = Base.Vector(0,self.__WallThick,self.__WallThick)
+        rod = Part.makeCylinder(self.__WallThick,self.CaseWidth,
+                                self.origin.add(offset),Base.Vector(1,0,0))
+        bot = bot.cut(temp.cut(rod))
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              self.origin.add(Base.Vector(0,self.CaseLength,0)),
+                              Base.Vector(1,0,0)).extrude(Base.Vector(self.CaseWidth,0,0))
+        offset = Base.Vector(0,self.CaseLength-self.__WallThick,self.__WallThick)
+        rod = Part.makeCylinder(self.__WallThick,self.CaseWidth,
+                                self.origin.add(offset),Base.Vector(1,0,0))
+        bot = bot.cut(temp.cut(rod))
+        
+        return bot
+    def __init__(self,name,origin=Base.Vector(0,0,0)):
+        self.name = name
+        if not isinstance(origin,Base.Vector):
+            raise RuntimeError("origin is not a Vector!")
+        self.origin = origin
+        self.bottom = self.__bottom()
+    def show(self,doc=None):
+        if doc==None:
+            doc = App.activeDocument()
+        obj = doc.addObject("Part::Feature",self.name+"_bottom")
+        obj.Shape = self.bottom
+        obj.Label=self.name+"_bottom"
+        obj.ViewObject.ShapeColor=(0.5,0.5,0.5)
+        #obj = doc.addObject("Part::Feature",self.name+"_r")
+        #obj.Shape = self.r
+        #obj.ViewObject.ShapeColor=(1.0,0.0,0.0)
+        #obj = doc.addObject("Part::Feature",self.name+"_t")
+        #obj.Shape = self.t
+        #obj.ViewObject.ShapeColor=(0.0,1.0,0.0)
+        
+        
 if __name__ == '__main__':
     if "RevCBoardCase" in App.listDocuments().keys():
         App.closeDocument("RevCBoardCase")
     doc = App.newDocument("RevCBoardCase")
     doc = App.activeDocument()
-    board = Board("board")
-    board.show(doc)
-    #board.show3D(doc)
+    case = Case("case")
+    case.show(doc)
     Gui.activeDocument().activeView().viewTop()
     Gui.SendMsgToActiveView("ViewFit")
     
