@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : 2026-02-23 12:02:35
-#  Last Modified : <260224.2037>
+#  Last Modified : <260225.0824>
 #
 #  Description	
 #
@@ -139,10 +139,10 @@ class Case(object):
         return l+(self.__WallThick*2)
     @property
     def MountTabCY1(self):
-        self.CaseLength*.25
+        return self.CaseLength*.25
     @property
     def MountTabCY2(self):
-        self.CaseLength*.75
+        return self.CaseLength*.75
     @property
     def CaseBottomHeight(self):
         return self.__WallThick+self.__SpaceUnderBoard+self.__BoardThick
@@ -202,7 +202,69 @@ class Case(object):
         rod = Part.makeCylinder(self.__WallThick,self.CaseWidth,
                                 self.origin.add(offset),Base.Vector(1,0,0))
         bot = bot.cut(temp.cut(rod))
-        
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              self.origin).extrude(Base.Vector(0,0,self.CaseBottomHeight))
+        rod = Part.makeCylinder(self.__WallThick,self.CaseBottomHeight,
+                                self.origin.add(Base.Vector(self.__WallThick,self.__WallThick,0)))
+        self.t = temp
+        self.r = rod
+        bot = bot.cut(temp.cut(rod))
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              self.origin.add(Base.Vector(0,self.CaseLength-self.__WallThick,0))
+                              ).extrude(Base.Vector(0,0,self.CaseBottomHeight))
+        rod = Part.makeCylinder(self.__WallThick,self.CaseBottomHeight,
+                                self.origin.add(Base.Vector(self.__WallThick,
+                                                            self.CaseLength-self.__WallThick,0)))
+        self.t = temp
+        self.r = rod
+        bot = bot.cut(temp.cut(rod))
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              self.origin.add(Base.Vector(self.CaseWidth-self.__WallThick,0,0))
+                              ).extrude(Base.Vector(0,0,self.CaseBottomHeight))
+        rod = Part.makeCylinder(self.__WallThick,self.CaseBottomHeight,
+                                self.origin.add(Base.Vector(self.CaseWidth-self.__WallThick,self.__WallThick,0)))
+        self.t = temp
+        self.r = rod
+        bot = bot.cut(temp.cut(rod))
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              self.origin.add(Base.Vector(self.CaseWidth-self.__WallThick,
+                                                          self.CaseLength-self.__WallThick,0))
+                              ).extrude(Base.Vector(0,0,self.CaseBottomHeight))
+        rod = Part.makeCylinder(self.__WallThick,self.CaseBottomHeight,
+                                self.origin.add(Base.Vector(self.CaseWidth-self.__WallThick,
+                                                            self.CaseLength-self.__WallThick,0)))
+        self.t = temp
+        self.r = rod
+        bot = bot.cut(temp.cut(rod))
+
+        taborigin = self.origin.add(Base.Vector(-self.__MountTabLength,
+                                                self.MountTabCY1-(self.__MountTabWidth/2),
+                                                0))
+        tab = Part.makePlane(self.__MountTabLength+self.__WallThick,
+                             self.__MountTabWidth,taborigin)\
+                .extrude(Base.Vector(0,0,self.__WallThick))
+        bot = bot.fuse(tab)
+        taborigin = self.origin.add(Base.Vector(-self.__MountTabLength,
+                                                self.MountTabCY2-(self.__MountTabWidth/2),
+                                                0))
+        tab = Part.makePlane(self.__MountTabLength+self.__WallThick,
+                             self.__MountTabWidth,taborigin)\
+                .extrude(Base.Vector(0,0,self.__WallThick))
+        bot = bot.fuse(tab)
+        taborigin = self.origin.add(Base.Vector(self.CaseWidth-self.__WallThick,
+                                                self.MountTabCY1-(self.__MountTabWidth/2),
+                                                0))
+        tab = Part.makePlane(self.__MountTabLength+self.__WallThick,
+                             self.__MountTabWidth,taborigin)\
+                .extrude(Base.Vector(0,0,self.__WallThick))
+        bot = bot.fuse(tab)
+        taborigin = self.origin.add(Base.Vector(self.CaseWidth-self.__WallThick,
+                                                self.MountTabCY2-(self.__MountTabWidth/2),
+                                                0))
+        tab = Part.makePlane(self.__MountTabLength+self.__WallThick,
+                             self.__MountTabWidth,taborigin)\
+                .extrude(Base.Vector(0,0,self.__WallThick))
+        bot = bot.fuse(tab)
         return bot
     def __init__(self,name,origin=Base.Vector(0,0,0)):
         self.name = name
