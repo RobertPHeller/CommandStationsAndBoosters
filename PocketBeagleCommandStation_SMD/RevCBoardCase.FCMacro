@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : 2026-02-23 12:02:35
-#  Last Modified : <260225.1313>
+#  Last Modified : <260225.1528>
 #
 #  Description	
 #
@@ -134,6 +134,9 @@ class Case(object):
     __PostShoulderDiameter = 8
     __PostShoulderDepth = 2.52
     __PostShoulderInnerDiameter = 6
+    __BJHeight = 10.7
+    __BJWidth = 9.0932
+    __BJXOffset = 52.4256
     @property
     def PostShoulderLength(self):
         return self.__WallThick+2.52
@@ -368,6 +371,74 @@ class Case(object):
                                   postOrig)
             )               
         return bot
+    def __top(self):
+        toporigin = self.origin.add(Base.Vector(0,0,self.CaseBottomHeight))
+        top = Part.makePlane(self.CaseWidth,self.CaseLength,
+                             toporigin.add(Base.Vector(0,0,self.CaseTopHeight-\
+                                                           self.__WallThick*1.5))) \
+            .extrude(Base.Vector(0,0,self.__WallThick))
+        top = top.fuse(
+            Part.makePlane(self.CaseTopHeight,self.CaseLength,
+                           toporigin.add(Base.Vector(0,self.CaseLength,
+                                                     -self.__WallThick/2)),
+                           Base.Vector(1,0,0)).extrude(Base.Vector(self.__WallThick,0,0))
+        )
+        top = top.cut(
+            Part.makePlane(self.__WallThick/2,
+                               self.CaseLength-self.__WallThick,
+                               toporigin.add(Base.Vector(self.__WallThick/2,
+                                             self.CaseLength-self.__WallThick/2,
+                                             -self.__WallThick/2)),
+                               Base.Vector(1,0,0)).extrude(Base.Vector(self.__WallThick/2,0,0))
+        )
+        top = top.fuse(
+            Part.makePlane(self.CaseTopHeight,self.CaseLength,
+                           toporigin.add(Base.Vector(self.CaseWidth-self.__WallThick,
+                                                     self.CaseLength,
+                                                     -self.__WallThick/2)),
+                           Base.Vector(1,0,0)).extrude(Base.Vector(self.__WallThick,0,0))
+        )
+        top = top.cut(
+            Part.makePlane(self.__WallThick/2,
+                               self.CaseLength-self.__WallThick,
+                               toporigin.add(Base.Vector(self.CaseWidth-self.__WallThick,
+                                             self.CaseLength-self.__WallThick/2,
+                                             -self.__WallThick/2)),
+                               Base.Vector(1,0,0)).extrude(Base.Vector(self.__WallThick/2,0,0))
+        )
+        top = top.fuse(
+            Part.makePlane(self.CaseTopHeight,self.CaseWidth,
+                           toporigin.add(Base.Vector(0,0,-self.__WallThick/2)),
+                           Base.Vector(0,1,0)).extrude(Base.Vector(0,self.__WallThick,0))
+        )
+        top = top.cut(
+            Part.makePlane(self.__WallThick/2,self.CaseWidth-self.__WallThick,
+                           toporigin.add(Base.Vector(self.__WallThick/2,
+                                                     self.__WallThick/2,
+                                                     -self.__WallThick/2)),
+                           Base.Vector(0,1,0)).extrude(Base.Vector(0,self.__WallThick,0))
+                           
+        )
+        top = top.fuse(
+            Part.makePlane(self.CaseTopHeight,self.CaseWidth,
+                           toporigin.add(Base.Vector(0,self.CaseLength-self.__WallThick,-self.__WallThick/2)),
+                           Base.Vector(0,1,0)).extrude(Base.Vector(0,self.__WallThick,0))
+        )
+        top = top.cut(
+            Part.makePlane(self.__WallThick/2,self.CaseWidth-self.__WallThick,
+                           toporigin.add(Base.Vector(self.__WallThick/2,
+                                                     self.CaseLength-self.__WallThick*1.5,
+                                                     -self.__WallThick/2)),
+                           Base.Vector(0,1,0)).extrude(Base.Vector(0,self.__WallThick,0))        
+        )
+        bjopening = Part.makePlane(self.__BJHeight+self.__WallThick/2,self.__BJWidth,
+                                   toporigin.add(Base.Vector(self.__BJXOffset+self.__WallThick,
+                                                             self.CaseLength-self.__WallThick,
+                                                             -self.__WallThick/2)),
+                                   Base.Vector(0,1,0)).extrude(Base.Vector(0,self.__WallThick,0))
+        self.t = bjopening
+        top = top.cut(bjopening)
+        return top
     def __init__(self,name,origin=Base.Vector(0,0,0)):
         self.name = name
         if not isinstance(origin,Base.Vector):
@@ -378,6 +449,8 @@ class Case(object):
                            self.origin.add(Base.Vector(self.__WallThick,
                                                        self.__WallThick,
                                                        self.CaseBottomHeight-self.__BoardThick)))
+        self.top = self.__top()
+        self.bottom = self.bottom.cut(self.top)
     def show(self,doc=None):
         if doc==None:
             doc = App.activeDocument()
@@ -386,12 +459,16 @@ class Case(object):
         obj.Label=self.name+"_bottom"
         obj.ViewObject.ShapeColor=(0.5,0.5,0.5)
         self.board.show(doc)
+        obj = doc.addObject("Part::Feature",self.name+"_top")
+        obj.Shape = self.top
+        obj.Label=self.name+"_top"
+        obj.ViewObject.ShapeColor=(0.5,0.5,0.5)
         #obj = doc.addObject("Part::Feature",self.name+"_r")
         #obj.Shape = self.r
         #obj.ViewObject.ShapeColor=(1.0,0.0,0.0)
-        #obj = doc.addObject("Part::Feature",self.name+"_t")
-        #obj.Shape = self.t
-        #obj.ViewObject.ShapeColor=(0.0,1.0,0.0)
+        obj = doc.addObject("Part::Feature",self.name+"_t")
+        obj.Shape = self.t
+        obj.ViewObject.ShapeColor=(0.0,1.0,0.0)
         
         
 if __name__ == '__main__':
