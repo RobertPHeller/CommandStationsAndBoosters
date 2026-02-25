@@ -1,4 +1,4 @@
-20908583077348665
+20912127048741327
 0ZCG0035AF2C
 FUSC4632X70N
 0ZCG0035AF2C
@@ -13,6 +13,13 @@ Connector
 0
 6
 6
+1706207
+1706207
+1706207
+Connector
+0
+4
+4
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -50561,6 +50568,13 @@ SMD SMT ceramic resonator filter filter hand-soldering
 3
 3
 DWSLogoBCU
+DWSLogoBCU
+
+
+0
+0
+0
+DWSLogos
 DWSLogoBCU
 
 
