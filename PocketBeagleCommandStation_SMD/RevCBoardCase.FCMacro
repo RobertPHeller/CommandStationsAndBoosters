@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : 2026-02-23 12:02:35
-#  Last Modified : <260226.1134>
+#  Last Modified : <260226.1546>
 #
 #  Description	
 #
@@ -129,11 +129,13 @@ class Case(object):
     __MountTabWidth = .375*25.4
     __MountTabLength = .5*25.4
     __MountTabHoleDiameter = 3.2
+    __VentHoleDiameter = 3.5
     __PostDiameter = 6.4
     __PostHoleDiameter = Board.HoleDiameter()
     __PostShoulderDiameter = 8
     __PostShoulderDepth = 2.52
     __PostShoulderInnerDiameter = 6
+    __TopPostDrillDiameter = 2.18
     __BJHeight = 10.7
     __BJWidth = 9.0932
     __BJXOffset = 52.4256
@@ -155,12 +157,22 @@ class Case(object):
     __ProgActXOffset = 107.3411
     __LEDPairWidth = 3.3
     __LEDHeight = 1.0
+    __FANXOffset = 76.781
+    __FANYOffset = 41.1448
+    __FANWidth =  25
+    __FANHeight = 25
     @property
     def PostShoulderLength(self):
         return self.__WallThick+2.52
     @property
     def PostLength(self):
         return self.CaseBottomHeight-self.__BoardThick
+    @property
+    def TopPostLength(self): 
+        return self.CaseTopHeight-self.__WallThick
+    @property
+    def TopPostDrillDepth(self):
+        return self.__SpaceAboveBoard
     @property
     def CaseWidth(self):
         w,l = self.__BoardSize
@@ -603,7 +615,57 @@ class Case(object):
                          .extrude(Base.Vector(0,self.__WallThick,0))
         self.t = progactopening
         top = top.cut(progactopening)
-
+        boardPostOrigin = toporigin.add(Base.Vector(self.__WallThick,         
+                                                    self.__WallThick,
+                                                    0))
+        for post in Board.HoleOffsets():
+            pX, pY = post
+            postOrig = boardPostOrigin.add(Base.Vector(pX,pY,0))
+            post = Part.makeCylinder(self.__PostDiameter/2,
+                                     self.TopPostLength,
+                                     postOrig)
+            post = post.cut(
+                Part.makeCylinder(self.__TopPostDrillDiameter/2,
+                                  self.TopPostDrillDepth,
+                                  postOrig)
+            )
+            top = top.fuse(post)
+        for ventCol in range(0,10):
+            ventY = self.__WallThick+5.2755+ventCol*10.5510
+            for ventRow in range(0,2):
+                ventZ = 8.4200+ventRow*8.4200
+                hole = Part.makeCylinder(self.__VentHoleDiameter/2,
+                                         self.__WallThick,
+                                         toporigin.add(
+                                            Base.Vector(
+                                                self.CaseWidth-self.__WallThick,
+                                                ventY,ventZ)),
+                                         Base.Vector(1,0,0))
+                top = top.cut(hole)
+                if ventRow == 1 or \
+                   ventY > (self.__USBAYOffset+self.__USBAWidth+self.__VentHoleDiameter) or \
+                   ventY < (self.__USBAYOffset):
+                    hole = Part.makeCylinder(self.__VentHoleDiameter/2,
+                                             self.__WallThick,
+                                             toporigin.add(
+                                                Base.Vector(0,ventY,ventZ)),
+                                             Base.Vector(1,0,0))
+                    top = top.cut(hole)
+        for ventCol in range(0,5):
+            ventX = 2.5+(ventCol*5)
+            for ventRow in range(0,5):
+                if (ventCol == 0 or ventCol == 4) and \
+                   (ventRow == 0 or ventRow == 4):
+                    continue
+                ventY = 2.5+(ventRow*5)
+                hole = Part.makeCylinder(self.__VentHoleDiameter/2,
+                                         self.__WallThick,
+                                         toporigin.add(
+                                            Base.Vector(
+                                                self.__FANXOffset+self.__WallThick+ventX,
+                                                self.__FANYOffset+self.__WallThick+ventY,
+                                                self.CaseTopHeight-self.__WallThick*1.5)))
+                top = top.cut(hole)
         return top
     def __init__(self,name,origin=Base.Vector(0,0,0),fakeboard=True):
         self.name = name
