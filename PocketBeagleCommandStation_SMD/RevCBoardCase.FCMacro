@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : 2026-02-23 12:02:35
-#  Last Modified : <260225.2123>
+#  Last Modified : <260226.1134>
 #
 #  Description	
 #
@@ -140,16 +140,16 @@ class Case(object):
     __USBAWidth = 15.672
     __USBAHeight = 8.075
     __USBAYOffset = 63.5
-    __LCCPOutXOffset = 9.1346
-    __LCCPInXOffset = 55.6514
-    __LCCPowerPlugWidth = 12.16
-    __LCCPowerPlugHeight = 4.8
+    __LCCPOutXOffset = 12.25
+    __LCCPInXOffset = 58.55
+    __LCCPowerPlugWidth = 6
+    __LCCPowerPlugHeight = 5.5
     __LCCRJ45XOffset = 21.8186
     __LCCRJ45Width = 32.6402
     __LCCRJ45Height = 12.7
     __TrackPowerXOffset = 90.8304
     __TrackPowerWidth = 15.8242
-    __TrackPowerHeight = 11
+    __TrackPowerHeight = 8
     __LCCActXOffset = 68.2752
     __OPSActXOffset = 86.2076
     __ProgActXOffset = 107.3411
@@ -178,6 +178,9 @@ class Case(object):
     @property
     def CaseBottomHeight(self):
         return self.__WallThick+self.__SpaceUnderBoard+self.__BoardThick
+    @classmethod
+    def ZOffset(cls):
+        return (cls.__WallThick+cls.__SpaceUnderBoard+cls.__BoardThick)-2.33
     @property
     def CaseTopHeight(self):
         return self.__WallThick+self.__SpaceAboveBoard+(self.__WallThick/2)
@@ -238,8 +241,8 @@ class Case(object):
                               self.origin).extrude(Base.Vector(0,0,self.CaseBottomHeight))
         rod = Part.makeCylinder(self.__WallThick,self.CaseBottomHeight,
                                 self.origin.add(Base.Vector(self.__WallThick,self.__WallThick,0)))
-        self.t = temp
-        self.r = rod
+        #self.t = temp
+        #self.r = rod
         bot = bot.cut(temp.cut(rod))
         temp = Part.makePlane(self.__WallThick,self.__WallThick,
                               self.origin.add(Base.Vector(0,self.CaseLength-self.__WallThick,0))
@@ -247,16 +250,16 @@ class Case(object):
         rod = Part.makeCylinder(self.__WallThick,self.CaseBottomHeight,
                                 self.origin.add(Base.Vector(self.__WallThick,
                                                             self.CaseLength-self.__WallThick,0)))
-        self.t = temp
-        self.r = rod
+        #self.t = temp
+        #self.r = rod
         bot = bot.cut(temp.cut(rod))
         temp = Part.makePlane(self.__WallThick,self.__WallThick,
                               self.origin.add(Base.Vector(self.CaseWidth-self.__WallThick,0,0))
                               ).extrude(Base.Vector(0,0,self.CaseBottomHeight))
         rod = Part.makeCylinder(self.__WallThick,self.CaseBottomHeight,
                                 self.origin.add(Base.Vector(self.CaseWidth-self.__WallThick,self.__WallThick,0)))
-        self.t = temp
-        self.r = rod
+        #self.t = temp
+        #self.r = rod
         bot = bot.cut(temp.cut(rod))
         temp = Part.makePlane(self.__WallThick,self.__WallThick,
                               self.origin.add(Base.Vector(self.CaseWidth-self.__WallThick,
@@ -265,8 +268,8 @@ class Case(object):
         rod = Part.makeCylinder(self.__WallThick,self.CaseBottomHeight,
                                 self.origin.add(Base.Vector(self.CaseWidth-self.__WallThick,
                                                             self.CaseLength-self.__WallThick,0)))
-        self.t = temp
-        self.r = rod
+        #self.t = temp
+        #self.r = rod
         bot = bot.cut(temp.cut(rod))
 
         taborigin = self.origin.add(Base.Vector(-self.__MountTabLength,
@@ -282,8 +285,8 @@ class Case(object):
                                 self.__WallThick,
                                 taborigin.add(Base.Vector(self.__MountTabWidth/2,
                                                           self.__MountTabWidth/2,0)))
-        self.t = temp
-        self.r = rod
+        #self.t = temp
+        #self.r = rod
         tab = tab.cut(temp.cut(rod))
 
         hole = Part.makeCylinder(self.__MountTabHoleDiameter/2,
@@ -305,8 +308,8 @@ class Case(object):
                                 self.__WallThick,
                                 taborigin.add(Base.Vector(self.__MountTabWidth/2,
                                                           self.__MountTabWidth/2,0)))
-        self.t = temp
-        self.r = rod
+        #self.t = temp
+        #self.r = rod
         tab = tab.cut(temp.cut(rod))
         hole = Part.makeCylinder(self.__MountTabHoleDiameter/2,
                                 self.__WallThick,
@@ -329,8 +332,8 @@ class Case(object):
                                 self.__WallThick,
                                 taborigin.add(Base.Vector(self.__MountTabLength+self.__WallThick-self.__MountTabWidth/2,
                                                           self.__MountTabWidth/2,0)))
-        self.t = temp
-        self.r = rod
+        #self.t = temp
+        #self.r = rod
         tab = tab.cut(temp.cut(rod))
         hole = Part.makeCylinder(self.__MountTabHoleDiameter/2,
                                 self.__WallThick,
@@ -353,14 +356,14 @@ class Case(object):
                                 self.__WallThick,
                                 taborigin.add(Base.Vector(self.__MountTabLength+self.__WallThick-self.__MountTabWidth/2,
                                                           self.__MountTabWidth/2,0)))
-        self.t = temp
-        self.r = rod
+        #self.t = temp
+        #self.r = rod
         tab = tab.cut(temp.cut(rod))
         hole = Part.makeCylinder(self.__MountTabHoleDiameter/2,
                                 self.__WallThick,
                                 taborigin.add(Base.Vector(self.__MountTabLength+self.__WallThick-self.__MountTabWidth/2,
                                                           self.__MountTabWidth/2,0)))
-        self.r = hole
+        #self.r = hole
         tab = tab.cut(hole)
         bot = bot.fuse(tab)
         boardPostOrigin = self.origin.add(Base.Vector(self.__WallThick,
@@ -377,17 +380,17 @@ class Case(object):
                                   self.PostShoulderLength,
                                   postOrig)
             )
-            post = post.cut(
-                Part.makeCylinder(self.__PostHoleDiameter/2,
-                                  self.PostLength,
-                                  postOrig)
-            )
             bot = bot.fuse(post)
             bot = bot.cut(
                 Part.makeCylinder(self.__PostShoulderInnerDiameter/2,
                                   self.__PostShoulderDepth,
                                   postOrig)
             )               
+            bot = bot.cut(
+                Part.makeCylinder(self.__PostHoleDiameter/2,
+                                  self.PostLength,
+                                  postOrig)
+            )
         return bot
     def __top(self):
         toporigin = self.origin.add(Base.Vector(0,0,self.CaseBottomHeight))
@@ -449,24 +452,172 @@ class Case(object):
                                                      -self.__WallThick/2)),
                            Base.Vector(0,1,0)).extrude(Base.Vector(0,self.__WallThick,0))        
         )
-        bjopening = Part.makePlane(self.__BJHeight+self.__WallThick/2,self.__BJWidth,
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              toporigin.add(Base.Vector(0,0,self.CaseTopHeight-self.__WallThick*1.5)),
+                              Base.Vector(0,1,0))\
+                .extrude(Base.Vector(0,self.CaseLength,0))
+        offset = Base.Vector(self.__WallThick,0,self.CaseTopHeight-self.__WallThick*1.5)
+        rod = Part.makeCylinder(self.__WallThick,self.CaseLength,
+                                toporigin.add(offset),Base.Vector(0,1,0))
+        top = top.cut(temp.cut(rod))
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              toporigin.add(Base.Vector(self.CaseWidth-self.__WallThick,
+                                     0,self.CaseTopHeight-self.__WallThick*1.5)),
+                              Base.Vector(0,1,0))\
+                .extrude(Base.Vector(0,self.CaseLength,0))
+        offset = Base.Vector(self.CaseWidth-self.__WallThick,0,self.CaseTopHeight-self.__WallThick*1.5)
+        rod = Part.makeCylinder(self.__WallThick,self.CaseLength,
+                                toporigin.add(offset),Base.Vector(0,1,0))
+        top = top.cut(temp.cut(rod))
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              toporigin.add(Base.Vector(0,self.__WallThick,
+                                     self.CaseTopHeight-self.__WallThick*1.5)),
+                              Base.Vector(1,0,0)).extrude(Base.Vector(self.CaseWidth,0,0))
+        offset = Base.Vector(0,self.__WallThick,self.CaseTopHeight-self.__WallThick*1.5)
+        rod = Part.makeCylinder(self.__WallThick,self.CaseWidth,
+                                toporigin.add(offset),Base.Vector(1,0,0))
+        top = top.cut(temp.cut(rod))
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              toporigin.add(Base.Vector(0,self.CaseLength,
+                                self.CaseTopHeight-self.__WallThick*1.5)),
+                              Base.Vector(1,0,0)).extrude(Base.Vector(self.CaseWidth,0,0))
+        offset = Base.Vector(0,self.CaseLength-self.__WallThick,
+                             self.CaseTopHeight-self.__WallThick*1.5)
+        rod = Part.makeCylinder(self.__WallThick,self.CaseWidth,
+                                toporigin.add(offset),Base.Vector(1,0,0))
+        top = top.cut(temp.cut(rod))
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              toporigin.add(Base.Vector(0,0,-self.__WallThick/2)))\
+                                .extrude(Base.Vector(0,0,self.CaseTopHeight))
+        rod = Part.makeCylinder(self.__WallThick,self.CaseTopHeight,
+                                toporigin.add(Base.Vector(self.__WallThick,
+                                                          self.__WallThick,
+                                                          -self.__WallThick/2)))
+        top = top.cut(temp.cut(rod))
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              toporigin.add(Base.Vector(0,self.CaseLength-self.__WallThick,-self.__WallThick/2))
+                              ).extrude(Base.Vector(0,0,self.CaseTopHeight))
+        rod = Part.makeCylinder(self.__WallThick,self.CaseTopHeight,
+                                toporigin.add(Base.Vector(self.__WallThick,
+                                                            self.CaseLength-self.__WallThick,-self.__WallThick/2)))
+        self.t = temp
+        self.r = rod
+        top = top.cut(temp.cut(rod))
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              toporigin.add(Base.Vector(self.CaseWidth-self.__WallThick,0,-self.__WallThick/2))
+                              ).extrude(Base.Vector(0,0,self.CaseTopHeight))
+        rod = Part.makeCylinder(self.__WallThick,self.CaseTopHeight,
+                                toporigin.add(Base.Vector(self.CaseWidth-self.__WallThick,self.__WallThick,-self.__WallThick/2)))
+        self.t = temp
+        self.r = rod
+        top = top.cut(temp.cut(rod))
+        temp = Part.makePlane(self.__WallThick,self.__WallThick,
+                              toporigin.add(Base.Vector(self.CaseWidth-self.__WallThick,
+                                                          self.CaseLength-self.__WallThick,-self.__WallThick/2))
+                              ).extrude(Base.Vector(0,0,self.CaseTopHeight))
+        rod = Part.makeCylinder(self.__WallThick,self.CaseTopHeight,
+                                toporigin.add(Base.Vector(self.CaseWidth-self.__WallThick,
+                                                            self.CaseLength-self.__WallThick,-self.__WallThick/2)))
+        top = top.cut(temp.cut(rod))
+
+        
+        bjopening = Part.makePlane(self.__BJHeight+self.__WallThick/2,
+                                   self.__BJWidth,
                                    toporigin.add(Base.Vector(self.__BJXOffset+self.__WallThick,
                                                              self.CaseLength-self.__WallThick,
                                                              -self.__WallThick/2)),
                                    Base.Vector(0,1,0)).extrude(Base.Vector(0,self.__WallThick,0))
-        self.t = bjopening
+        #self.t = bjopening
         top = top.cut(bjopening)
+        usbaopening = Part.makePlane(self.__USBAHeight+self.__WallThick/2,
+                                     self.__USBAWidth,
+                                     toporigin.add(Base.Vector(0,self.__USBAYOffset+self.__USBAWidth+self.__WallThick,-self.__WallThick/2)),
+                                     Base.Vector(1,0,0))\
+                 .extrude(Base.Vector(self.__WallThick,0,0))
+        #self.t = usbaopening
+        top = top.cut(usbaopening)
+        lccpoutopening = Part.makePlane(self.__LCCPowerPlugHeight+self.__WallThick/2,
+                                        self.__LCCPowerPlugWidth,
+                                        toporigin.add(
+                                            Base.Vector(self.__LCCPOutXOffset+self.__WallThick,
+                                                        0,
+                                                        -self.__WallThick/2)),
+                                        Base.Vector(0,1,0))\
+                        .extrude(Base.Vector(0,self.__WallThick,0))
+        self.t = lccpoutopening
+        top = top.cut(lccpoutopening)
+        lccrj45sopening = Part.makePlane(self.__LCCRJ45Height+self.__WallThick/2,
+                                         self.__LCCRJ45Width,
+                                         toporigin.add(
+                                            Base.Vector(self.__LCCRJ45XOffset+self.__WallThick,
+                                                        0,
+                                                        -self.__WallThick/2)),
+                                         Base.Vector(0,1,0))\
+                        .extrude(Base.Vector(0,self.__WallThick,0))
+        self.t = lccrj45sopening
+        top = top.cut(lccrj45sopening)
+        lccpinopening = Part.makePlane(self.__LCCPowerPlugHeight+self.__WallThick/2,
+                                        self.__LCCPowerPlugWidth,
+                                        toporigin.add(
+                                            Base.Vector(self.__LCCPInXOffset+self.__WallThick,
+                                                        0,
+                                                        -self.__WallThick/2)),
+                                        Base.Vector(0,1,0))\
+                        .extrude(Base.Vector(0,self.__WallThick,0))
+        self.t = lccpinopening
+        top = top.cut(lccpinopening)
+        trackpoweropening = Part.makePlane(self.__TrackPowerHeight+self.__WallThick/2,
+                                        self.__TrackPowerWidth,
+                                        toporigin.add(
+                                            Base.Vector(self.__TrackPowerXOffset+self.__WallThick,
+                                                        0,
+                                                        -self.__WallThick/2)),
+                                        Base.Vector(0,1,0))\
+                        .extrude(Base.Vector(0,self.__WallThick,0))
+        self.t = trackpoweropening
+        top = top.cut(trackpoweropening)
+        lccactopening = Part.makePlane(self.__LEDHeight,
+                                       self.__LEDPairWidth,
+                                       toporigin.add(
+                                            Base.Vector(self.__LCCActXOffset+self.__WallThick,
+                                                        0,0)),
+                                       Base.Vector(0,1,0))\
+                         .extrude(Base.Vector(0,self.__WallThick,0))
+        self.t = lccactopening
+        top = top.cut(lccactopening)
+        opsactopening = Part.makePlane(self.__LEDHeight,
+                                       self.__LEDPairWidth,
+                                       toporigin.add(
+                                            Base.Vector(self.__OPSActXOffset+self.__WallThick,
+                                                        0,0)),
+                                       Base.Vector(0,1,0))\
+                         .extrude(Base.Vector(0,self.__WallThick,0))
+        self.t = opsactopening
+        top = top.cut(opsactopening)
+        progactopening = Part.makePlane(self.__LEDHeight,
+                                       self.__LEDPairWidth,
+                                       toporigin.add(
+                                            Base.Vector(self.__ProgActXOffset+self.__WallThick,
+                                                        0,0)),
+                                       Base.Vector(0,1,0))\
+                         .extrude(Base.Vector(0,self.__WallThick,0))
+        self.t = progactopening
+        top = top.cut(progactopening)
+
         return top
-    def __init__(self,name,origin=Base.Vector(0,0,0)):
+    def __init__(self,name,origin=Base.Vector(0,0,0),fakeboard=True):
         self.name = name
         if not isinstance(origin,Base.Vector):
             raise RuntimeError("origin is not a Vector!")
         self.origin = origin
         self.bottom = self.__bottom()
-        self.board = Board(name+"_board",
-                           self.origin.add(Base.Vector(self.__WallThick,
-                                                       self.__WallThick,
-                                                       self.CaseBottomHeight-self.__BoardThick)))
+        if fakeboard:
+            self.board = Board(name+"_board",
+                               self.origin.add(Base.Vector(self.__WallThick,
+                                                           self.__WallThick,
+                                                           self.CaseBottomHeight-self.__BoardThick)))
+        else:
+            self.board = None
         self.top = self.__top()
         self.bottom = self.bottom.cut(self.top)
     def show(self,doc=None):
@@ -476,7 +627,8 @@ class Case(object):
         obj.Shape = self.bottom
         obj.Label=self.name+"_bottom"
         obj.ViewObject.ShapeColor=(0.5,0.5,0.5)
-        self.board.show(doc)
+        if self.board != None:
+            self.board.show(doc)
         obj = doc.addObject("Part::Feature",self.name+"_top")
         obj.Shape = self.top
         obj.Label=self.name+"_top"
@@ -484,18 +636,21 @@ class Case(object):
         #obj = doc.addObject("Part::Feature",self.name+"_r")
         #obj.Shape = self.r
         #obj.ViewObject.ShapeColor=(1.0,0.0,0.0)
-        obj = doc.addObject("Part::Feature",self.name+"_t")
-        obj.Shape = self.t
-        obj.ViewObject.ShapeColor=(0.0,1.0,0.0)
+        #obj = doc.addObject("Part::Feature",self.name+"_t")
+        #obj.Shape = self.t
+        #obj.ViewObject.ShapeColor=(0.0,1.0,0.0)
         
         
 if __name__ == '__main__':
-    if "RevCBoardCase" in App.listDocuments().keys():
-        App.closeDocument("RevCBoardCase")
-    doc = App.newDocument("RevCBoardCase")
+    #if "RevCBoardCase" in App.listDocuments().keys():
+    #    App.closeDocument("RevCBoardCase")
+    #doc = App.newDocument("RevCBoardCase")
+    Gui.open(os.path.join(os.path.dirname(__file__),"PocketBeagleCommandStation_SMD.wrl"))
     doc = App.activeDocument()
-    case = Case("case")
+    boardW, BoardH = Board.BoardSize()
+    case = Case("case",Base.Vector(82.55,-166.45,-Case.ZOffset()),False)
     case.show(doc)
-    Gui.activeDocument().activeView().viewTop()
+    Gui.activeDocument().activeView().viewFront()
     Gui.SendMsgToActiveView("ViewFit")
     
+
