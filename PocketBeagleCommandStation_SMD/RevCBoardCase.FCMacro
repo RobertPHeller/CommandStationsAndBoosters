@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : 2026-02-23 12:02:35
-#  Last Modified : <260225.1528>
+#  Last Modified : <260225.2123>
 #
 #  Description	
 #
@@ -137,6 +137,24 @@ class Case(object):
     __BJHeight = 10.7
     __BJWidth = 9.0932
     __BJXOffset = 52.4256
+    __USBAWidth = 15.672
+    __USBAHeight = 8.075
+    __USBAYOffset = 63.5
+    __LCCPOutXOffset = 9.1346
+    __LCCPInXOffset = 55.6514
+    __LCCPowerPlugWidth = 12.16
+    __LCCPowerPlugHeight = 4.8
+    __LCCRJ45XOffset = 21.8186
+    __LCCRJ45Width = 32.6402
+    __LCCRJ45Height = 12.7
+    __TrackPowerXOffset = 90.8304
+    __TrackPowerWidth = 15.8242
+    __TrackPowerHeight = 11
+    __LCCActXOffset = 68.2752
+    __OPSActXOffset = 86.2076
+    __ProgActXOffset = 107.3411
+    __LEDPairWidth = 3.3
+    __LEDHeight = 1.0
     @property
     def PostShoulderLength(self):
         return self.__WallThick+2.52
