@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : 2026-02-23 12:02:35
-#  Last Modified : <260226.1546>
+#  Last Modified : <260227.1004>
 #
 #  Description	
 #
@@ -152,11 +152,15 @@ class Case(object):
     __TrackPowerXOffset = 90.8304
     __TrackPowerWidth = 15.8242
     __TrackPowerHeight = 8
-    __LCCActXOffset = 68.2752
-    __OPSActXOffset = 86.2076
-    __ProgActXOffset = 107.3411
-    __LEDPairWidth = 3.3
-    __LEDHeight = 1.0
+    __LCCTxAct = (154.2542-85.09, 105.51-(162.0775-58.42))
+    __LCCRxAct = (156.0322-85.09, 105.51-(162.0775-58.42))
+    __OPSBAct  = (172.1104-85.09, 105.51-(162.0519-58.42))
+    __OPSAAct  = (173.8376-85.09, 105.51-(162.0773-58.42))
+    __ProgBAct = (193.1670-85.09, 105.51-(162.1430-58.42))
+    __ProgAAct = (194.9196-85.09, 105.51-(162.1175-58.42))
+    __Power    = (123.2154-85.09, 105.51-( 59.4614-58.42))
+    __LEDZOffset = 0.7
+    __LEDRodDiameter = 0.8
     __FANXOffset = 76.781
     __FANYOffset = 41.1448
     __FANWidth =  25
@@ -404,6 +408,18 @@ class Case(object):
                                   postOrig)
             )
         return bot
+    def __LEDRod(self,posXY):
+        ledX, ledY = posXY
+        #debug("*** __LEDRod(): ledX = %f, ledY = %f",ledX,ledY)
+        #debug("*** __LEDRod(): self.origin = (%f, %f, %f)",self.origin.x,
+        #                                                   self.origin.y,
+        #                                                   self.origin.z)
+        ledOrig = self.origin.add(Base.Vector(self.__WallThick+ledX,
+                                              self.__WallThick+ledY,
+                                              self.CaseBottomHeight+self.__LEDZOffset))
+        #debug("*** __LEDRod(): ledOrig = (%f, %f, %f)",ledOrig.x,ledOrig.y,ledOrig.z)
+        rodLength = self.CaseTopHeight-self.__WallThick/2
+        return Part.makeCylinder(self.__LEDRodDiameter/2,rodLength,ledOrig)
     def __top(self):
         toporigin = self.origin.add(Base.Vector(0,0,self.CaseBottomHeight))
         top = Part.makePlane(self.CaseWidth,self.CaseLength,
@@ -588,33 +604,21 @@ class Case(object):
                         .extrude(Base.Vector(0,self.__WallThick,0))
         self.t = trackpoweropening
         top = top.cut(trackpoweropening)
-        lccactopening = Part.makePlane(self.__LEDHeight,
-                                       self.__LEDPairWidth,
-                                       toporigin.add(
-                                            Base.Vector(self.__LCCActXOffset+self.__WallThick,
-                                                        0,0)),
-                                       Base.Vector(0,1,0))\
-                         .extrude(Base.Vector(0,self.__WallThick,0))
-        self.t = lccactopening
-        top = top.cut(lccactopening)
-        opsactopening = Part.makePlane(self.__LEDHeight,
-                                       self.__LEDPairWidth,
-                                       toporigin.add(
-                                            Base.Vector(self.__OPSActXOffset+self.__WallThick,
-                                                        0,0)),
-                                       Base.Vector(0,1,0))\
-                         .extrude(Base.Vector(0,self.__WallThick,0))
-        self.t = opsactopening
-        top = top.cut(opsactopening)
-        progactopening = Part.makePlane(self.__LEDHeight,
-                                       self.__LEDPairWidth,
-                                       toporigin.add(
-                                            Base.Vector(self.__ProgActXOffset+self.__WallThick,
-                                                        0,0)),
-                                       Base.Vector(0,1,0))\
-                         .extrude(Base.Vector(0,self.__WallThick,0))
-        self.t = progactopening
-        top = top.cut(progactopening)
+        self.lccTxAct = self.__LEDRod(self.__LCCTxAct)
+        top = top.cut(self.lccTxAct)
+        self.lccRxAct = self.__LEDRod(self.__LCCRxAct)
+        top = top.cut(self.lccRxAct)
+        self.opsBAct  = self.__LEDRod(self.__OPSBAct)
+        top = top.cut(self.opsBAct)
+        self.opsAAct  = self.__LEDRod(self.__OPSAAct)
+        top = top.cut(self.opsAAct)
+        self.progBAct  = self.__LEDRod(self.__ProgBAct)
+        top = top.cut(self.progBAct)
+        self.progAAct  = self.__LEDRod(self.__ProgAAct)
+        top = top.cut(self.progAAct)
+        self.power     = self.__LEDRod(self.__Power)
+        top = top.cut(self.power)
+
         boardPostOrigin = toporigin.add(Base.Vector(self.__WallThick,         
                                                     self.__WallThick,
                                                     0))
@@ -695,6 +699,41 @@ class Case(object):
         obj.Shape = self.top
         obj.Label=self.name+"_top"
         obj.ViewObject.ShapeColor=(0.5,0.5,0.5)
+        obj = doc.addObject("Part::Feature",self.name+"_lccTxAct")
+        obj.Shape = self.lccTxAct
+        obj.Label=self.name+"_lccTxAct"
+        obj.ViewObject.ShapeColor=(1.0,1.0,1.0)
+        obj.ViewObject.Transparency=90
+        obj = doc.addObject("Part::Feature",self.name+"_lccRxAct")
+        obj.Shape = self.lccRxAct
+        obj.Label=self.name+"_lccRxAct"
+        obj.ViewObject.ShapeColor=(1.0,1.0,1.0)
+        obj.ViewObject.Transparency=90
+        obj = doc.addObject("Part::Feature",self.name+"_opsBAct")
+        obj.Shape = self.opsBAct
+        obj.Label=self.name+"_opsBAct"
+        obj.ViewObject.ShapeColor=(1.0,1.0,1.0)
+        obj.ViewObject.Transparency=90
+        obj = doc.addObject("Part::Feature",self.name+"_opsAAct")
+        obj.Shape = self.opsAAct
+        obj.Label=self.name+"_opsAAct"
+        obj.ViewObject.ShapeColor=(1.0,1.0,1.0)
+        obj.ViewObject.Transparency=90
+        obj = doc.addObject("Part::Feature",self.name+"_progBAct")
+        obj.Shape = self.progBAct
+        obj.Label=self.name+"_progBAct"
+        obj.ViewObject.ShapeColor=(1.0,1.0,1.0)
+        obj.ViewObject.Transparency=90
+        obj = doc.addObject("Part::Feature",self.name+"_progAAct")
+        obj.Shape = self.progAAct
+        obj.Label=self.name+"_progAAct"
+        obj.ViewObject.ShapeColor=(1.0,1.0,1.0)
+        obj.ViewObject.Transparency=90
+        obj = doc.addObject("Part::Feature",self.name+"_power")
+        obj.Shape = self.power
+        obj.Label=self.name+"_power"
+        obj.ViewObject.ShapeColor=(1.0,1.0,1.0)
+        obj.ViewObject.Transparency=90
         #obj = doc.addObject("Part::Feature",self.name+"_r")
         #obj.Shape = self.r
         #obj.ViewObject.ShapeColor=(1.0,0.0,0.0)

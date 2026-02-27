@@ -3843,6 +3843,9 @@
     (path "/00000000-0000-0000-0000-00006070b3d3/828d2f56-257d-4f43-aad3-b0afb5868222"
       (reference "#PWR0107") (unit 1) (value "+3V3") (footprint "")
     )
+    (path "/00000000-0000-0000-0000-00006070b3d0/ba85fb51-1400-412b-a345-e461d876282f"
+      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
+    )
     (path "/00000000-0000-0000-0000-00006070b3e2"
       (reference "C1") (unit 1) (value "10 nf") (footprint "Capacitor_SMD:C_1206_3216Metric")
     )
@@ -3983,6 +3986,9 @@
     )
     (path "/00000000-0000-0000-0000-000060737fc0"
       (reference "D14") (unit 1) (value "PROG ActB") (footprint "LED_SMD:LED_0603_1608Metric")
+    )
+    (path "/00000000-0000-0000-0000-00006070b3d0/c0f68966-a5ed-4265-b04f-69a02af93756"
+      (reference "D?") (unit 1) (value "Power") (footprint "LED_SMD:LED_0603_1608Metric")
     )
     (path "/00000000-0000-0000-0000-00006071fb1d"
       (reference "F1") (unit 1) (value "5A") (footprint "MF-R500:MFR500")
@@ -4256,6 +4262,9 @@
     )
     (path "/00000000-0000-0000-0000-000060736e8c"
       (reference "R57") (unit 1) (value "3K") (footprint "Resistor_SMD:R_0603_1608Metric")
+    )
+    (path "/00000000-0000-0000-0000-00006070b3d0/860a3709-624e-4a9e-be30-da083a1ebcfe"
+      (reference "R?") (unit 1) (value "180") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/00000000-0000-0000-0000-00006070b3d1/00000000-0000-0000-0000-00006070bd9a"
       (reference "T2") (unit 1) (value "LCC Power Out") (footprint "1706207:1706207")
