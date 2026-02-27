@@ -8035,7 +8035,7 @@
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 64b7fcc0-388e-4fcd-a0a7-7cead43051d9)
     )
-    (fp_text value "Fan_IEC60617" (at -3.5814 -11.0998) (layer "F.Fab")
+    (fp_text value "Fan_IEC60617" (at -3.2258 -10.541) (layer "F.Fab")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp ea76b5e2-3eb7-46fa-be1d-9c6ab86b0831)
     )
