@@ -62,4 +62,9 @@
   (pad "25" thru_hole circle (at -1.2 1.2) (size 0.4 0.4) (drill 0.2) (layers *.Cu) (tstamp f3e1fa0b-f66e-496c-8588-6d346fa4d55b))
   (pad "25" thru_hole circle (at 0 2.4) (size 0.4 0.4) (drill 0.2) (layers *.Cu) (tstamp f6cbef97-b1cc-4762-838c-c415d6554037))
   (pad "25" thru_hole circle (at -1.2 0) (size 0.4 0.4) (drill 0.2) (layers *.Cu) (tstamp ff16a253-1aed-4106-9b4e-d16c17f7b265))
+  (model "${KICAD6_3DMODEL_DIR}/Package_SO.3dshapes/SSOP-24_3.9x8.7mm_P0.635mm.wrl"
+    (offset (xyz 0 0 0))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 0 0 0))
+  )
 )
