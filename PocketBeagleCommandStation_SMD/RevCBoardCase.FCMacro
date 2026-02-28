@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : 2026-02-23 12:02:35
-#  Last Modified : <260227.1004>
+#  Last Modified : <260228.1035>
 #
 #  Description	
 #
@@ -53,6 +53,77 @@ sys.path.append(os.path.dirname(__file__))
 
 def debug(fmt,*args):
     print(fmt % args,file=sys.stderr)
+
+class Adafruit_91_128x32_STEAMMA(object):
+    __TotalLength = 1.3*25.4
+    __TotalWidth  = 0.86*25.4
+    __HoleSpaceLength = 1.1*25.4
+    __HoleSpaceWidth = 0.65*25.4
+    __HoleDiameter = 0.1*25.4
+    __ScreenLength = 1.18*25.4
+    __ScreenWidth = 0.45*25.4
+    __BoardThick  = 1.6
+    __ScreenThick = 0.8
+    def MountHole(self,ihole,Z,ZLength):
+        hOrigin = Base.Vector(self.holeOrigins[ihole].x,
+                              self.holeOrigins[ihole].y,
+                              Z)
+        return Part.makeCylinder(self.__HoleDiameter/2,ZLength,hOrigin)
+    def ScreenCutout(self,Z,ZLength):
+        return Part.makePlane(self.__ScreenLength,
+                              self.__ScreenWidth,
+                              Base.Vector(self.screenOrigin.x,
+                                          self.screenOrigin.y,
+                                          Z)) \
+                   .extrude(Base.Vector(0,0,ZLength))
+    def __init__(self,name,origin=Base.Vector(0,0,0)):
+        self.name = name
+        if not isinstance(origin,Base.Vector):
+            raise RuntimeError("origin is not a Vector!")
+        self.origin = origin
+        self.board = Part.makePlane(self.__TotalLength,
+                                    self.__TotalWidth,
+                                    self.origin)\
+                             .extrude(Base.Vector(0,0,self.__BoardThick))
+        holeXOffset = (self.__TotalLength-self.__HoleSpaceLength)/2
+        holeYOffset = (self.__TotalWidth-self.__HoleSpaceWidth)/2
+        self.holeOrigins = list()
+        for hx in range(0,2):
+            holeX = holeXOffset+(hx*self.__HoleSpaceLength)
+            for hy in range(0,2):
+                holeY = holeYOffset+(hy*self.__HoleSpaceWidth)
+                self.holeOrigins.append(self.origin.add(Base.Vector(holeX,holeY,0)))
+        self.board = self.board.cut(
+            self.MountHole(0,self.origin.z,self.__BoardThick)
+        )
+        self.board = self.board.cut(
+            self.MountHole(1,self.origin.z,self.__BoardThick)
+        )
+        self.board = self.board.cut(
+            self.MountHole(2,self.origin.z,self.__BoardThick)
+        )
+        self.board = self.board.cut(
+            self.MountHole(3,self.origin.z,self.__BoardThick)
+        )
+        self.screenOrigin = self.origin.add(
+            Base.Vector((self.__TotalLength-self.__ScreenLength)/2,
+                        (self.__TotalWidth-self.__ScreenWidth)/2,
+                        self.__BoardThick))
+        self.screen = Part.makePlane(self.__ScreenLength,
+                                     self.__ScreenWidth,
+                                     self.screenOrigin)\
+                       .extrude(Base.Vector(0,0,self.__ScreenThick))
+    def show(self,doc=None):
+        if doc==None:
+            doc = App.activeDocument() 
+        obj = doc.addObject("Part::Feature",self.name+"_board")
+        obj.Shape = self.board
+        obj.Label=self.name+"_board"
+        obj.ViewObject.ShapeColor=(0.0,0.0,1.0)
+        obj = doc.addObject("Part::Feature",self.name+"_screen")
+        obj.Shape = self.screen
+        obj.Label=self.name+"_screen"
+        obj.ViewObject.ShapeColor=(0.0,0.0,0.0)
 
 class Board(object):
     __Width = 118.21
@@ -165,6 +236,8 @@ class Case(object):
     __FANYOffset = 41.1448
     __FANWidth =  25
     __FANHeight = 25
+    __DisplayXOffset = 18
+    __DisplayYOffset = 40
     @property
     def PostShoulderLength(self):
         return self.__WallThick+2.52
@@ -670,6 +743,20 @@ class Case(object):
                                                 self.__FANYOffset+self.__WallThick+ventY,
                                                 self.CaseTopHeight-self.__WallThick*1.5)))
                 top = top.cut(hole)
+        displayOrigin = toporigin.add(Base.Vector(self.__DisplayXOffset,
+                                                  self.__DisplayYOffset,
+                                                  self.CaseTopHeight-self.__WallThick*1.5-1.6))
+        self.display = Adafruit_91_128x32_STEAMMA(self.name+"_Adafruit_91_128x32_STEAMMA",displayOrigin)
+        for ih in range(0,4):
+            top = top.cut(
+                self.display.MountHole(ih,
+                                       toporigin.z+self.CaseTopHeight-self.__WallThick*1.5,
+                                       self.__WallThick)
+            )
+        top = top.cut(
+            self.display.ScreenCutout(toporigin.z+self.CaseTopHeight-self.__WallThick*1.5,
+                                      self.__WallThick)
+        )
         return top
     def __init__(self,name,origin=Base.Vector(0,0,0),fakeboard=True):
         self.name = name
@@ -734,6 +821,7 @@ class Case(object):
         obj.Label=self.name+"_power"
         obj.ViewObject.ShapeColor=(1.0,1.0,1.0)
         obj.ViewObject.Transparency=90
+        self.display.show(doc)
         #obj = doc.addObject("Part::Feature",self.name+"_r")
         #obj.Shape = self.r
         #obj.ViewObject.ShapeColor=(1.0,0.0,0.0)
