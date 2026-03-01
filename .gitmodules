@@ -4,3 +4,6 @@
 [submodule "BBBCommandStationOpenMRN/httpd"]
 	path = BBBCommandStationOpenMRN/httpd
 	url = git@github.com:RobertPHeller/openmrn-httpd.git
+[submodule "BBBCommandStationOpenMRN-RevC-PB2/httpd"]
+	path = BBBCommandStationOpenMRN-RevC-PB2/httpd
+	url = git@github.com:RobertPHeller/openmrn-httpd.git
