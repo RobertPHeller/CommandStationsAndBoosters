@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:43 2019
-//  Last Modified : <221118.0816>
+//  Last Modified : <260304.1433>
 //
 //  Description	
 //
@@ -54,57 +54,28 @@
 #include <utils/ConfigUpdateListener.hxx>
 #include <utils/Debouncer.hxx>
 
-/// CDI Configuration for a @ref FanControl.
-CDI_GROUP(FanControlConfig);
-CDI_GROUP_ENTRY(alarmtemperaturethresh,
-                openlcb::Uint16ConfigEntry,
-                Name("Alarm Temperature threshold, in tenths of degrees Centitrade."),
-                Default(350),Min(250),Max(500),
-                Description("This is the temperature level to issue an event."));
-CDI_GROUP_ENTRY(alarmon,
-                openlcb::EventConfigEntry,
-                Name("Alarm On Event"));
-CDI_GROUP_ENTRY(alarmoff,
-                openlcb::EventConfigEntry,
-                Name("Alarm Off Event"));
-CDI_GROUP_ENTRY(fantemperaturethresh,
-                openlcb::Uint16ConfigEntry,
-                Name("Fan Temperature threshold, in tenths of degrees Centitrade."),
-                Default(250),Min(250),Max(500),
-                Description("This is the temperature level to turn on the fan."));
-CDI_GROUP_ENTRY(fanon,
-                openlcb::EventConfigEntry,
-                Name("Fan On Event"));
-CDI_GROUP_ENTRY(fanoff,
-                openlcb::EventConfigEntry,
-                Name("Fan Off Event"));
-CDI_GROUP_END();
+#include <libconfig.h++>
 
-class FanControl : public ConfigUpdateListener, public openlcb::Polling {
+class FanControl : public openlcb::Polling {
 public:
     FanControl(openlcb::Node *node,
-               const FanControlConfig &cfg,
+               const libconfig::Setting &cfg,
                uint8_t temperatureAIN,
                const Gpio *fanGpio);
     template <class FAN>
           FanControl(openlcb::Node *node,
-                     const FanControlConfig &cfg,
+                     const libconfig::Setting &cfg,
                      uint8_t temperatureAIN,
                      const FAN&,
                      const Gpio *fanGpio = FAN::instance());
     ~FanControl();
     virtual void poll_33hz(openlcb::WriteHelper *helper, Notifiable *done);
-    virtual UpdateAction apply_configuration(int fd, bool initial_load,
-                                             BarrierNotifiable *done);
-
-    virtual void factory_reset(int fd);
     bool FanOn() const {return fanon_ == 1;}
     bool AlarmOn() const {return alarmon_ == 1;}
     openlcb::Polling *polling() {return this;}
     uint32_t getLastReading() {return lastReading_;}
 private:
     openlcb::Node *node_;
-    const FanControlConfig cfg_;
     uint8_t temperatureAIN_;
     const Gpio *fanGpio_;
     uint16_t alarmthresh_{350};

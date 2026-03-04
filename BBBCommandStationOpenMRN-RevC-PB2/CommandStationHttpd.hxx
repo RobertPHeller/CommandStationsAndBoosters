@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Mar 17 12:47:00 2025
-//  Last Modified : <250318.0935>
+//  Last Modified : <260304.1432>
 //
 //  Description	
 //
@@ -86,6 +86,7 @@
 #include <string>
 #include <map>
 
+#include <libconfig.h++>
 using String = std::string;
 
 class CommandStationHttpd : public BeagleCS::DCCProgrammer, 
@@ -99,9 +100,9 @@ public:
                         uint16_t port);
     static void Begin(openlcb::SimpleStackBase *stack, 
                       openlcb::TrainService *tractionService,
-                      const HBridgeControlConfig &maincfg,
-                      const HBridgeControlConfig &progcfg,
-                      const FanControlConfig &fancfg,
+                      const libconfig::Setting &maincfg,
+                      const libconfig::Setting &progcfg,
+                      const libconfig::Setting &fancfg,
                       const char *mainPRUfirmware = "MainTrackDCC.out",
                       const char *progPRUfirmware = "ProgTrackDCC.out");
     static void initiate_estop()
@@ -152,7 +153,7 @@ private:
     // that implement the Command Station
     //
     // Montitors the OPS track current
-    static std::unique_ptr<HBridgeControl> mains;
+    static std::unique_ptr<HBridgeControlSPI> mains;
     // Montitors the Prog track current
     static std::unique_ptr<HBridgeControl> progtrack;
     // Montitors the temperature and fan

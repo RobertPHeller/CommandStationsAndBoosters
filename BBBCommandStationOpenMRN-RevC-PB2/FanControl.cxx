@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:53 2019
-//  Last Modified : <210526.1945>
+//  Last Modified : <260304.1433>
 //
 //  Description	
 //
@@ -58,44 +58,44 @@ static const char rcsid[] = "@(#) : $Id$";
 #include <vector>
 #include <numeric>
 
+#include <libconfig.h++>
+
 FanControl::FanControl(openlcb::Node *node,
-                       const FanControlConfig &cfg,
+                       const libconfig::Setting &cfg,
                        uint8_t temperatureAIN,
                        const Gpio *fanGpio)
       : node_(node)
-, cfg_(cfg)
 , temperatureAIN_(temperatureAIN)
 , fanGpio_(fanGpio)
-, alarmBit_(node, 0, 0, &alarmon_, 1)
-, fanBit_(node, 0, 0, &fanon_, 1)
+, alarmBit_(node, cfg.lookup("AlarmOn"), cfg.lookup("AlarmOff"), &alarmon_, 1)
+, fanBit_(node, cfg.lookup("FanOn"),  cfg.lookup("FanOff"), &fanon_, 1)
 , alarmProducer_(&alarmBit_)
 , fanProducer_(&fanBit_)
 {
-    ConfigUpdateService::instance()->register_update_listener(this);
+    alarmthresh_ = (int)cfg.lookup("AlarmTempThresh");
+    fanthresh_ = (int)cfg.lookup("FanTempThresh");
 }
 
 template <class FAN>
 FanControl::FanControl(openlcb::Node *node,
-                     const FanControlConfig &cfg,
+                     const libconfig::Setting &cfg,
                      uint8_t temperatureAIN,
                      const FAN&,
                      const Gpio *fanGpio)
       : node_(node)
-, cfg_(cfg)
 , temperatureAIN_(temperatureAIN)
 , fanGpio_(fanGpio)
-, alarmBit_(node, 0, 0, &alarmon_, 1)
-, fanBit_(node, 0, 0, &fanon_, 1)
+, alarmBit_(node, cfg.lookup("AlarmOn"), cfg.lookup("AlarmOff"), &alarmon_, 1)
+, fanBit_(node, cfg.lookup("FanOn"),  cfg.lookup("FanOff"), &fanon_, 1)
 , alarmProducer_(&alarmBit_)
 , fanProducer_(&fanBit_)
 {
-    ConfigUpdateService::instance()->register_update_listener(this);
-    //memset((void *)write_helper_,0,10*sizeof(openlcb::WriteHelper));
+    alarmthresh_ = (int)cfg.lookup("AlarmTempThresh");
+    fanthresh_ = (int)cfg.lookup("FanTempThresh");
 }
 
 FanControl::~FanControl()
 {
-    ConfigUpdateService::instance()->unregister_update_listener(this);
 }
 
 void FanControl::poll_33hz(openlcb::WriteHelper *helper, Notifiable *done)
@@ -144,43 +144,4 @@ void FanControl::poll_33hz(openlcb::WriteHelper *helper, Notifiable *done)
     }
 }
 
-ConfigUpdateListener::UpdateAction FanControl::apply_configuration(int fd, bool initial_load,
-                                                                   BarrierNotifiable *done)
-{
-    AutoNotify n(done);
-    UpdateAction res = initial_load ? REINIT_NEEDED : UPDATED;
-    alarmthresh_ = cfg_.alarmtemperaturethresh().read(fd);
-    fanthresh_ = cfg_.fantemperaturethresh().read(fd);
-    openlcb::EventId alarmon = cfg_.alarmon().read(fd);
-    openlcb::EventId alarmoff = cfg_.alarmoff().read(fd);
-    openlcb::EventId fanon = cfg_.fanon().read(fd);
-    openlcb::EventId fanoff = cfg_.fanoff().read(fd);
-    auto saved_node = alarmBit_.node();
-    if (alarmon != alarmBit_.event_on() ||
-        alarmoff != alarmBit_.event_off())
-    {
-        alarmBit_.openlcb::MemoryBit<uint8_t>::~MemoryBit();
-        new (&alarmBit_)openlcb::MemoryBit<uint8_t>(saved_node, alarmon, alarmoff, &alarmon_, 1);
-        alarmProducer_.openlcb::BitEventProducer::~BitEventProducer();
-        new (&alarmProducer_)openlcb::BitEventProducer(&alarmBit_);
-        res = REINIT_NEEDED;
-    }
-    if (fanon != fanBit_.event_on() ||
-        fanoff != fanBit_.event_off())
-    {
-        fanBit_.openlcb::MemoryBit<uint8_t>::~MemoryBit();
-        new (&fanBit_)openlcb::MemoryBit<uint8_t>(saved_node, fanon, fanoff, &fanon_, 1);
-        fanProducer_.openlcb::BitEventProducer::~BitEventProducer();
-        new (&fanProducer_)openlcb::BitEventProducer(&fanBit_);
-        res = REINIT_NEEDED;
-    }
-    
-    return res;
-}
-
-void FanControl::factory_reset(int fd)
-{
-    CDI_FACTORY_RESET(cfg_.alarmtemperaturethresh);
-    CDI_FACTORY_RESET(cfg_.fantemperaturethresh);
-}
 

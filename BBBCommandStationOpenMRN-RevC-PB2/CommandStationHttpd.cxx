@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Mar 17 13:52:59 2025
-//  Last Modified : <260303.1109>
+//  Last Modified : <260304.1433>
 //
 //  Description	
 //
@@ -99,7 +99,7 @@ static const char rcsid[] = "@(#) : $Id$";
 
 static BBRailComDriver<RailComHW> opsRailComDriver(RAILCOM_FEEDBACK_QUEUE);
 
-std::unique_ptr<HBridgeControl> CommandStationHttpd::mains;
+std::unique_ptr<HBridgeControlSPI> CommandStationHttpd::mains;
 std::unique_ptr<HBridgeControl> CommandStationHttpd::progtrack;
 std::unique_ptr<FanControl> CommandStationHttpd::fan;
 std::unique_ptr<openlcb::RefreshLoop> CommandStationHttpd::cs_poller;
@@ -242,22 +242,22 @@ CommandStationHttpd::CommandStationHttpd(openlcb::SimpleStackBase *stack,
 // Initialize all unique pointers.
 void CommandStationHttpd::Begin(openlcb::SimpleStackBase *stack, 
                                   openlcb::TrainService *tractionService,
-                                  const HBridgeControlConfig &maincfg,
-                                  const HBridgeControlConfig &progcfg,
-                                  const FanControlConfig &fancfg,
+                                  const libconfig::Setting &maincfg,
+                                  const libconfig::Setting &progcfg,
+                                  const libconfig::Setting &fancfg,
                                   const char *mainPRUfirmware,
                                   const char *progPRUfirmware)
 {
-    mains.reset(new HBridgeControl(stack->node(), 
+    mains.reset(new HBridgeControlSPI(stack->node(), 
                                    maincfg, 
-                                   CSenseMainAnalogChannel, 
+                                   MAINSPI,MAINCURRENT,MAINSHUNTRESISTOR,MAINSHUNTVALUE,
                                    MAIN_MAX_MILLIAMPS, 
                                    MAIN_LIMIT_MILLIAMPS, 
                                    MainEN_Pin::instance()));
     LOG(INFO, "[CommandStationHttpd] Main track HBridgeControl setup...");
     progtrack.reset(new HBridgeControl(stack->node(),
                                        progcfg, 
-                                       CSenseProgAnalogChannel, 
+                                       PROGCURRENT,PROGSHUNTRESISTOR,PROGSHUNTVALUE, 
                                        PROG_MAX_MILLIAMPS, 
                                        ProgEN_Pin::instance()));
     LOG(INFO, "[CommandStationHttpd] Prog track HBridgeControl setup...");
@@ -496,13 +496,9 @@ void CommandStationHttpd::status_UriHandler(const HTTPD::HttpRequest *request, H
     reply->Puts(" ");
     reply->Puts(std::to_string(mains->EnabledP()));
     reply->Puts(" ");
-    reply->Puts(std::to_string(mains->ThermalFlagP()));
-    reply->Puts(" ");
     reply->Puts(std::to_string(mains->OverCurrentP()));
     reply->Puts(" ");
     reply->Puts(std::to_string(progtrack->EnabledP()));
-    reply->Puts(" ");
-    reply->Puts(std::to_string(progtrack->ThermalFlagP()));
     reply->Puts(" ");
     reply->Puts(std::to_string(progtrack->OverCurrentP()));
     reply->Puts(" ");

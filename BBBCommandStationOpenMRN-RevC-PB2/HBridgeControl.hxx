@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:15 2019
-//  Last Modified : <221118.0819>
+//  Last Modified : <260304.1431>
 //
 //  Description	
 //
@@ -56,54 +56,19 @@
 #include <utils/ConfigUpdateListener.hxx>
 #include <utils/Debouncer.hxx>
 
+#include <libconfig.h++>
+
 #define BIT(n) (1 << n)
 
-/// CDI Configuration for a @ref HBridgeControl.
-CDI_GROUP(HBridgeControlConfig);
-CDI_GROUP_ENTRY(event_short,
-                openlcb::EventConfigEntry,
-                Name("Short Detected"),
-                Description("This event will be produced when a short has "
-                            "been detected on the track output."));
-CDI_GROUP_ENTRY(event_short_cleared,
-                openlcb::EventConfigEntry,
-                Name("Short Cleared"),
-                Description("This event will be produced when a short has "
-                            "been cleared on the track output."));
-CDI_GROUP_ENTRY(event_shutdown,
-                openlcb::EventConfigEntry,
-                Name("H-Bridge Shutdown"),
-                Description("This event will be produced when the track "
-                            "output power has exceeded the safety threshold "
-                            "of the H-Bridge."));
-CDI_GROUP_ENTRY(event_shutdown_cleared,
-                openlcb::EventConfigEntry,
-                Name("H-Bridge Shutdown Cleared"),
-                Description("This event will be produced when the track "
-                            "output power has returned to safe levels."));
-CDI_GROUP_ENTRY(event_thermflagon,
-                openlcb::EventConfigEntry,
-                Name("Thermal Flag on"));
-CDI_GROUP_ENTRY(event_thermflagoff,
-                openlcb::EventConfigEntry,
-                Name("Thermal Flag off"));
-CDI_GROUP_END();
-
-class HBridgeControl : public ConfigUpdateListener, public openlcb::Polling {
+class HBridgeControl : public openlcb::Polling {
 public:
     HBridgeControl(openlcb::Node *node, 
-                   const HBridgeControlConfig &cfg, 
-                   uint8_t currentAIN, 
-                   const uint32_t limitMilliAmps,
+                   const libconfig::Setting &cfg, 
+                   const char *sysFSCurrent,
+                   const char *sysFSShunt,
+                   const char *sysFSShuntValue,
                    const uint32_t maxMilliAmps,
-                   const Gpio *enableGpio, 
-                   const Gpio *thermFlagGpio = NULL);
-    HBridgeControl(openlcb::Node *node, 
-                   const HBridgeControlConfig &cfg, 
-                   uint8_t currentAIN, 
-                   const uint32_t maxMilliAmps,
-                   const Gpio *enableGpio, 
-                   const Gpio *thermFlagGpio = NULL);
+                   const Gpio *enableGpio);
     enum STATE : uint8_t
     {
         STATE_OVERCURRENT = BIT(0),
@@ -113,45 +78,76 @@ public:
     };
     ~HBridgeControl();
     virtual void poll_33hz(openlcb::WriteHelper *helper, Notifiable *done);
-    virtual UpdateAction apply_configuration(int fd, bool initial_load,
-                                             BarrierNotifiable *done);
-
-    virtual void factory_reset(int fd);
     bool EnabledP() const {return state_ != STATE_OFF;}
-    bool ThermalFlagP() const {return thermalFlag_ == 1;}
     bool OverCurrentP() const {return (state_ & STATE_OVERCURRENT) != 0;}
     openlcb::Polling *polling() {return this;}
     uint32_t getMaxMilliAmps() {return maxMilliAmps_;}
     uint32_t getLastReading() {return lastReading_;}
-    bool isProgrammingTrack() {return isProgTrack_;}
+    bool isProgrammingTrack() {return true;}
     void enable_prog_response(bool enable)
     {
         progEnable_ = enable;
     }
 private:
     openlcb::Node *node_;
-    const HBridgeControlConfig cfg_;
-    const uint8_t currentAIN_;
-    const uint8_t adcSampleCount_{32};
-    const uint8_t overCurrentRetryCount_{3};
+    const char *sysFSCurrent_;
     const Gpio *enableGpio_;
-    const Gpio *thermFlagGpio_;
     const uint32_t maxMilliAmps_;
     const uint32_t overCurrentLimit_;
+    const uint8_t overCurrentRetryCount_{3};
     const uint32_t shutdownLimit_;
-    bool isProgTrack_;
     const uint32_t progAckLimit_;
     openlcb::MemoryBit<uint8_t> shortBit_;
     openlcb::MemoryBit<uint8_t> shutdownBit_;
-    openlcb::MemoryBit<uint8_t> thermalFlagBit_;
     openlcb::BitEventProducer shortProducer_;
     openlcb::BitEventProducer shutdownProducer_;
-    openlcb::BitEventProducer thermalFlagProducer_;
     bool progEnable_{false};
     uint8_t state_{STATE_OFF};
     uint8_t overCurrentCheckCount_{0};
     uint32_t lastReading_{0};
-    uint8_t thermalFlag_{0};
+};            
+
+class HBridgeControlSPI : public openlcb::Polling {
+public:
+    HBridgeControlSPI(openlcb::Node *node, 
+                      const libconfig::Setting &cfg, 
+                      const char *spidevice,
+                      const char *sysFSCurrent,
+                      const char *sysFSShunt,
+                      const char *sysFSShuntValue,
+                      const uint32_t limitMilliAmps,
+                      const uint32_t maxMilliAmps,
+                      const Gpio *enableGpio);
+    enum STATE : uint8_t
+    {
+        STATE_OVERCURRENT = BIT(0),
+        STATE_SHUTDOWN    = BIT(1),
+        STATE_ON          = BIT(2),
+        STATE_OFF         = BIT(3)
+    };
+    ~HBridgeControlSPI();
+    virtual void poll_33hz(openlcb::WriteHelper *helper, Notifiable *done);
+    bool EnabledP() const {return state_ != STATE_OFF;}
+    bool OverCurrentP() const {return (state_ & STATE_OVERCURRENT) != 0;}
+    openlcb::Polling *polling() {return this;}
+    uint32_t getMaxMilliAmps() {return maxMilliAmps_;}
+    uint32_t getLastReading() {return lastReading_;}
+    bool isProgrammingTrack() {return false;}
+private:
+    openlcb::Node *node_;
+    const char *sysFSCurrent_;
+    const Gpio *enableGpio_;
+    const uint32_t maxMilliAmps_;
+    const uint32_t overCurrentLimit_;
+    const uint32_t shutdownLimit_;
+    openlcb::MemoryBit<uint8_t> shortBit_;
+    openlcb::MemoryBit<uint8_t> shutdownBit_;
+    openlcb::BitEventProducer shortProducer_;
+    openlcb::BitEventProducer shutdownProducer_;
+    int spifd_;
+    uint8_t state_{STATE_OFF};
+    uint8_t overCurrentCheckCount_{0};
+    uint32_t lastReading_{0};
 };            
 
 #endif // __HBRIDGECONTROL_HXX

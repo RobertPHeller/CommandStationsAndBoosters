@@ -188,6 +188,7 @@
  */
 
 #include <ctype.h>
+
 #include "os/os.h"
 #include "nmranet_config.h"
 
@@ -200,6 +201,7 @@ OVERRIDE_CONST(num_memory_spaces, 7);
 #include "openlcb/SimpleStack.hxx"
 #include "openlcb/ConfiguredConsumer.hxx"
 #include "openlcb/ConfiguredProducer.hxx"
+#include "openlcb/SimpleNodeInfoDefs.hxx"
 
 #include "Hardware.hxx"
 #include "freertos_drivers/common/DummyGPIO.hxx"
@@ -224,62 +226,134 @@ OVERRIDE_CONST(gc_generate_newlines, 1);
 // thread. Useful tuning parameter in case the application runs out of memory.
 OVERRIDE_CONST(main_thread_stack_size, 2500);
 
-// Specifies the default 48-bit OpenLCB node identifier. This must be unique for every
-// hardware manufactured, so in production this should be replaced by some
-// easily incrementable method.
-#define DefaultNODEID 0x050101012200ULL // 05 01 01 01 22 00
-static openlcb::NodeID NODE_ID = DefaultNODEID;
 
-char pathnamebuffer[256];
 
 // Persistant train DB file.
 char persistenttrainfile[256];
 extern const char *const BeagleCS::TRAIN_DB_JSON_FILE = persistenttrainfile;
 
-// Set up the connection mode: either over Tcp/Ip (GridConnect) 
-// or over the CAN netork.
-
-int upstream_port = DEFAULT_TCP_GRIDCONNECT_PORT;
-const char *upstream_host = DEFAULT_TCP_GRIDCONNECT_HOST;
-const char *cansocket = DEFAULT_CAN_SOCKET;
-int gctcp_hub_port = DEFAULT_GRIDCONNECT_HUB_PORT;
-
-// Files containing the PRU Firmware programs.
-
-static char mainPRUfirmware[256] = "MainTrackDCC.out", 
-            progPRUfirmware[256] = "ProgTrackDCC.out";
-
-static bool start_WiThrottle = false;
-static char WiThrottle_Name[256] = "PocketBeagle";
-int WiThrottle_port = -1;
-
 withrottle::Server *WiThrottleServer;
 
-libconfig::Config config();
+libconfig::Config configuration;
 
 #define SYSTEMDEFAULTCONFIG "/etc/default/commandstation.cfg"
 #define USERCONFIG "/home/debian/commandstation.cfg"
 
+extern const char *const openlcb::SNIP_DYNAMIC_FILENAME = NULL;
+
+extern const openlcb::SimpleNodeStaticValues SNIP_STATIC_DATA = {
+    4, "Deepwoods Software", "PocketBeagleCommandStation", "SMD Rev C", "1.0"};
+
+
+// Specifies the default 48-bit OpenLCB node identifier. This must be unique for every
+// hardware manufactured, so in production this should be replaced by some
+// easily incrementable method.
+#define DefaultNODEID 0x050101012200ULL // 05 01 01 01 22 00
+
 static bool InitializeDCCConfig(libconfig::Setting &group, const char *prufile,
-                                openlcb::EventID shorton,
-                                openlcb::EventID shortoff,
-                                openlcb::EventID shutdownon,
-                                openlcb::EventID shutdownoff,
+                                openlcb::EventId shorton,
+                                openlcb::EventId shortoff,
+                                openlcb::EventId shutdownon,
+                                openlcb::EventId shutdownoff,
                                 bool update)
 {
-    
+    if (!group.exists("PRUfirmware"))
+    {
+        libconfig::Setting &prufirm = group.add("PRUfirmware",
+                                               libconfig::Setting::TypeString);
+        prufirm = prufile;
+        update = true;
+    }
+    if (!group.exists("EventShortOn"))
+    {
+        libconfig::Setting &eventshorton = group.add("EventShortOn",
+                                                    libconfig::Setting::TypeInt64);
+        eventshorton = (long long)shorton;
+        eventshorton.setFormat(libconfig::Setting::FormatHex);
+        update = true; 
+    }
+    if (!group.exists("EventShortOff"))
+    {
+        libconfig::Setting &eventshorton = group.add("EventShortOff",
+                                                    libconfig::Setting::TypeInt64);
+        eventshorton = (long long)shortoff;
+        eventshorton.setFormat(libconfig::Setting::FormatHex);
+        update = true; 
+    }
+    if (!group.exists("EventShutdownOn"))
+    {
+        libconfig::Setting &eventshutdownon = group.add("EventShutdownOn",
+                                                    libconfig::Setting::TypeInt64);
+        eventshutdownon = (long long)shutdownon;
+        eventshutdownon.setFormat(libconfig::Setting::FormatHex);
+        update = true; 
+    }
+    if (!group.exists("EventShutdownOff"))
+    {
+        libconfig::Setting &eventshutdownoff = group.add("EventShutdownOff",
+                                                    libconfig::Setting::TypeInt64);
+        eventshutdownoff = (long long)shutdownoff;
+        eventshutdownoff.setFormat(libconfig::Setting::FormatHex);
+        update = true; 
+    }
     return update;
 }
 
 static bool InitializeFanControl(libconfig::Setting &group,
                                  uint16_t alarmthresh,
-                                 openlcb::EventID alarmon,
-                                 openlcb::EventID alarmmoff,
+                                 openlcb::EventId alarmon,
+                                 openlcb::EventId alarmoff,
                                  uint16_t fanthresh,
-                                 openlcb::EventID fanon,
-                                 openlcb::EventID fanoff,
+                                 openlcb::EventId fanon,
+                                 openlcb::EventId fanoff,
                                  bool update)
 {
+    if (!group.exists("AlarmTempThresh"))
+    {
+        libconfig::Setting &althresh = group.add("AlarmTempThresh",
+                                                libconfig::Setting::TypeInt);
+        althresh = alarmthresh;
+        update = true;
+    }
+    if (!group.exists("AlarmOn"))
+    {
+        libconfig::Setting &alevon = group.add("AlarmOn",
+                                             libconfig::Setting::TypeInt64);
+        alevon.setFormat(libconfig::Setting::FormatHex);
+        alevon = (long long)alarmon;
+        update = true;
+    }
+    if (!group.exists("AlarmOff"))
+    {
+        libconfig::Setting &alevoff = group.add("AlarmOff",
+                                             libconfig::Setting::TypeInt64);
+        alevoff.setFormat(libconfig::Setting::FormatHex);
+        alevoff = (long long)alarmoff;
+        update = true;
+    }
+    if (!group.exists("FanTempThresh"))
+    {
+        libconfig::Setting &althresh = group.add("FanTempThresh",
+                                                libconfig::Setting::TypeInt);
+        althresh = fanthresh;
+        update = true;
+    }
+    if (!group.exists("FanOn"))
+    {
+        libconfig::Setting &fanevon = group.add("FanOn",
+                                             libconfig::Setting::TypeInt64);
+        fanevon.setFormat(libconfig::Setting::FormatHex);
+        fanevon = (long long)fanon;
+        update = true;
+    }
+    if (!group.exists("FanOff"))
+    {
+        libconfig::Setting &fanevoff = group.add("FanOff",
+                                             libconfig::Setting::TypeInt64);
+        fanevoff.setFormat(libconfig::Setting::FormatHex);
+        fanevoff = (long long)fanoff;
+        update = true;
+    }
     return update;
 }
 
@@ -288,81 +362,81 @@ static void ProcessConfiguration(libconfig::Config &config)
     try {
         config.readFile(USERCONFIG);
     }
-    catch(const FileIOException &fioex)
+    catch(const libconfig::FileIOException &fioex)
     {
         try {
             config.readFile(SYSTEMDEFAULTCONFIG);
         }
-        catch(const FileIOException &fioex)
+        catch(const libconfig::FileIOException &fioex)
         {
         }
     }
     bool updated = false;
     
-    libconfig::Setting root = config.getRoot();
+    libconfig::Setting &root = config.getRoot();
     if (!root.exists("NodeID"))
     {
-        libconfig::Setting nodeid = root.add("NodeID",
+        libconfig::Setting &nodeid = root.add("NodeID",
                                              libconfig::Setting::TypeInt64);
         nodeid.setFormat(libconfig::Setting::FormatHex);
-        nodeid = DefaultNODEID;
+        nodeid = (long long)DefaultNODEID;
         updated = true;
     }
     if (!root.exists("PersistentTrainFilePath"))
     {
-        libconfig::Setting persistpath = root.add("PersistentTrainFilePath",
+        libconfig::Setting &persistpath = root.add("PersistentTrainFilePath",
                                                   libconfig::Setting::TypeString);
         char persistpathbuffer[256];
         snprintf(persistpathbuffer,sizeof(persistpathbuffer),
-                 "/tmp/persistent_train_file_%012llX",root.lookup("NodeID"));
+                 "/tmp/persistent_train_file_%012llX",(long long)root.lookup("NodeID"));
         persistpath = persistpathbuffer;
         updated = true;
     }
     if (!root.exists("UseGCHost"))
     {
-        libconfig::Setting usegchost = root.add("UseGCHost".
+        libconfig::Setting &usegchost = root.add("UseGCHost",
                                                 libconfig::Setting::TypeBoolean);
         usegchost = false;
         updated = true;
     }
     if (!root.exists("GCHost"))
     {
-        libconfig::Setting gchost = root.add("GCHost",
+        libconfig::Setting &gchost = root.add("GCHost",
                                              libconfig::Setting::TypeString);
         gchost = DEFAULT_TCP_GRIDCONNECT_HOST;
         updated = true;
     }
     if (!root.exists("GCPort"))
     {
-        libconfig::Setting gcport = root.add("GCPort",
+        libconfig::Setting &gcport = root.add("GCPort",
                                              libconfig::Setting::TypeInt);
         gcport = DEFAULT_TCP_GRIDCONNECT_HOST;
         updated = true;
     }
     if (!root.exists("CanSocket"))
     {
-        libconfig::Setting cansocket = root.add("CanSocket",
+        libconfig::Setting &cansocket = root.add("CanSocket",
                                                 libconfig::Setting::TypeString);
         cansocket = DEFAULT_CAN_SOCKET;
         updated = true;
     }
     if (!root.exists("GCHub"))
     {
-        libconfig::Setting gchub = root.add("GCHub",
+        libconfig::Setting &gchub = root.add("GCHub",
                                             libconfig::Setting::TypeBoolean);
         gchub = false;
         updated = true;
     }
     if (!root.exists("GCHubPort"))
     {
-        libconfig::Setting gchubport = root.add("GCHubPort",
+        libconfig::Setting &gchubport = root.add("GCHubPort",
                                                 libconfig::Setting::TypeInt);
         gchubport = DEFAULT_GRIDCONNECT_HUB_PORT;
         updated = true; 
     }
     if (!root.exists("WebServerRoot"))
     {
-        libconfig::Setting webserverroot = 
+        libconfig::Setting &webserverroot = 
               root.add("WebServerRoot",
                        libconfig::Setting::TypeString);
         webserverroot = WEBSERVERROOT;
@@ -370,81 +444,116 @@ static void ProcessConfiguration(libconfig::Config &config)
     }
     if (!root.exists("WebServerPort"))
     {
-        libconfig::Setting webserverport = root.add("WebServerPort",
+        libconfig::Setting &webserverport = root.add("WebServerPort",
                                                     libconfig::Setting::TypeInt);
         webserverport = WEBSERVERPORT;
         updated = true;
     }
     if (!root.exists("StartWiThrottle"))
     {
-        libconfig::Setting startwithrottle = root.add("StartWiThrottle",
+        libconfig::Setting &startwithrottle = root.add("StartWiThrottle",
                                                       libconfig::Setting::TypeBoolean);
         startwithrottle = false;
         updated = true;
     }
     if (!root.exists("WiThrottleName"))
     {
-        libconfig::Setting withrottlename = root.add("WiThrottleName",
+        libconfig::Setting &withrottlename = root.add("WiThrottleName",
                                                      libconfig::Setting::TypeString);
         withrottlename = "PocketBeagle";
         updated = true;
     }
     if (!root.exists("WiThrottlePort"))
     {
-        libconfig::Setting withrottleport = root.add("WiThrottlePort",
+        libconfig::Setting &withrottleport = root.add("WiThrottlePort",
                                                      libconfig::Setting::TypeInt);
         withrottleport = withrottle::Defs::DEFAULT_PORT;
         updated = true;
     }
     if (!root.exists("Main"))
     {
-        libconfig::Setting main = root.add("Main",
-                                           libconfig::Setting::TypeGroup);
+        root.add("Main", libconfig::Setting::TypeGroup);
         updated = true;
     }
-    openlcb::EventID lastEventID = root.lookup("NodeID") << 16;
+    
+    uint16_t next_event = 0;
+    uint64_t node_id = (long long)root.lookup("NodeID");
+    openlcb::EventId shorton = node_id;
+    shorton <<= 16;
+    shorton |= next_event++;
+    openlcb::EventId shortoff = node_id;
+    shortoff <<= 16;
+    shortoff |= next_event++;
+    openlcb::EventId shutdownon = node_id;
+    shorton <<= 16;
+    shorton |= next_event++;
+    openlcb::EventId shutdownoff = node_id;
+    shortoff <<= 16;
+    shortoff |= next_event++;
     updated = InitializeDCCConfig(root.lookup("Main"),
                                   "MainTrackDCC.out",
-                                  lastEventID++,
-                                  lastEventID++,
-                                  lastEventID++,
-                                  lastEventID++,
+                                  shorton,
+                                  shortoff,
+                                  shutdownon,
+                                  shutdownoff,
                                   updated);
     if (!root.exists("Programming"))
     {
-        libconfig::Setting prog = root.add("Programming",
-                                           libconfig::Setting::TypeGroup);
+        root.add("Programming", libconfig::Setting::TypeGroup);
         updated = true; 
     }
+    shorton = node_id;
+    shorton <<= 16;
+    shorton |= next_event++;
+    shortoff = node_id;
+    shortoff <<= 16;
+    shortoff |= next_event++;
+    shutdownon = node_id;
+    shorton <<= 16;
+    shorton |= next_event++;
+    shutdownoff = node_id;
+    shortoff <<= 16;
+    shortoff |= next_event++;
     updated = InitializeDCCConfig(root.lookup("Programming"),
                                   "ProgTrackDCC.out",
-                                  lastEventID++,
-                                  lastEventID++,
-                                  lastEventID++,
-                                  lastEventID++,
+                                  shorton,
+                                  shortoff,
+                                  shutdownon,
+                                  shutdownon,
                                   updated);
     if (!root.exists("FanControl"))
     {
-        libconfig::Setting fancontrol = root.add("FanControl",
-                                                 libconfig::Setting::TypeGroup);
+        root.add("FanControl",libconfig::Setting::TypeGroup);
         updated = true;
     }
+    openlcb::EventId alarmon = node_id;
+    alarmon <<= 16;
+    alarmon |= next_event++;
+    openlcb::EventId alarmoff = node_id;
+    alarmoff <<= 16;
+    alarmoff |= next_event++;
+    openlcb::EventId fanon = node_id;
+    fanon <<= 16;
+    fanon |= next_event++;
+    openlcb::EventId fanoff = node_id;
+    fanoff <<= 16;
+    fanoff |= next_event++;
     updated = InitializeFanControl(root.lookup("FanControl"),
                                    350,
-                                   lastEventID++,
-                                   lastEventID++,
+                                   alarmon,
+                                   alarmoff,
                                    250,
-                                   lastEventID++,
-                                   lastEventID++,
+                                   fanon,
+                                   fanoff,
                                    updated);
     if (updated)
     {
         try {
             config.writeFile(USERCONFIG);
         }
-        catch(const FileIOException &fioex)
+        catch(const libconfig::FileIOException &fioex)
         {
-            LOG(ERROR,"Failed to save configuration %s",USERCONFIG);
+            LOG(FATAL,"Failed to save configuration %s",USERCONFIG);
             exit(errno);
         }
     }
@@ -457,14 +566,12 @@ static void ProcessConfiguration(libconfig::Config &config)
  */
 int appl_main(int argc, char *argv[])
 {
-    // Compute default EEProm and persistant train file pathnames.
-    snprintf(pathnamebuffer,sizeof(pathnamebuffer),
-             "/tmp/config_eeprom_%012llX",NODE_ID);
-    snprintf(persistenttrainfile,sizeof(persistenttrainfile),
-             "/tmp/persistent_train_file_%012llX",NODE_ID);
-    // Parse command line.
-    parse_args(argc, argv);
+    // Parse configuration file
+    ProcessConfiguration(configuration);
     
+    strncpy(persistenttrainfile,
+            configuration.lookup("PersistentTrainFilePath"),
+            sizeof(persistenttrainfile));
     // Initialize GPIO
     GpioInit::hw_init();
     
@@ -473,64 +580,40 @@ int appl_main(int argc, char *argv[])
     // CAN-bus-specific components, a virtual node, PIP, SNIP, Memory configuration
     // protocol, ACDI, CDI, a bunch of memory spaces, etc.
     //openlcb::SimpleCanStack stack(NODE_ID);
-#if defined(USE_GRIDCONNECT_HOST) || defined(USE_SOCKET_CAN_PORT) || defined(START_GCTCP_HUB)
-    openlcb::SimpleCommandStationCanStack stack(NODE_ID);
-#else
-#ifdef USE_OPENLCB_TCP_HOST
-    Executor<1> g_connect_executor("connect_executor", 0, 2048);
-    openlcb::SimpleCommandStationTcpStack stack(NODE_ID);
-    // OpenLCB connection callback.
-    auto connect_callback = [&stack] (int fd, Notifiable *on_error)
-    {
-        LOG(INFO, "Connected to hub.");
-        stack.add_tcp_port_select(fd, on_error);
-        stack.restart_stack();
-    }
-#endif
-#endif
+    openlcb::SimpleCommandStationCanStack stack((long long)configuration.lookup("NodeID"));
 
     // Webserver executor.
     Executor<1> httpd_executor("httpd_executor", 0, 2048);
     CommandStationHttpd commandProcessorHttpd(&stack,
                                               stack.traction_service(),
                                               &httpd_executor,
-                                              WEBSERVERROOT, 
-                                              WEBSERVERPORT);
-    FactoryResetHelper  factory_reset_helper;
-    
-    // Create the config file
-    stack.create_config_file_if_needed(cfg.seg().internal_config(), openlcb::CANONICAL_VERSION, openlcb::CONFIG_FILE_SIZE);
+                                              configuration.lookup("WebServerRoot"), 
+                                              (int)configuration.lookup("WebServerPort"));
     CommandStationHttpd::Begin(&stack,stack.traction_service(),
-                                 cfg.seg().maindcc(),
-                                 cfg.seg().progdcc(),
-                                 cfg.seg().fancontrol(),
-                                 mainPRUfirmware,
-                                 progPRUfirmware);
-    // Connects to a TCP hub on the internet.
-    //stack.connect_tcp_gridconnect_hub("28k.ch", 50007);
-#ifdef USE_TCP_GRIDCONNECT_HOST
-    stack.connect_tcp_gridconnect_hub(upstream_host, upstream_port);
-#endif
-#ifdef USE_OPENLCB_TCP_HOST
-    SocketClient socket_client(stack.service(), &g_connect_executor,
-      &g_connect_executor,
-      SocketClientParams::from_static(upstream_host,upstream_port),
-      &connect_callback);
-#endif
+                                 configuration.lookup("Main"),
+                                 configuration.lookup("Programming"),
+                                 configuration.lookup("FanControl"),
+                                 configuration.lookup("Main.PRUfirmware"),
+                                 configuration.lookup("Programming.PRUfirmware"));
+    if (configuration.lookup("UseGCHost"))
+    {
+        stack.connect_tcp_gridconnect_hub(configuration.lookup("GCHost"),
+                                          configuration.lookup("GCPort"));
+    }
 #ifdef PRINT_ALL_PACKETS
     // Causes all packets to be dumped to stdout.
     stack.print_all_packets();
 #endif
-#if defined(USE_SOCKET_CAN_PORT)
-    stack.add_socketcan_port_select(cansocket);
-#endif
-#if defined(START_GCTCP_HUB)
-    stack.start_tcp_hub_server(gctcp_hub_port);
-#endif
-    
-    if (start_WiThrottle)
+    stack.add_socketcan_port_select(configuration.lookup("CanSocket"));
+    if (configuration.lookup("GCHub"))
     {
-        WiThrottleServer = new withrottle::Server(WiThrottle_Name,WiThrottle_port,stack.node());
+        stack.start_tcp_hub_server(configuration.lookup("GCHubPort"));
+    }
+    if (configuration.lookup("StartWiThrottle"))
+    {
+        WiThrottleServer = new withrottle::Server(configuration.lookup("WiThrottleName"),
+                                                  configuration.lookup("WiThrottlePort"),
+                                                  stack.node());
     }
     
     // This command donates the main thread to the operation of the

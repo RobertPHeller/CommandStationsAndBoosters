@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : 2026-03-02 07:38:28
-//  Last Modified : <260303.1216>
+//  Last Modified : <260304.1437>
 //
 //  Description	
 //
@@ -123,6 +123,10 @@ typedef GpioInitializer<MainEN_Pin, ProgEN_Pin,
 
 #define RAILCOM_DATA_PORT "/dev/ttyS4"
 #define RAILCOM_FEEDBACK_QUEUE 4
+
+#define DEFAULT_TCP_GRIDCONNECT_HOST "localhost"
+#define DEFAULT_TCP_GRIDCONNECT_PORT 12021
+#define DEFAULT_GRIDCONNECT_HUB_PORT 12021
 
 #define DEFAULT_CAN_SOCKET "can0"
 

@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:31 2019
-//  Last Modified : <210527.0746>
+//  Last Modified : <260304.1429>
 //
 //  Description	
 //
@@ -61,77 +61,54 @@ static const char rcsid[] = "@(#) : $Id$";
 #include <vector>
 #include <numeric>
 
-HBridgeControl::HBridgeControl(openlcb::Node *node, 
-                               const HBridgeControlConfig &cfg, 
-                               uint8_t currentAIN, 
-                               const uint32_t limitMilliAmps,
-                               const uint32_t maxMilliAmps,
-                               const Gpio *enableGpio, 
-                               const Gpio *thermFlagGpio)
-      : node_(node)
-, cfg_(cfg)
-, currentAIN_(currentAIN)
-, enableGpio_(enableGpio)
-, thermFlagGpio_(thermFlagGpio)
-, maxMilliAmps_(maxMilliAmps)
-, overCurrentLimit_((uint32_t)round(limitMilliAmps*.9)) // ~90% max value
-, shutdownLimit_((uint32_t)round(limitMilliAmps*.99))
-, isProgTrack_(false)
-, progAckLimit_(0)
-, shortBit_(node, 0, 0, &state_, STATE_OVERCURRENT)
-, shutdownBit_(node, 0, 0, &state_, STATE_SHUTDOWN)
-, thermalFlagBit_(node, 0, 0, &thermalFlag_, 1)
-, shortProducer_(&shortBit_)
-, shutdownProducer_(&shortBit_)
-, thermalFlagProducer_(&thermalFlagBit_)
-{
-    ConfigUpdateService::instance()->register_update_listener(this);
-}
+#include <libconfig.h++>
 
 HBridgeControl::HBridgeControl(openlcb::Node *node, 
-                               const HBridgeControlConfig &cfg, 
-                               uint8_t currentAIN, 
+                               const libconfig::Setting &cfg, 
+                               const char *sysFSCurrent,
+                               const char *sysFSShunt,
+                               const char *sysFSShuntValue,
                                const uint32_t maxMilliAmps,
-                               const Gpio *enableGpio, 
-                               const Gpio *thermFlagGpio)
+                               const Gpio *enableGpio)
       : node_(node)
-, cfg_(cfg)
-, currentAIN_(currentAIN)
+, sysFSCurrent_(sysFSCurrent)
 , enableGpio_(enableGpio)
-, thermFlagGpio_(thermFlagGpio)
 , maxMilliAmps_(maxMilliAmps)
 , overCurrentLimit_(250) // ~250 mA
 , shutdownLimit_(500)
-, isProgTrack_(true)
-, progAckLimit_(60) // ~60 mA
-, shortBit_(node, 0, 0, &state_, STATE_OVERCURRENT)
-, shutdownBit_(node, 0, 0, &state_, STATE_SHUTDOWN)
-, thermalFlagBit_(node, 0, 0, &thermalFlag_, 1)
+, progAckLimit_(0)
+, shortBit_(node, cfg.lookup("EventShortOn"), cfg.lookup("EventShortOff"), &state_, STATE_OVERCURRENT)
+, shutdownBit_(node, cfg.lookup("EventShutdownOn"), cfg.lookup("EventShutdownOff"), &state_, STATE_SHUTDOWN)
 , shortProducer_(&shortBit_)
 , shutdownProducer_(&shortBit_)
-, thermalFlagProducer_(&thermalFlagBit_)
 {
-    ConfigUpdateService::instance()->register_update_listener(this);
+    char buffer[32];
+    int fd = open(sysFSShunt,O_WRONLY);
+    HASSERT(fd >= 0);
+    write(fd,sysFSShuntValue,strlen(sysFSShuntValue));
+    write(fd,"\n",1);
+    close(fd);
+    fd = open(sysFSCurrent_,O_RDONLY);
+    HASSERT(fd >= 0);
+    read(fd,buffer,sizeof(buffer));
+    close(fd);
+    lastReading_ = atol(buffer);
 }
 
 HBridgeControl::~HBridgeControl()
 {
-    ConfigUpdateService::instance()->unregister_update_listener(this);
 }
 
 void HBridgeControl::poll_33hz(openlcb::WriteHelper *helper, Notifiable *done)
 {
-    vector<int> samples;
+    char buffer[32];
+    int fd = open(sysFSCurrent_,O_RDONLY);
+    HASSERT(fd >= 0);
+    read(fd,buffer,sizeof(buffer));
+    close(fd);
+    lastReading_ = atol(buffer);
     
-    while (samples.size() < adcSampleCount_)
-    {
-        samples.push_back(sysfs_adc_getvalue(currentAIN_));
-        usleep(1);
-    }
-    
-    lastReading_ = (uint32_t)round(CurrentFromAIN(std::accumulate(samples.begin(), samples.end(), 0)/adcSampleCount_)*1000);
-    
-    if (isProgTrack_ && progEnable_)
+    if (progEnable_)
     {
         auto backend = Singleton<ProgrammingTrackBackend>::instance();
         if (lastReading_ >= overCurrentLimit_)
@@ -185,75 +162,44 @@ void HBridgeControl::poll_33hz(openlcb::WriteHelper *helper, Notifiable *done)
             async_event_req = true;
         }
     }
-    if (thermFlagGpio_ != NULL)
-    {
-        uint8_t previous_thermalFlag = thermalFlag_;
-        if (thermFlagGpio_->is_set())
-        {
-            thermalFlag_ = 1;
-        }
-        else
-        {
-            thermalFlag_ = 0;
-        }
-        if (previous_thermalFlag != thermalFlag_) {
-            thermalFlagProducer_.SendEventReport(helper, done);
-            async_event_req = true;
-        }
-    }
     if (!async_event_req)
     {
         done->notify();
     }
 }
 
-ConfigUpdateListener::UpdateAction HBridgeControl::apply_configuration(int fd, bool initial_load,
-                                                                       BarrierNotifiable *done)
-{
-    AutoNotify n(done);
-    UpdateAction res = initial_load ? REINIT_NEEDED : UPDATED;
-    openlcb::EventId short_detected = cfg_.event_short().read(fd);
-    openlcb::EventId short_cleared = cfg_.event_short_cleared().read(fd);
-    openlcb::EventId shutdown = cfg_.event_shutdown().read(fd);
-    openlcb::EventId shutdown_cleared = cfg_.event_shutdown_cleared().read(fd);
-    openlcb::EventId thermalflagon = cfg_.event_thermflagon().read(fd);
-    openlcb::EventId thermalflagoff = cfg_.event_thermflagoff().read(fd);
-    
-    auto saved_node = shortBit_.node();
-    if (short_detected != shortBit_.event_on() ||
-        short_cleared != shortBit_.event_off())
-    {
-        shortBit_.openlcb::MemoryBit<uint8_t>::~MemoryBit();
-        new (&shortBit_)openlcb::MemoryBit<uint8_t>(saved_node, short_detected, short_cleared, &state_, STATE_OVERCURRENT);
-        shortProducer_.openlcb::BitEventProducer::~BitEventProducer();
-        new (&shortProducer_)openlcb::BitEventProducer(&shortBit_);
-        res = REINIT_NEEDED;
-    }
-    if (shutdown != shutdownBit_.event_on() ||
-        shutdown_cleared != shutdownBit_.event_off())
-    {
-      saved_node = shutdownBit_.node();
-      shutdownBit_.openlcb::MemoryBit<uint8_t>::~MemoryBit();
-      new (&shutdownBit_)openlcb::MemoryBit<uint8_t>(saved_node, shutdown, shutdown_cleared, &state_, STATE_SHUTDOWN);
-      shutdownProducer_.openlcb::BitEventProducer::~BitEventProducer();
-      new (&shutdownProducer_)openlcb::BitEventProducer(&shutdownBit_);
-      res = REINIT_NEEDED;
-    }
-    if (thermalflagon != thermalFlagBit_.event_on() ||
-        thermalflagoff != thermalFlagBit_.event_off())
-    {
-      saved_node = thermalFlagBit_.node();
-      thermalFlagBit_.openlcb::MemoryBit<uint8_t>::~MemoryBit();
-      new (&thermalFlagBit_)openlcb::MemoryBit<uint8_t>(saved_node, thermalflagon, thermalflagoff, &thermalFlag_, 1);
-      thermalFlagProducer_.openlcb::BitEventProducer::~BitEventProducer();
-      new (&thermalFlagProducer_)openlcb::BitEventProducer(&thermalFlagBit_);
-      res = REINIT_NEEDED;
-    }
-    
-    return res;
-}
 
-void HBridgeControl::factory_reset(int fd)
+HBridgeControlSPI::HBridgeControlSPI(openlcb::Node *node,
+                                     const libconfig::Setting &cfg,
+                                     const char *spidevice,
+                                     const char *sysFSCurrent,
+                                     const char *sysFSShunt,
+                                     const char *sysFSShuntValue,
+                                     const uint32_t limitMilliAmps,
+                                     const uint32_t maxMilliAmps, 
+                                     const Gpio *enableGpio)
+      : node_(node)
+, sysFSCurrent_(sysFSCurrent)
+, enableGpio_(enableGpio)
+, maxMilliAmps_(maxMilliAmps)     
+, overCurrentLimit_((uint32_t)round(limitMilliAmps*.9)) // ~90% max value
+, shutdownLimit_((uint32_t)round(limitMilliAmps*.99))
+, shortBit_(node, cfg.lookup("EventShortOn"), cfg.lookup("EventShortOff"), &state_, STATE_OVERCURRENT)
+, shutdownBit_(node, cfg.lookup("EventShutdownOn"), cfg.lookup("EventShutdownOff"), &state_, STATE_SHUTDOWN)
+, shortProducer_(&shortBit_)
+, shutdownProducer_(&shortBit_)
 {
+    char buffer[32];
+    int fd = open(sysFSShunt,O_WRONLY);
+    HASSERT(fd >= 0);
+    write(fd,sysFSShuntValue,strlen(sysFSShuntValue));
+    write(fd,"\n",1);
+    close(fd);
+    fd = open(sysFSCurrent_,O_RDONLY);
+    HASSERT(fd >= 0);
+    read(fd,buffer,sizeof(buffer));
+    close(fd);
+    lastReading_ = atol(buffer);
+    spifd_ = open(spidevice,O_RDWR);
+    HASSERT(spifd_ >= 0);
 }
-
