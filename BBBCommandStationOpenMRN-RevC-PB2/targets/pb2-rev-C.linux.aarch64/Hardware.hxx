@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : 2026-03-02 07:38:28
-//  Last Modified : <260302.1352>
+//  Last Modified : <260303.1216>
 //
 //  Description	
 //
@@ -124,10 +124,8 @@ typedef GpioInitializer<MainEN_Pin, ProgEN_Pin,
 #define RAILCOM_DATA_PORT "/dev/ttyS4"
 #define RAILCOM_FEEDBACK_QUEUE 4
 
-#define USE_SOCKET_CAN_PORT
 #define DEFAULT_CAN_SOCKET "can0"
 
-#define USEWEBSERVER 1
 #define WEBSERVERPORT 9090
 #define WEBSERVERROOT "/home/heller/CommandStationsAndBoosters/BBBCommandStationOpenMRN/WEBFrontEnd/"
 

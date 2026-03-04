@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Mar 17 13:52:59 2025
-//  Last Modified : <250318.0947>
+//  Last Modified : <260303.1109>
 //
 //  Description	
 //
@@ -248,22 +248,12 @@ void CommandStationHttpd::Begin(openlcb::SimpleStackBase *stack,
                                   const char *mainPRUfirmware,
                                   const char *progPRUfirmware)
 {
-#ifdef NO_THERMFAULT
     mains.reset(new HBridgeControl(stack->node(), 
                                    maincfg, 
                                    CSenseMainAnalogChannel, 
                                    MAIN_MAX_MILLIAMPS, 
                                    MAIN_LIMIT_MILLIAMPS, 
                                    MainEN_Pin::instance()));
-#else
-    mains.reset(new HBridgeControl(stack->node(),
-                                   maincfg, 
-                                   CSenseMainAnalogChannel, 
-                                   MAIN_MAX_MILLIAMPS, 
-                                   MAIN_LIMIT_MILLIAMPS, 
-                                   MainEN_Pin::instance(), 
-                                   MainTF_Pin::instance()));
-#endif
     LOG(INFO, "[CommandStationHttpd] Main track HBridgeControl setup...");
     progtrack.reset(new HBridgeControl(stack->node(),
                                        progcfg, 

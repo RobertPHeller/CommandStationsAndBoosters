@@ -51,23 +51,7 @@
  * 
  * @section OPTIONS OPTIONS
  * 
- * @arg -e EEPROM_file_path is the path to use to implement the 
- *         EEProm device.
- * @arg -t Persistent_Train_file_path is the path to use to the 
- *         implement the train persistent data.
- * @arg -u upstream_host   is the host name for an upstream hub.
- * @arg -q upstream_port   is the port number for the upstream hub.
- * @arg -c can_socketname   is the name of the CAN socket.
- * @arg -M mainPRUfirmware  is the path to the Main (PRU0) firmware
- * @arg -P progPRUfirmware  is the path to the Prog (PRU1) firmware
- * @arg -W name:port Start a WiThrottle named name on port (if :port
- *         is ommited, on the default port).
- * @par
- * 
- * The -u and -q options are only available if the program was built 
- * to support either a OpenLCB Tcp host or a GRIDCONNECT host.
- * The -c option is only available if the program was built to 
- * support CAN Sockets.
+ * None.
  * 
  * @section PARAMETERS PARAMETERS
  * 
@@ -106,76 +90,99 @@
  * 
  * These build options include:
  * 
- * @arg USE_OPENLCB_TCP_HOST
- * Use a binary OpenLCB over Tcp/Ip connection.  Normally NOT defined.
- * 
- * @arg DEFAULT_OPENLCB_TCP_HOST
- * Default OpenLCB over Tcp/Ip host to connect to normally "localhost". 
- * @arg DEFAULT_OPENLCB_TCP_PORT
- * Default OpenLCB over Tcp/Ip port -- normally 12020.
- * 
- * @arg USE_GRIDCONNECT_HOST
- * Use a binary GridConnect over Tcp/Ip connection.  Normally NOT defined.
  * @arg DEFAULT_TCP_GRIDCONNECT_HOST
  * Default GridConnect over Tcp/Ip host to connect to -- normally "localhost".
  * @arg DEFAULT_TCP_GRIDCONNECT_PORT
  * Default GridConnect over Tcp/Ip port -- normally 12021.
  * 
- * @arg PRINT_ALL_PACKETS
- * Print all LCC Packets.  Normally NOT defined.
- * 
- * @arg USE_SOCKET_CAN_PORT
- * Use a hardware CAN connection.  Normally defined.
  * @arg DEFAULT_CAN_SOCKET
- * CAN family socket name.  Normally "can1".
+ * CAN family socket name.  Normally "can0".
  * 
- * @arg START_GCTCP_HUB
- * Start a Grid Connect Hub server
  * @arg DEFAULT_GRIDCONNECT_HUB_PORT
  * Default port the Grid Connect Hub server should listen on -- normally 12021.
  * 
- * @arg USEWEBSERVER
- * Start a webserer instead of opening a Console server
  * @arg WEBSERVERROOT
  * Webserver doc root
  * @arg WEBSERVERPORT
  * Webserver port to use -- normally 9090
- * @arg TERMINALCONSOLE
- * Use a terminal console. Normally NOT defined -- debug use only.
- * @arg CONSOLEPORT
- * Console port to listen on -- normally 9900.
  * 
  * 
  * @page Configuration
  * 
- * There are three configuration sections, one for each of the DCC
- * outputs (Main and Programming) and one for the fan control.
+ * The configuration is loaded from /home/debian/commandstation.cfg or
+ * /etc/default/commandstation.cfg if /home/debian/commandstation.cfg does
+ * not exist.
+ *
+ * @section GLOBAL The global config options include:
  * 
- * The two DCC outputs have these configuration options:
+ * @arg NodeID The node ID to use as a long long.  The default is 
+ * 0x050101012200L (05:01:01:01:22:00).
+ * @arg UseGCHost Connect to a GC host.  The default is false.
+ * @arg GCHost The GridConnect host. The default is a build option, normally 
+ * "localhost".
+ * @arg GCPort The GridConnect port. The default is a build option, normally
+ * 12021.
+ * @arg CanSocket The CAN socket to use. The default is a build option, 
+ * normally "can0".
+ * @arg GCHub Whether to start a GC hub.  The default is false.
+ * @arg GCHubPort the port the GC hub should listen on.  The default is a build
+ * option, normally 12021.  The hub will listen on all interfaces (0.0.0.0).
+ * @arg WebServerRoot The webserver document root.  The default is a build 
+ * option.
+ * @arg WebServerPort The webserver port to listen on.  The default is a build
+ * option, normally 9090. The Webserver will listen on all interfaces 
+ * (0.0.0.0). 
+ * @arg StartWiThrottle Start the WiThrottle. Default false.
+ * @arg WiThrottleName The name of the WiThrottle. The default is 
+ * "PocketBeagle".
+ * @arg WiThrottlePort The port number the WiThrottle server will listen on.
+ * The default is 12090.  The server will listen on all interfaces (0.0.0.0).
+ * @section DCCOUTPUT DCC output configurations.
  * 
- * @arg The event to send when there is a short.
- * @arg The event to send when short is cleared.
- * @arg The event to send when the command station is shutdown
- *      due to over current.
- * @arg The event to send when the shutdown is cleared.
- * @arg The event to send when the thermal flag goes on.
- * @arg The event to send when the thermal flag goes off.
+ * There are two groups for the DCC output configurations: Main and 
+ * Programming.
+ * 
+ * The config options are:
+ *
+ * @arg PRUfirmware The path tail for the PRU firmware. The default is 
+ * "MainTrackDCC.out" for the main and "ProgTrackDCC.out" for the programming 
+ * track.
+ * @arg EventShortOn The EventID to send when there is a short.  The default 
+ * is formed from the NodeID shifted left 16 bits with 0x0000 (Main) or
+ * 0x0004 (Programming) added.
+ * @arg EventShortOff The EventID to send when the short clears.  The default
+ * is formed from the NodeID shifted left 16 bits with 0x0001 (Main) or
+ * 0x0005 (Programming) added.
+ * @arg EventShutdownOn The EventID to send when the track output power has 
+ * exceeded the safety threshold of the H-Bridge. The default is formed from 
+ * the NodeID shifted left 16 bits with 0x0002 (Main) or 0x0006 (Programming) 
+ * added.
+ * @arg EventShutdownOff The EventID to send when the track output power has 
+ * returned to safe levels. The default is formed from 
+ * the NodeID shifted left 16 bits with 0x0003 (Main) or 0x0007 (Programming) 
+ * added.
+ * @arg 
+ * 
  * @par
+ * @section FANCONTROL Fan Control
  * 
- * The fan control section has these configuration options:
+ * The third section relates to temperature and fan control: FanControl
  * 
- * @arg The alarm temperature threshold, in tenths of degree 
- *      centitrade.
- * @arg The event to send when the temperature excedes the alarm 
- *      temperature threshold.
- * @arg The event to send when the temperature drops below the alarm 
- *      temperature threshold.
- * @arg The fan temperature threshold, in tenths of degree
- *      centitrade.
- * @arg The event to send when the temperature excedes the fan
- *      temperature threshold.
- * @arg The event to send when the temperature drops below the fan
- *      temperature threshold.
+ * @arg AlarmTempThresh Alarm Temperature threshold, in tenths of degrees 
+ * Centitgrade. The default is 350.
+ * @arg AlarmOn The event to send when the temperature excedes the threshold.
+ * The default is formed from the NodeID shifted left 16 bits with 0x0008 
+ * added.
+ * @arg AlarmOff he event to send when the temperature drops below the
+ * threshold. The default is formed from the NodeID shifted left 16 bits with
+ * 0x0009 added.
+ * @arg FanTempThresh Fan Temperature threshold, in tenths of degrees
+ * Centitgrade. The default is 250.
+ * @arg FanOn The event to send when the fan is turned on. The default is 
+ * formed from the NodeID shifted left 16 bits with 0x000A added.
+ * @arg FanOff The event to send when the fan is turned off. The default is 
+ * formed from the NodeID shifted left 16 bits with 0x000B added.
+ * 
  * @par
  * 
  */
@@ -195,17 +202,12 @@ OVERRIDE_CONST(num_memory_spaces, 7);
 #include "openlcb/ConfiguredProducer.hxx"
 
 #include "Hardware.hxx"
-#include "config.hxx"
 #include "freertos_drivers/common/DummyGPIO.hxx"
 #include "freertos_drivers/common/LoggingGPIO.hxx"
 #include "os/LinuxGpio.hxx"
 #include "utils/GpioInitializer.hxx"
 #include "CommandStationStack.hxx"
-#ifdef USEWEBSERVER
 #include "CommandStationHttpd.hxx"
-#else
-#include "CommandStationConsole.hxx"
-#endif
 #include "withrottle/Server.hxx"
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -213,6 +215,7 @@ OVERRIDE_CONST(num_memory_spaces, 7);
 #include <unistd.h>
 #include <termios.h>
 #include <sys/ioctl.h>
+#include <libconfig.h++>
 
 // Changes the default behavior by adding a newline after each gridconnect
 // packet. Makes it easier for debugging the raw device.
@@ -226,171 +229,25 @@ OVERRIDE_CONST(main_thread_stack_size, 2500);
 // easily incrementable method.
 #define DefaultNODEID 0x050101012200ULL // 05 01 01 01 22 00
 static openlcb::NodeID NODE_ID = DefaultNODEID;
-// ConfigDef comes from config.hxx and is specific to the particular device and
-// target. It defines the layout of the configuration memory space and is also
-// used to generate the cdi.xml file. Here we instantiate the configuration
-// layout. The argument of offset zero is ignored and will be removed later.
-openlcb::ConfigDef cfg(0);
-// Defines weak constants used by the stack to tell it which device contains
-// the volatile configuration information. This device name appears in
-// HwInit.cxx that creates the device drivers.
 
 char pathnamebuffer[256];
-
-extern const char *const openlcb::CONFIG_FILENAME = pathnamebuffer;
-// The size of the memory space to export over the above device.
-extern const size_t openlcb::CONFIG_FILE_SIZE =
-    cfg.seg().size() + cfg.seg().offset();
-// The SNIP user-changeable information in also stored in the above eeprom
-// device. In general this could come from different eeprom segments, but it is
-// simpler to keep them together.
-extern const char *const openlcb::SNIP_DYNAMIC_FILENAME =
-    openlcb::CONFIG_FILENAME;
 
 // Persistant train DB file.
 char persistenttrainfile[256];
 extern const char *const BeagleCS::TRAIN_DB_JSON_FILE = persistenttrainfile;
 
-// Instantiates the actual producer and consumer objects for the given GPIO
-// pins from above. The ConfiguredConsumer class takes care of most of the
-// complicated setup and operation requirements. We need to give it the virtual
-// node pointer, the configuration configuration from the CDI definition, and
-// the hardware pin definition. The virtual node pointer comes from the stack
-// object. The configuration structure comes from the CDI definition object,
-// segment 'seg', in which there is a repeated group 'consumers', and we assign
-// the individual entries to the individual consumers. Each consumer gets its
-// own GPIO pin.
+// Set up the connection mode: either over Tcp/Ip (GridConnect) 
+// or over the CAN netork.
 
-
-class FactoryResetHelper : public DefaultConfigUpdateListener {
-public:
-    UpdateAction apply_configuration(int fd, bool initial_load,
-                                     BarrierNotifiable *done) OVERRIDE 
-    {
-        AutoNotify n(done);
-        return UPDATED;
-    }
-    void factory_reset(int fd) override
-    {
-        cfg.userinfo().name().write(fd, HARDWARE_IMPL);
-        cfg.userinfo().description().write(
-            fd, HARDWARE_IMPL);
-    }
-};
-
-
-
-// Set up the connection mode: either over Tcp/Ip (GridConnect or
-// OpenLCB) or over the CAN netork.
-
-#ifdef USE_OPENLCB_TCP_HOST
-int upstream_port = DEFAULT_OPENLCB_TCP_PORT;
-const char *upstream_host = DEFAULT_OPENLCB_TCP_HOST;
-#else
-#  ifdef USE_GRIDCONNECT_HOST
 int upstream_port = DEFAULT_TCP_GRIDCONNECT_PORT;
 const char *upstream_host = DEFAULT_TCP_GRIDCONNECT_HOST;
-#  endif
-#  ifdef USE_SOCKET_CAN_PORT
 const char *cansocket = DEFAULT_CAN_SOCKET;
-#    ifdef START_GCTCP_HUB
 int gctcp_hub_port = DEFAULT_GRIDCONNECT_HUB_PORT;
-#    endif
-#  endif
-#endif
-
-// CLI Usage output.
-
-void usage(const char *e)
-{
-    fprintf(stderr, "Usage: %s [-e EEPROM_file_path] [-t Persistent_Train_file_path]", e);
-    fprintf(stderr, "\n\n");    
-    fprintf(stderr, "OpenMRN-Cxx-Node.\nManages a Beagle Bone Command Station Cape.\n");
-    fprintf(stderr, "\nOptions:\n");
-    fprintf(stderr, " [-n nodeid]");
-    fprintf(stderr, " [-M mainPRUfirmware] [-P progPRUfirmware]");
-#if defined(USE_OPENLCB_TCP_HOST) || defined(USE_GRIDCONNECT_HOST)
-    fprintf(stderr, " [-u upstream_host] [-q upstream_port]");
-#endif
-#ifdef USE_SOCKET_CAN_PORT
-    fprintf(stderr, " [-c can_socketname]");
-#endif
-    fprintf(stderr, "\t-n nodeid is the node id, as a 12 hex digit number (optionally with colons between pairs of hex digits.\n");
-    fprintf(stderr, "\t-e EEPROM_file_path is the path to use to implement the EEProm device.\n");
-    fprintf(stderr, "\t-t Persistent_Train_file_path is the path to use to the implement the train persistent data.\n");
-    fprintf(stderr, "\t-M mainPRUfirmware is the path to the mains PRU (PRU0) firmware\n");
-    fprintf(stderr, "\t-P progPRUfirmware is the path to the prog PRU (PRU1) firmware\n");
-#if defined(USE_OPENLCB_TCP_HOST) || defined(USE_GRIDCONNECT_HOST)
-    fprintf(stderr,"\t-u upstream_host   is the host name for an "
-            "upstream hub.\n");
-    fprintf(stderr,
-            "\t-q upstream_port   is the port number for the upstream "
-            "hub.\n");
-#endif
-#ifdef USE_SOCKET_CAN_PORT
-    fprintf(stderr,"\t-c can_socketname   is the name of the CAN "
-            "socket.\n");
-#endif
-    fprintf(stderr,"\t-W name:port Start a WiThrottle named name on port (if :port\n");
-    fprintf(stderr,"\t             is ommited, on the default port).\n");
-    exit(1);
-}
 
 // Files containing the PRU Firmware programs.
 
 static char mainPRUfirmware[256] = "MainTrackDCC.out", 
             progPRUfirmware[256] = "ProgTrackDCC.out";
-
-// Parse CLI options.
-
-openlcb::NodeID parseNodeID(const char *nidstring)
-{
-    uint64_t result = 0ULL;
-    int nibcount = 0, coloncount = 0;
-    const char *p = NULL;
-    for (p = nidstring; *p != '\0'; p++)
-    {
-        if (isxdigit(*p))
-        {
-            nibcount++;
-            if (isdigit(*p))
-            {
-                result = (result<<4)+(*p-'0');
-            }
-            else if (islower(*p))
-            {
-                result = (result<<4)+(*p-'a'+10);
-            }
-            else
-            {
-                result = (result<<4)+(*p-'A'+10);
-            }
-        }
-        else if (*p == ':')
-        {
-            coloncount++;
-        }
-        else
-        {
-            // not a hex digit or colon
-            fprintf(stderr, "Syntax error: Illformed node id: %s\n",nidstring);
-            return (openlcb::NodeID) -1;
-        }
-    }
-    if (nibcount != 12)
-    {
-        // Wrong number of digits
-        fprintf(stderr, "Syntax error: Illformed node id: %s\n",nidstring);
-        return (openlcb::NodeID) -1;
-    }
-    if (coloncount != 0 && coloncount != 5)
-    {
-        // Wrong number of colons (some number other than 0 or 5)
-        fprintf(stderr, "Syntax error: Illformed node id: %s\n",nidstring);
-        return (openlcb::NodeID) -1;
-    }
-    return (openlcb::NodeID) result;
-}
 
 static bool start_WiThrottle = false;
 static char WiThrottle_Name[256] = "PocketBeagle";
@@ -398,106 +255,200 @@ int WiThrottle_port = -1;
 
 withrottle::Server *WiThrottleServer;
 
-void parse_args(int argc, char *argv[])
+libconfig::Config config();
+
+#define SYSTEMDEFAULTCONFIG "/etc/default/commandstation.cfg"
+#define USERCONFIG "/home/debian/commandstation.cfg"
+
+static bool InitializeDCCConfig(libconfig::Setting &group, const char *prufile,
+                                openlcb::EventID shorton,
+                                openlcb::EventID shortoff,
+                                openlcb::EventID shutdownon,
+                                openlcb::EventID shutdownoff,
+                                bool update)
 {
-    int opt;
-#if defined(USE_OPENLCB_TCP_HOST) || defined(USE_GRIDCONNECT_HOST)
-#  ifdef USE_SOCKET_CAN_PORT
-#    ifdef START_GCTCP_HUB
-#      define OPTSTRING "hn:e:t:M:P:u:q:c:p:W:"
-#    else
-#      define OPTSTRING "hn:e:t:M:P:u:q:c:W:"
-#    endif
-#  else
-#    define OPTSTRING "hn:e:t:M:P:u:q:W:"
-#  endif
-#else
-#  ifdef USE_SOCKET_CAN_PORT
-#    ifdef START_GCTCP_HUB
-#      define OPTSTRING "hn:e:t:M:P:c:p:W:"
-#    else
-#      define OPTSTRING "hn:e:t:M:P:c:W:"
-#    endif
-#  else
-#    define OPTSTRING "hn:e:t:M:P:W:"
-#  endif
-#endif
-    while ((opt = getopt(argc, argv, OPTSTRING)) >= 0)
+    
+    return update;
+}
+
+static bool InitializeFanControl(libconfig::Setting &group,
+                                 uint16_t alarmthresh,
+                                 openlcb::EventID alarmon,
+                                 openlcb::EventID alarmmoff,
+                                 uint16_t fanthresh,
+                                 openlcb::EventID fanon,
+                                 openlcb::EventID fanoff,
+                                 bool update)
+{
+    return update;
+}
+
+static void ProcessConfiguration(libconfig::Config &config)
+{
+    try {
+        config.readFile(USERCONFIG);
+    }
+    catch(const FileIOException &fioex)
     {
-        switch (opt)
+        try {
+            config.readFile(SYSTEMDEFAULTCONFIG);
+        }
+        catch(const FileIOException &fioex)
         {
-        case 'h':
-            usage(argv[0]);
-            break;
-        case 'n':
-            {
-                openlcb::NodeID nid = parseNodeID(optarg);
-                if (((int64_t)nid) == -1) 
-                {
-                    usage(argv[0]);
-                }
-                else
-                {
-                    NODE_ID = nid;
-                }
-            }
-            break;
-        case 'e':
-            strncpy(pathnamebuffer,optarg,sizeof(pathnamebuffer));
-            break;
-        case 't':
-            strncpy(persistenttrainfile,optarg,sizeof(persistenttrainfile));
-            break;
-        case 'M':
-            strncpy(mainPRUfirmware,optarg,sizeof(mainPRUfirmware));
-            break;
-        case 'P':
-            strncpy(progPRUfirmware,optarg,sizeof(progPRUfirmware));
-            break;
-#if defined(USE_OPENLCB_TCP_HOST) || defined(USE_GRIDCONNECT_HOST)
-        case 'u':
-            upstream_host = optarg;
-            break;
-        case 'q':
-            upstream_port = atoi(optarg);
-            break;
-#endif
-#ifdef USE_SOCKET_CAN_PORT
-        case 'c':
-            cansocket = optarg;
-            break;
-#endif
-#ifdef START_GCTCP_HUB
-        case 'p':
-            gctcp_hub_port = atoi(optarg);
-            break;
-#endif
-        case 'W':
-            {
-                start_WiThrottle = true;
-                char *c = strchr(optarg,':');
-                if (c != NULL)
-                {
-                    WiThrottle_port = atoi(c+1);
-                    *c = '\0';
-                }
-                else
-                {
-                    WiThrottle_port = withrottle::Defs::DEFAULT_PORT;
-                }
-                strcpy(WiThrottle_Name,optarg);
-                break;
-            }
-        default:
-            fprintf(stderr, "Unknown option %c\n", opt);
-            usage(argv[0]);
+        }
+    }
+    bool updated = false;
+    
+    libconfig::Setting root = config.getRoot();
+    if (!root.exists("NodeID"))
+    {
+        libconfig::Setting nodeid = root.add("NodeID",
+                                             libconfig::Setting::TypeInt64);
+        nodeid.setFormat(libconfig::Setting::FormatHex);
+        nodeid = DefaultNODEID;
+        updated = true;
+    }
+    if (!root.exists("PersistentTrainFilePath"))
+    {
+        libconfig::Setting persistpath = root.add("PersistentTrainFilePath",
+                                                  libconfig::Setting::TypeString);
+        char persistpathbuffer[256];
+        snprintf(persistpathbuffer,sizeof(persistpathbuffer),
+                 "/tmp/persistent_train_file_%012llX",root.lookup("NodeID"));
+        persistpath = persistpathbuffer;
+        updated = true;
+    }
+    if (!root.exists("UseGCHost"))
+    {
+        libconfig::Setting usegchost = root.add("UseGCHost".
+                                                libconfig::Setting::TypeBoolean);
+        usegchost = false;
+        updated = true;
+    }
+    if (!root.exists("GCHost"))
+    {
+        libconfig::Setting gchost = root.add("GCHost",
+                                             libconfig::Setting::TypeString);
+        gchost = DEFAULT_TCP_GRIDCONNECT_HOST;
+        updated = true;
+    }
+    if (!root.exists("GCPort"))
+    {
+        libconfig::Setting gcport = root.add("GCPort",
+                                             libconfig::Setting::TypeInt);
+        gcport = DEFAULT_TCP_GRIDCONNECT_HOST;
+        updated = true;
+    }
+    if (!root.exists("CanSocket"))
+    {
+        libconfig::Setting cansocket = root.add("CanSocket",
+                                                libconfig::Setting::TypeString);
+        cansocket = DEFAULT_CAN_SOCKET;
+        updated = true;
+    }
+    if (!root.exists("GCHub"))
+    {
+        libconfig::Setting gchub = root.add("GCHub",
+                                            libconfig::Setting::TypeBoolean);
+        gchub = false;
+        updated = true;
+    }
+    if (!root.exists("GCHubPort"))
+    {
+        libconfig::Setting gchubport = root.add("GCHubPort",
+                                                libconfig::Setting::TypeInt);
+        gchubport = DEFAULT_GRIDCONNECT_HUB_PORT;
+        updated = true; 
+    }
+    if (!root.exists("WebServerRoot"))
+    {
+        libconfig::Setting webserverroot = 
+              root.add("WebServerRoot",
+                       libconfig::Setting::TypeString);
+        webserverroot = WEBSERVERROOT;
+        updated = true;
+    }
+    if (!root.exists("WebServerPort"))
+    {
+        libconfig::Setting webserverport = root.add("WebServerPort",
+                                                    libconfig::Setting::TypeInt);
+        webserverport = WEBSERVERPORT;
+        updated = true;
+    }
+    if (!root.exists("StartWiThrottle"))
+    {
+        libconfig::Setting startwithrottle = root.add("StartWiThrottle",
+                                                      libconfig::Setting::TypeBoolean);
+        startwithrottle = false;
+        updated = true;
+    }
+    if (!root.exists("WiThrottleName"))
+    {
+        libconfig::Setting withrottlename = root.add("WiThrottleName",
+                                                     libconfig::Setting::TypeString);
+        withrottlename = "PocketBeagle";
+        updated = true;
+    }
+    if (!root.exists("WiThrottlePort"))
+    {
+        libconfig::Setting withrottleport = root.add("WiThrottlePort",
+                                                     libconfig::Setting::TypeInt);
+        withrottleport = withrottle::Defs::DEFAULT_PORT;
+        updated = true;
+    }
+    if (!root.exists("Main"))
+    {
+        libconfig::Setting main = root.add("Main",
+                                           libconfig::Setting::TypeGroup);
+        updated = true;
+    }
+    openlcb::EventID lastEventID = root.lookup("NodeID") << 16;
+    updated = InitializeDCCConfig(root.lookup("Main"),
+                                  "MainTrackDCC.out",
+                                  lastEventID++,
+                                  lastEventID++,
+                                  lastEventID++,
+                                  lastEventID++,
+                                  updated);
+    if (!root.exists("Programming"))
+    {
+        libconfig::Setting prog = root.add("Programming",
+                                           libconfig::Setting::TypeGroup);
+        updated = true; 
+    }
+    updated = InitializeDCCConfig(root.lookup("Programming"),
+                                  "ProgTrackDCC.out",
+                                  lastEventID++,
+                                  lastEventID++,
+                                  lastEventID++,
+                                  lastEventID++,
+                                  updated);
+    if (!root.exists("FanControl"))
+    {
+        libconfig::Setting fancontrol = root.add("FanControl",
+                                                 libconfig::Setting::TypeGroup);
+        updated = true;
+    }
+    updated = InitializeFanControl(root.lookup("FanControl"),
+                                   350,
+                                   lastEventID++,
+                                   lastEventID++,
+                                   250,
+                                   lastEventID++,
+                                   lastEventID++,
+                                   updated);
+    if (updated)
+    {
+        try {
+            config.writeFile(USERCONFIG);
+        }
+        catch(const FileIOException &fioex)
+        {
+            LOG(ERROR,"Failed to save configuration %s",USERCONFIG);
+            exit(errno);
         }
     }
 }
-
-
-#ifdef USE_OPENLCB_TCP_HOST
-#endif
 
 /** Entry point to application.
  * @param argc number of command line arguments
@@ -538,7 +489,6 @@ int appl_main(int argc, char *argv[])
 #endif
 #endif
 
-#ifdef USEWEBSERVER
     // Webserver executor.
     Executor<1> httpd_executor("httpd_executor", 0, 2048);
     CommandStationHttpd commandProcessorHttpd(&stack,
@@ -546,45 +496,16 @@ int appl_main(int argc, char *argv[])
                                               &httpd_executor,
                                               WEBSERVERROOT, 
                                               WEBSERVERPORT);
-#else
-    // Console executor.
-    Executor<1> console_executor("console_executor", 0, 2048);
-    
-    // Console
-#ifdef TERMINALCONSOLE
-    CommandStationConsole commandProcessorConsole(&stack,
-                                                  stack.traction_service(),
-                                                  &console_executor,
-                                                  Console::FD_STDIN,
-                                                  Console::FD_STDOUT);
-#elsee
-    CommandStationConsole commandProcessorConsole(&stack,
-                                                  stack.traction_service(),
-                                                  &console_executor,
-                                                  CONSOLEPORT);
-#endif
-#endif
-    
     FactoryResetHelper  factory_reset_helper;
     
     // Create the config file
     stack.create_config_file_if_needed(cfg.seg().internal_config(), openlcb::CANONICAL_VERSION, openlcb::CONFIG_FILE_SIZE);
-#ifdef USEWEBSERVER
     CommandStationHttpd::Begin(&stack,stack.traction_service(),
                                  cfg.seg().maindcc(),
                                  cfg.seg().progdcc(),
                                  cfg.seg().fancontrol(),
                                  mainPRUfirmware,
                                  progPRUfirmware);
-#else
-    // Start things up in the Console.
-    CommandStationConsole::Begin(&stack,stack.traction_service(),
-                                 cfg.seg().maindcc(),
-                                 cfg.seg().progdcc(),
-                                 cfg.seg().fancontrol(),
-                                 mainPRUfirmware,
-                                 progPRUfirmware);
-#endif
     // Connects to a TCP hub on the internet.
     //stack.connect_tcp_gridconnect_hub("28k.ch", 50007);
 #ifdef USE_TCP_GRIDCONNECT_HOST
