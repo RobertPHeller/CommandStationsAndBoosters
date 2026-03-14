@@ -190,6 +190,9 @@
  */
 
 #include <ctype.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <unistd.h>
 
 #include "os/os.h"
 #include "nmranet_config.h"
@@ -239,7 +242,8 @@ withrottle::Server *WiThrottleServer;
 libconfig::Config configuration;
 
 extern const char SYSTEMDEFAULTCONFIG[] = "/etc/default/commandstation.cfg";
-extern const char USERCONFIG[] =  "/home/heller/commandstation.cfg";
+char userconfigfile[256];
+extern const char *const USERCONFIG =  userconfigfile;
 
 extern const char *const openlcb::SNIP_DYNAMIC_FILENAME = NULL;
 
@@ -361,6 +365,18 @@ static bool InitializeFanControl(libconfig::Setting &group,
 
 static void ProcessConfiguration(libconfig::Config &config)
 {
+    uid_t myuid = getuid();
+    struct passwd *pwentry = getpwuid(myuid);
+    if (pwentry)
+    {
+        snprintf(userconfigfile,sizeof(userconfigfile),"%s/commandstation.cfg",
+                 pwentry->pw_dir);
+    }
+    else
+    {
+        snprintf(userconfigfile,sizeof(userconfigfile),"%s/commandstation.cfg","/root");
+    }
+    LOG(INFO,"[ProcessConfiguration] userconfigfile is %s",userconfigfile);
     try {
         config.readFile(USERCONFIG);
     }

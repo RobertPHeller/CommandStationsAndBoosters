@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:31 2019
-//  Last Modified : <260305.1243>
+//  Last Modified : <260314.0838>
 //
 //  Description	
 //
@@ -57,6 +57,9 @@ static const char rcsid[] = "@(#) : $Id$";
 #include "AnalogReadSysFS.h"
 #include "HBridgeControl.hxx"
 #include "Hardware.hxx"
+
+#include <fcntl.h>
+#include <unistd.h>
 
 #include <vector>
 #include <numeric>

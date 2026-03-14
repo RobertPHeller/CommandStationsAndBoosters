@@ -1,4 +1,5 @@
 SUBDIRS = \
-	pb2-rev-C.linux.aarch64	  
+	pb2-rev-C.linux.aarch64	\
+	dummy.linux.aarch64
 
 include $(OPENMRNPATH)/etc/recurse.mk

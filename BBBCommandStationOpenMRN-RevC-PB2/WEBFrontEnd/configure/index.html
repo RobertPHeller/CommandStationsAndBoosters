@@ -1,0 +1,71 @@
+<html>
+<head>
+        <TITLE>Command Station Configuration</TITLE>
+        <link rel="stylesheet" href="/CSS/font_awesome_all.min.css" />
+        <link rel="stylesheet" href="/CSS/cs.css" />
+        <link rel="stylesheet" href="/CSS/UI.css" />
+        <script id="cs" type="text/javascript" src="/JS/cs.js"></script>
+</head>
+<body >
+  <H1>Command Station Configuration</H1>
+  <div id="tools" class="toolbar">
+    <button type="button" name="Load" value="Load" onclick="CS.RefreshConfiguration()">Load</button>
+    <button type="button" name="Save" value="Save" onclick="CS.SaveConfiguration()">Save Configuration</button>
+  </div>
+  <div id="messages"></div>
+  <div id="Global" class="ConfigGroup">
+    <H2>Global</H2>
+    <ul>
+      <li><label for="NodeID">Node ID: </label><input id="NodeID" type="text" size="17" value="XX.XX.XX.XX.XX.XX" /><button type="button" onclick="CS.SetConfig('NodeId')">Set</button></li>
+      <li><label for="PersistentTrainFilePath">Persistent Train File Path: </label><input id="PersistentTrainFilePath" type="text" size="100" value="" /><button type="button" onclick="CS.SetConfig('PersistentTrainFilePath')">Set</button></li>
+      <li><label for="UseGCHost">Use GC Host? </label><input id="UseGCHost" type="checkbox" /><button type="button" onclick="CS.SetConfig('UseGCHost')">Set</button></li>
+      <li><label for="GCHost">GC Host: </label><input id="GCHost" type="text" size="32" value="" /><button type="button" onclick="CS.SetConfig('GCHost')">Set</button></li>
+      <li><label for="GCPort">GC Port: </label><input id="GCPort" type="number" size="10" value="" /><button type="button" onclick="CS.SetConfig('GCPort')">Set</button></li>
+      <li><label for="CanSocket">CAN Socket: </label><input id="CanSocket" type="text" size="32" value="" /><button type="button" onclick="CS.SetConfig('CanSocket')">Set</button></li>
+      <li><label for="GCHub">Start GC Hub: </label><input id="GCHub" type="checkbox" /><button type="button" onclick="CS.SetConfig('GCHub')">Set</button></li>
+      <li><label for="GCHubPort">GC Hub Port: </label><input id="GCHubPort" type="number" size="10" value="" /><button type="button" onclick="CS.SetConfig('GCHubPort')">Set</button></li>
+      <li><label for="WebServerRoot">Web Server Root: </label><input id="WebServerRoot" type="text" size="100" value="" /><button type="button" onclick="CS.SetConfig('WebServerRoot')">Set</button></li>
+      <li><label for="WebServerPort">Web Server Port: </label><input id="WebServerPort" type="number" size="10" value="" /><button type="button" onclick="CS.SetConfig('WebServerPort')">Set</button></li>
+      <li><label for="StartWiThrottle">Start WiThrotte? </label><input id="StartWiThrottle" type="checkbox" /><button type="button" onclick="CS.SetConfig('StartWiThrottle')">Set</button></li>
+      <li><label for="WiThrottleName">WiThrottle Name: </label><input id="WiThrottleName" type="text" size="32" value="" /><button type="button" onclick="CS.SetConfig('WiThrottleName')">Set</button></li>
+      <li><label for="WiThrottlePort">WiThrottle Port: </label><input id="WiThrottlePort" type="number" size="10" value="" /><button type="button" onclick="CS.SetConfig('WiThrottlePort')">Set</button></li>
+    </ul>
+  </div>
+  <div id="Main" class="ConfigGroup">
+    <H2>Main DCC</H2>
+    <ul>
+      <li><label for="Main.PRUfirmware">PRU Firmware: </label><input id="Main.PRUfirmware" type="text" size="100" value="" /><button type="button" onclick="CS.SetConfig('Main.PRUfirmware')">Set</button></li>
+      <li><label for="Main.EventShortOn">Short Event On: </label><input id="Main.EventShortOn" type="text" size="25" value="XX.XX.XX.XX.XX.XX.XX.XX" /><button type="button" onclick="CS.SetConfig('Main.EventShortOn')">Set</button></li>
+      <li><label for="Main.EventShortOff">Short Event Off: </label><input id="Main.EventShortOff" type="text" size="25" value="XX.XX.XX.XX.XX.XX" /><button type="button" onclick="CS.SetConfig('Main.EventShortOff')">Set</button></li>
+      <li><label for="Main.EventShutdownOn">Shutdown Event On: </label><input id="Main.EventShutdownOn" type="text" size="25" value="XX.XX.XX.XX.XX.XX" /><button type="button" onclick="CS.SetConfig('Main.EventShutdownOn')">Set</button></li>
+      <li><label for="Main.EventShutdownOff">Shutdown Event Off: </label><input id="Main.EventShutdownOff" type="text" size="25" value="XX.XX.XX.XX.XX.XX" /><button type="button" onclick="CS.SetConfig('Main.EventShutdownOff')">Set</button></li>
+    </ul>
+  </div>
+  <div id="Programming" class="ConfigGroup">
+    <H2>Programming Track DCC</H2>
+    <ul>
+      <li><label for="Programming.PRUfirmware">PRU Firmware: </label><input id="Programming.PRUfirmware" type="text" size="100" value="" /><button type="button" onclick="CS.SetConfig('Programming.PRUfirmware')">Set</button></li>
+      <li><label for="Programming.EventShortOn">Short Event On: </label><input id="Programming.EventShortOn" type="text" size="25" value="XX.XX.XX.XX.XX.XX" /><button type="button" onclick="CS.SetConfig('Programming.EventShortOn')">Set</button></li>
+      <li><label for="Programming.EventShortOff">Short Event Off: </label><input id="Programming.EventShortOff" type="text" size="25" value="XX.XX.XX.XX.XX.XX" /><button type="button" onclick="CS.SetConfig('Programming.EventShortOff')">Set</button></li>
+      <li><label for="Programming.EventShutdownOn">Shutdown Event On: </label><input id="Programming.EventShutdownOn" type="text" size="25" value="XX.XX.XX.XX.XX.XX" /><button type="button" onclick="CS.SetConfig('Programming.EventShutdownOn')">Set</button></li>
+      <li><label for="Programming.EventShutdownOff">Shutdown Event Off: </label><input id="Programming.EventShutdownOff" type="text" size="25" value="XX.XX.XX.XX.XX.XX" /><button type="button" onclick="CS.SetConfig('Programming.EventShutdownOff')">Set</button></li>
+    </ul>
+  </div>
+  <div id="FanControl" class="ConfigGroup">
+    <H2>Fan Control</H2>
+    <ul>
+      <li><label for="FanControl.AlarmTempThresh">Alarm Temporature Threshold: </label><input id="FanControl.AlarmTempThresh" type="number" size="10" value="" /><button type="button" onclick="CS.SetConfig('FanControl.AlarmTempThresh')">Set</button></li>
+      <li><label for="FanControl.AlarmOn">Alarm On: </label><input id="FanControl.AlarmOn" type="text" size="25" value="XX.XX.XX.XX.XX.XX" /><button type="button" onclick="CS.SetConfig('FanControl.AlarmOn')">Set</button></li>
+      <li><label for="FanControl.AlarmOff">Alarm Off: </label><input id="FanControl.AlarmOff" type="text" size="25" value="XX.XX.XX.XX.XX.XX" /><button type="button" onclick="CS.SetConfig('FanControl.AlarmOff')">Set</button></li>
+      <li><label for="FanControl.FanTempThresh">Fan Temporature Threshold: </label><input id="FanControl.FanTempThresh" type="number" size="10" value="" /><button type="button" onclick="CS.SetConfig('FanControl.FanTempThresh')">Set</button></li>
+      <li><label for="FanControl.FanOn">Fan On: </label><input id="FanControl.FanOn" type="text" size="25" value="XX.XX.XX.XX.XX.XX" /><button type="button" onclick="CS.SetConfig('FanControl.FanOn')">Set</button></li>
+      <li><label for="FanControl.FanOff">Fan Off: </label><input id="FanControl.FanOff" type="text" size="25" value="XX.XX.XX.XX.XX.XX" /><button type="button" onclick="CS.SetConfig('FanControl.FanOff')">Set</button></li>
+    </ul>
+  </div>
+  <script>
+    console.log("test");
+    CS.RefreshConfiguration();
+  </script>
+</body>
+</html>
+

@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:53 2019
-//  Last Modified : <260304.1433>
+//  Last Modified : <260314.0910>
 //
 //  Description	
 //
@@ -104,8 +104,15 @@ void FanControl::poll_33hz(openlcb::WriteHelper *helper, Notifiable *done)
     
     while (samples.size() < 32)
     {
-        samples.push_back(sysfs_adc_getvalue(temperatureAIN_));
-        usleep(1);
+        if (temperatureAIN_ != 0xff)
+        {
+            samples.push_back(sysfs_adc_getvalue(temperatureAIN_));
+            usleep(1);
+        }
+        else
+        {
+            samples.push_back(0);
+        }
     }
     
     lastReading_ = (uint16_t)round(TempFromAIN(std::accumulate(samples.begin(), samples.end(), 0)/32)*10);

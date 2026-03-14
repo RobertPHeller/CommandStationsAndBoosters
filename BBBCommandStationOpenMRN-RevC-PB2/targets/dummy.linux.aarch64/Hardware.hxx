@@ -45,14 +45,14 @@
 #ifndef __HARDWARE_HXX
 #define __HARDWARE_HXX
 
-#include <os/LinuxGpio.hxx>
+#include <freertos_drivers/common/DummyGPIO.hxx>
 #include "utils/GpioInitializer.hxx"
 
 #define HARDWARE_IMPL "PB2 Rev C Command Station"
 
-#define FANPin GpioOutputSafeLow                                                
-#define EnablePin GpioOutputSafeHigh                                            
-#define ThermFlagPin GpioInputActiveLow
+#define FANPin DummyPinWithRead
+#define EnablePin DummyPinWithRead
+#define ThermFlagPin DummyPinWithRead
 #define Railcom                                                                 
 
 // MCP9700T-E/LT: .5V == 0C, .01V/Degree C, 125C == 1.75V, 1.9V Vref,
@@ -71,11 +71,13 @@
 // Shunt resistor on on ina220: /sys/class/hwmon/hwmon0/shunt_resistor = .005 Ohms
 #define MAIN_MAX_MILLIAMPS 2800
 #define MAIN_LIMIT_MILLIAMPS 2800
-GPIO_PIN(MainEN, EnablePin, 52);
-GPIO_PIN(MainBRAKE, EnablePin, 48);
-#define MAINSPI "/dev/spi2.0"
-#define MAINCURRENT "/sys/class/hwmon/hwmon0/curr1_input"
-#define MAINSHUNTRESISTOR  "/sys/class/hwmon/hwmon0/shunt_resistor"
+typedef EnablePin MainEN_Pin;
+//GPIO_PIN(MainEN, EnablePin, 52);
+typedef EnablePin MainBRAKE_Pin;
+//GPIO_PIN(MainBRAKE, EnablePin, 48);
+#define MAINSPI "/dev/null"
+#define MAINCURRENT "/dev/zero"
+#define MAINSHUNTRESISTOR  "/dev/null"
 #define MAINSHUNTVALUE "5000" // .005 * 1000000
 
 //
@@ -86,9 +88,10 @@ GPIO_PIN(MainBRAKE, EnablePin, 48);
 // Current on ina220: /sys/class/hwmon/hwmon1/curr1_input
 // Shunt resistor on on ina220: /sys/class/hwmon/hwmon1/shunt_resistor = .005 Ohms
 #define PROG_MAX_MILLIAMPS 2800
-GPIO_PIN(ProgEN, EnablePin, 44);  // 32+12
-#define PROGCURRENT "/sys/class/hwmon/hwmon1/curr1_input"
-#define PROGSHUNTRESISTOR  "/sys/class/hwmon/hwmon1/shunt_resistor"
+typedef EnablePin ProgEN_Pin;
+//GPIO_PIN(ProgEN, EnablePin, 44);  // 32+12
+#define PROGCURRENT "/dev/zero"
+#define PROGSHUNTRESISTOR  "/dev/null"
 #define PROGSHUNTVALUE "5000" // .005 * 1000000
 
 // Tempsensor:
@@ -97,14 +100,14 @@ GPIO_PIN(ProgEN, EnablePin, 44);  // 32+12
 //                           Pocketbeagle: P1_23
 //
 
-#define TempsensorChannel 2
+#define TempsensorChannel -1
 
 // Fan Control (out):
 //
 // P1_34 GPIO1_2 [config-pin P1_34 gpio]
 //                           Pocketbeagle: P1_34
-
-GPIO_PIN(FanControl, FANPin, 34);
+typedef FANPin FanControl_Pin;
+//GPIO_PIN(FanControl, FANPin, 34);
 
 // Railcom:
 //
@@ -112,26 +115,32 @@ GPIO_PIN(FanControl, FANPin, 34);
 // RAILCOM-SHORT P2_22 GPIO0_63   // PocketBeagle: P2_22
 // RAILCOM-DIR   P2_3 GPIO0_85    // PocketBeagle: P2_3
 // RAILCOM-DATA  P2_20 /dev/ttyS4 // PocketBeagle: P2_5
-
-GPIO_PIN(RailcomEN, EnablePin, 47);
-GPIO_PIN(RailcomShort, ThermFlagPin, 46);
-GPIO_PIN(RailcomDir, GpioInputActiveLow, 23);
+typedef EnablePin RailcomEN_Pin;
+//GPIO_PIN(RailcomEN, EnablePin, 47);
+typedef ThermFlagPin RailcomShort_Pin;
+//GPIO_PIN(RailcomShort, ThermFlagPin, 46);
+typedef DummyPinWithReadHigh RailcomDir_Pin;
+//GPIO_PIN(RailcomDir, GpioInputActiveLow, 23);
 
 typedef GpioInitializer<MainEN_Pin, ProgEN_Pin, 
                         MainBRAKE_Pin, FanControl_Pin, RailcomEN_Pin,
                         RailcomShort_Pin, RailcomDir_Pin> GpioInit;
 
-#define RAILCOM_DATA_PORT "/dev/ttyS4"
+#define RAILCOM_DATA_PORT "/dev/null"
 #define RAILCOM_FEEDBACK_QUEUE 4
 
 #define DEFAULT_TCP_GRIDCONNECT_HOST "localhost"
 #define DEFAULT_TCP_GRIDCONNECT_PORT 12021
 #define DEFAULT_GRIDCONNECT_HUB_PORT 12021
 
-#define DEFAULT_CAN_SOCKET "can0"
+#define DEFAULT_CAN_SOCKET "vcan0"
 
 #define WEBSERVERPORT 9090
 #define WEBSERVERROOT "/home/heller/CommandStationsAndBoosters/BBBCommandStationOpenMRN-RevC-PB2/WEBFrontEnd/"
+
+#define NOPRUS 1
+
+
 
 
 #endif // __HARDWARE_HXX

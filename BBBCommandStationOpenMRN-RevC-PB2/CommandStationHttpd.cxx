@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Mar 17 13:52:59 2025
-//  Last Modified : <260313.1636>
+//  Last Modified : <260314.1706>
 //
 //  Description	
 //
@@ -240,6 +240,13 @@ CommandStationHttpd::CommandStationHttpd(openlcb::SimpleStackBase *stack,
                 {
                     ((CommandStationHttpd *)userContext)->lookupConfiguration_UriHandler(request,reply);
                 },this);
+    server_.add_uri(HTTPD::Uri("/configuration/all"),
+                    [](const HTTPD::HttpRequest *request,
+                       HTTPD::HttpReply *reply,
+                       void *userContext)
+                {
+                    ((CommandStationHttpd *)userContext)->lookupAllConfiguration_UriHandler(request,reply);
+                },this);
     server_.add_uri(HTTPD::UriGlob("/configuration/set?*"),
                     [](const HTTPD::HttpRequest *request,
                        HTTPD::HttpReply *reply,
@@ -247,7 +254,7 @@ CommandStationHttpd::CommandStationHttpd(openlcb::SimpleStackBase *stack,
                 {
                     ((CommandStationHttpd *)userContext)->setConfiguration_UriHandler(request,reply);
                 },this);
-    server_.add_uri(HTTPD::UriGlob("/configuration/write?*"),
+    server_.add_uri(HTTPD::Uri("/configuration/write"),
                     [](const HTTPD::HttpRequest *request,
                        HTTPD::HttpReply *reply,
                        void *userContext)
@@ -767,6 +774,8 @@ void CommandStationHttpd::lookupConfiguration_UriHandler(const HTTPD::HttpReques
         case libconfig::Setting::TypeInt:
             reply->SetStatus(200);
             reply->SetContentType("text/plain");
+            reply->Puts(path);
+            reply->Puts(" = ");
             snprintf(buffer,sizeof(buffer),"%d",(int)setting);
             reply->Puts(buffer);
             reply->Puts("\r\n");
@@ -774,6 +783,8 @@ void CommandStationHttpd::lookupConfiguration_UriHandler(const HTTPD::HttpReques
         case libconfig::Setting::TypeInt64:
             reply->SetStatus(200);
             reply->SetContentType("text/plain");
+            reply->Puts(path);
+            reply->Puts(" = ");
             if (path == "NodeID")
             {
                 reply->Puts(node_id_to_string((uint64_t)setting));
@@ -788,6 +799,8 @@ void CommandStationHttpd::lookupConfiguration_UriHandler(const HTTPD::HttpReques
             // Should never get here
             reply->SetStatus(200);
             reply->SetContentType("text/plain");
+            reply->Puts(path);
+            reply->Puts(" = ");
             snprintf(buffer,sizeof(buffer),"%g",(double)setting);
             reply->Puts(buffer);
             reply->Puts("\r\n");
@@ -795,12 +808,16 @@ void CommandStationHttpd::lookupConfiguration_UriHandler(const HTTPD::HttpReques
         case libconfig::Setting::TypeString:
             reply->SetStatus(200);
             reply->SetContentType("text/plain");
+            reply->Puts(path);
+            reply->Puts(" = ");
             reply->Puts((const char *)setting);
             reply->Puts("\r\n");
             break;
         case libconfig::Setting::TypeBoolean:
             reply->SetStatus(200); 
             reply->SetContentType("text/plain");
+            reply->Puts(path);
+            reply->Puts(" = ");
             if ((bool)setting)
             {
                 reply->Puts("1");
@@ -830,6 +847,82 @@ void CommandStationHttpd::lookupConfiguration_UriHandler(const HTTPD::HttpReques
     }
     reply->SendReply();
 }
+
+void CommandStationHttpd::lookupAllConfiguration_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply)
+{
+    //LOG(INFO,"[CommandStationHttpd] lookupAllConfiguration_UriHandler()");
+    libconfig::Setting &root = configuration.getRoot();
+    reply->SetStatus(200);
+    reply->SetContentType("text/plain");
+    lookupAllConfiguration_UriHandlerSetting(root,reply);
+    reply->SendReply(); 
+}
+
+void CommandStationHttpd::lookupAllConfiguration_UriHandlerSetting(const libconfig::Setting &setting, HTTPD::HttpReply *reply)
+{
+    char buffer[64];
+    switch (setting.getType())
+    {
+    case libconfig::Setting::TypeInt:
+        reply->Puts(setting.getPath());
+        reply->Puts(" = ");
+        snprintf(buffer,sizeof(buffer),"%d",(int)setting);
+        reply->Puts(buffer);
+        reply->Puts("\r\n");
+        break;
+    case libconfig::Setting::TypeInt64: 
+        reply->Puts(setting.getPath());
+        reply->Puts(" = ");
+        if (setting.getPath() == "NodeID")
+        {
+            reply->Puts(node_id_to_string((uint64_t)setting));
+        }
+        else
+        {
+            reply->Puts(event_id_to_string((uint64_t)setting));
+        }
+        reply->Puts("\r\n");
+        break;
+    case libconfig::Setting::TypeFloat:                                     
+        // Should never get here 
+        reply->Puts(setting.getPath());
+        reply->Puts(" = ");
+        snprintf(buffer,sizeof(buffer),"%g",(double)setting);
+        reply->Puts(buffer);
+        reply->Puts("\r\n");
+        break;
+    case libconfig::Setting::TypeString:
+        reply->Puts(setting.getPath());
+        reply->Puts(" = ");
+        reply->Puts((const char *)setting);
+        reply->Puts("\r\n");
+        break; 
+    case libconfig::Setting::TypeBoolean:
+        reply->Puts(setting.getPath());
+        reply->Puts(" = ");
+        if ((bool)setting)
+        {
+            reply->Puts("1");
+        }
+        else
+        {
+            reply->Puts("0");
+        }
+        reply->Puts("\r\n");
+        break;
+    case libconfig::Setting::TypeGroup:
+        {
+            for (auto i = setting.begin(); i != setting.end(); i++) {
+                lookupAllConfiguration_UriHandlerSetting(*i,reply);
+            }
+        }
+        break;
+    default:
+        // Should not get here.
+        break;
+    }
+}
+
 
 void CommandStationHttpd::setConfiguration_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply)
 {
@@ -913,7 +1006,7 @@ void CommandStationHttpd::setConfiguration_UriHandler(const HTTPD::HttpRequest *
     reply->SendReply();
 }
 
-extern const char *USERCONFIG;
+extern const char *const USERCONFIG;
 
 void CommandStationHttpd::writeConfiguration_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply)
 {
@@ -928,6 +1021,9 @@ void CommandStationHttpd::writeConfiguration_UriHandler(const HTTPD::HttpRequest
         reply->SetStatus(500);
         reply->SetContentType("text/plain");
         reply->Puts(fioex.what());
+        reply->Puts("\r\n");
+        reply->Puts("Writing ");
+        reply->Puts(USERCONFIG);
         reply->Puts("\r\n");
     }
     reply->SendReply();

@@ -8,7 +8,7 @@
      Created By    : Robert Heller, Deepwoods Software
      Created       : Wed Feb 5 17:08:40 2025
 
-     Last Modified : <260313.1640>
+     Last Modified : <260314.1602>
      ID            : $Id$
      Source        : $Source$
      Description	
@@ -27,13 +27,15 @@ CS.Save = function () {
 }
 
 CS.Service = function () {
+  window.open('/service/','_blank');
 }
 
 CS.Configure = function () {
+  window.open('/configure/','_blank');
 }
 
 CS.Help = function () {
-    window.open('http://cs.deepsoft.com/help/','_blank');
+    window.open('/help/','_blank');
 }
 
 CS.describeLoco = function () {
@@ -296,5 +298,135 @@ CS.StatusRefresh = function () {
     }
     request.open(method, url, async);
     request.send();
+}
+
+CS.RefreshConfiguration = function () {
+  console.log("CS.RefreshConfiguration()");
+  var url = "/configuration/all"
+  var method = "GET";
+  var async = true;
+  var request = new XMLHttpRequest();
+  request.onreadystatechange = function() {
+    if (request.readyState != 4) {
+      return;
+    }
+    var status = parseInt(request.status);
+    var errorInfo = null; 
+    var response = request.response;
+    console.log("status is "+status);  
+    console.log("response is '"+response+"'");
+    pattern = /(.+) = (.+)\r\n/g;
+    let match = pattern.exec(response); 
+    console.log("match is "+match);
+    while (match)
+    {
+      path = match[1];
+      console.log("path is "+path);
+      value = match[2];
+      console.log("value is "+value);
+      field = document.getElementById(path);
+      if (field) 
+      {
+        console.log("field is "+field);
+        if (field.type == "checkbox")
+        {
+          if (value == "1")
+          {
+            field.checked="checked";
+          }
+          else
+          {
+            field.checked="";
+          }
+        }
+        else
+        {
+          field.value = value;
+        }
+      }
+      match = pattern.exec(response);
+      console.log("match(new) is "+match);
+    }
+  }
+  request.open(method, url, async);
+  request.send();
+}
+
+CS.SetConfig = function (path) {
+  field = document.getElementById(path);
+  if (field)
+  {
+    let value = "";
+    if (field.type == "checkbox")
+    {
+      console.log("field.checked is '"+field.checked+"'");
+      if (field.checked)
+      {
+        value = "1";
+      }
+      else
+      {
+        value = "0";
+      }
+    }
+    else
+    {
+      value = field.value;
+    }
+    var url = encodeURI("/configuration/set?path="+path+"&value="+value);
+    console.log("url = '"+url+"'");
+    var method = "GET";
+    var async = true;
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState != 4) {
+        return;
+      }
+      var status = parseInt(request.status);
+      var errorInfo = null; 
+      var response = request.response;
+      console.log("status is "+status);  
+      console.log("response is '"+response+"'");
+      messages = document.getElementById("messages");
+      if (status != 200) 
+      {
+        messages.innerHTML = response;
+      }
+      else
+      {
+        messages.innerHTML = path + " set to " + value;
+      }
+    }
+    request.open(method, url, async);
+    request.send();
+  }
+}
+
+CS.SaveConfiguration = function() {
+  var url = "/configuration/write";
+  var method = "GET";
+  var async = true;
+  var request = new XMLHttpRequest();
+  request.onreadystatechange = function() {
+    if (request.readyState != 4) {
+      return;
+    }
+    var status = parseInt(request.status);
+    var errorInfo = null; 
+    var response = request.response;
+    console.log("status is "+status);  
+    console.log("response is '"+response+"'");
+    messages = document.getElementById("messages");
+    if (status != 200) 
+    {
+      messages.innerHTML = response;
+    }
+    else
+    {
+      messages.innerHTML = "Configuration Saved";
+    }
+  }
+  request.open(method, url, async);
+  request.send();
 }
 

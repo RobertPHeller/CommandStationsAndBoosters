@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon May 10 14:12:56 2021
-//  Last Modified : <221117.1624>
+//  Last Modified : <260314.0903>
 //
 //  Description	
 //
@@ -73,7 +73,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <utils/logging.h>
-
+#include "Hardware.hxx"
 
 // Interface to a PRU to generate DCC pulse waveforms.
 // PRU_NUM is 0 or 1 and identifies the PRU number to initialize and
@@ -97,20 +97,24 @@ public:
         // created.
         HASSERT(! hasInstance_);
         hasInstance_ = true;
+#ifndef NOPRUS
         snprintf(pruFirmware,sizeof(pruFirmware),pruFirmwareFMT,PRU);
         snprintf(pruState,sizeof(pruState),pruStateFMT,PRU);
         snprintf(pruMessageDevice,sizeof(pruMessageDevice),pruMessageDeviceFMT,PRU);
         StartPRU(firmwareName);
+#endif
     }
     ~CommandStationDCCPRUTrack()
     {
         hasInstance_ = false;
+#ifndef NOPRUS
         FILE *sysfs_node = fopen(pruState,"r+");
         if (sysfs_node == NULL) {
             LOG(FATAL, "CommandStationDCCPRUTrack::StartPRU(): Cannot open firmware sysfs_node %s (%d)", pruState, errno);
         }
         fprintf(sysfs_node,"stop\n");
         fclose(sysfs_node);
+#endif
     }
     FixedPool *pool() OVERRIDE
     {
@@ -119,6 +123,7 @@ public:
 protected:
     Action entry() OVERRIDE
     {
+#ifndef NOPRUS
         dcc::Packet *p = message()->data();
         // -- send p to the PRU to send to the track.
         int f = open(pruMessageDevice,O_WRONLY);
@@ -133,6 +138,7 @@ protected:
         if (status < 0) {
             LOG(FATAL, "CommandStationDCCPRUTrack::entry(): Could not close %s (%d)", pruMessageDevice, errno);
         }
+#endif
         return finish();
     }
     
@@ -150,6 +156,7 @@ private:
         static uint8_t buffer[2048];
         int len;
         FILE *sysfs_node, *firmfd;
+#ifndef NOPRUS
         sysfs_node = fopen(pruState,"r+");
         if (sysfs_node == NULL) {
             LOG(FATAL, "CommandStationDCCPRUTrack::StartPRU(): Cannot open firmware sysfs_node %s (%d)", pruState, errno);
@@ -183,6 +190,7 @@ private:
         if (access(pruMessageDevice,F_OK)) {
             LOG(FATAL, "CommandStationDCCPRUTrack::StartPRU(): Could not open %s (%d)", pruMessageDevice, errno);
         }
+#endif
     }
     static constexpr char const *pruFirmwareFMT =  "/lib/firmware/am335x-pru%d-fw";
     static constexpr char const *pruStateFMT = "/dev/remoteproc/pruss-core%d/state";
