@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Mar 17 13:52:59 2025
-//  Last Modified : <260304.1433>
+//  Last Modified : <260313.1636>
 //
 //  Description	
 //
@@ -95,6 +95,9 @@ static const char rcsid[] = "@(#) : $Id$";
 #include <termios.h>
 #include <sys/ioctl.h>
 #include "RailComHW.hxx"
+#include <libconfig.h++>
+
+extern libconfig::Config configuration;
 
 
 static BBRailComDriver<RailComHW> opsRailComDriver(RAILCOM_FEEDBACK_QUEUE);
@@ -229,6 +232,27 @@ CommandStationHttpd::CommandStationHttpd(openlcb::SimpleStackBase *stack,
                        void *userContext)
                 {
                     ((CommandStationHttpd *)userContext)->writeopscvbit_UriHandler(request,reply);
+                },this);
+    server_.add_uri(HTTPD::UriGlob("/configuration/lookup?*"),
+                    [](const HTTPD::HttpRequest *request,
+                       HTTPD::HttpReply *reply,
+                       void *userContext)
+                {
+                    ((CommandStationHttpd *)userContext)->lookupConfiguration_UriHandler(request,reply);
+                },this);
+    server_.add_uri(HTTPD::UriGlob("/configuration/set?*"),
+                    [](const HTTPD::HttpRequest *request,
+                       HTTPD::HttpReply *reply,
+                       void *userContext)
+                {
+                    ((CommandStationHttpd *)userContext)->setConfiguration_UriHandler(request,reply);
+                },this);
+    server_.add_uri(HTTPD::UriGlob("/configuration/write?*"),
+                    [](const HTTPD::HttpRequest *request,
+                       HTTPD::HttpReply *reply,
+                       void *userContext)
+                {
+                    ((CommandStationHttpd *)userContext)->writeConfiguration_UriHandler(request,reply);
                 },this);
     server_.add_uri(HTTPD::UriGlob("/*"),
                     [](const HTTPD::HttpRequest *request,
@@ -671,6 +695,244 @@ void CommandStationHttpd::writeopscvbit_UriHandler(const HTTPD::HttpRequest *req
     reply->SendReply();
 }
 
+static string node_id_to_string(uint64_t node_id)
+{
+    string result = "";
+    char buffer[8];
+    string dot = "";
+    for (int i=0; i<6; i++)
+    {
+        snprintf(buffer,sizeof(buffer),"%02X",(unsigned)(node_id&0x0FF));
+        result = buffer + dot + result;
+        dot = ".";
+        node_id >>= 8;
+    }
+    return result;
+}
+
+static string event_id_to_string(uint64_t event_id)
+{
+    string result = "";
+    char buffer[8];
+    string dot = "";
+    for (int i=0; i<8; i++)
+    {
+        snprintf(buffer,sizeof(buffer),"%02X",(unsigned)(event_id&0x0FF));
+        result = buffer + dot + result;
+        dot = ".";
+        event_id >>= 8;
+    }
+    return result;
+}        
+
+static uint64_t string_to_node_id(const string node_string)
+{
+    uint64_t result = 0LL;
+    for (int i=0; i<6; i++)
+    {
+        int index = i*3;
+        unsigned byte=0;
+        sscanf(node_string.substr(index,2).c_str(),"%02X",&byte);
+        result <<= 8;
+        result |= byte;
+    }
+    return result;
+}
+
+static uint64_t string_to_event_id(const string event_string)
+{
+    uint64_t result = 0LL;
+    for (int i=0; i<8; i++)
+    {
+        int index = i*3;
+        unsigned byte=0;
+        sscanf(event_string.substr(index,2).c_str(),"%02X",&byte);
+        result <<= 8;
+        result |= byte;
+    }
+    return result;
+}
+
+void CommandStationHttpd::lookupConfiguration_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply)
+{
+    string Query = request->Query();
+    ParseQuery formdata(Query);
+    string path = formdata.Value("path");
+    if (configuration.exists(path))
+    {
+        char buffer[64];
+        libconfig::Setting &setting = configuration.lookup(path);
+        switch (setting.getType())
+        {
+        case libconfig::Setting::TypeInt:
+            reply->SetStatus(200);
+            reply->SetContentType("text/plain");
+            snprintf(buffer,sizeof(buffer),"%d",(int)setting);
+            reply->Puts(buffer);
+            reply->Puts("\r\n");
+            break;
+        case libconfig::Setting::TypeInt64:
+            reply->SetStatus(200);
+            reply->SetContentType("text/plain");
+            if (path == "NodeID")
+            {
+                reply->Puts(node_id_to_string((uint64_t)setting));
+            }
+            else
+            {
+                reply->Puts(event_id_to_string((uint64_t)setting));
+            }
+            reply->Puts("\r\n");
+            break;
+        case libconfig::Setting::TypeFloat:
+            // Should never get here
+            reply->SetStatus(200);
+            reply->SetContentType("text/plain");
+            snprintf(buffer,sizeof(buffer),"%g",(double)setting);
+            reply->Puts(buffer);
+            reply->Puts("\r\n");
+            break;
+        case libconfig::Setting::TypeString:
+            reply->SetStatus(200);
+            reply->SetContentType("text/plain");
+            reply->Puts((const char *)setting);
+            reply->Puts("\r\n");
+            break;
+        case libconfig::Setting::TypeBoolean:
+            reply->SetStatus(200); 
+            reply->SetContentType("text/plain");
+            if ((bool)setting)
+            {
+                reply->Puts("1");
+            }
+            else
+            {
+                reply->Puts("0");
+            }
+            reply->Puts("\r\n");
+            break;
+        case libconfig::Setting::TypeArray:
+        case libconfig::Setting::TypeList:
+        case libconfig::Setting::TypeGroup:
+        case libconfig::Setting::TypeNone:
+            // should not get here!
+            reply->SetStatus(500);
+            reply->SetContentType("text/plain");
+            reply->Puts("500 Unsupported\r\n");
+            break;
+        }
+    }
+    else
+    {
+        reply->SetStatus(404);
+        reply->SetContentType("text/plain");
+        reply->Puts("404 No such configuation option\r\n");
+    }
+    reply->SendReply();
+}
+
+void CommandStationHttpd::setConfiguration_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply)
+{
+    string Query = request->Query();
+    ParseQuery formdata(Query);
+    string path = formdata.Value("path");
+    if (configuration.exists(path))
+    {
+        libconfig::Setting &setting = configuration.lookup(path);
+        switch (setting.getType())
+        {
+        case libconfig::Setting::TypeInt:
+            {
+                int value = formdata.IValue("value");
+                setting = value;
+                reply->SetStatus(200);
+                reply->SetContentType("text/plain");
+                reply->Puts("\r\n");
+                break;
+            }
+        case libconfig::Setting::TypeInt64:
+            {
+                uint64_t value;
+                if (path == "NodeID")
+                {
+                    value = string_to_node_id(formdata.Value("value"));
+                }
+                else
+                {
+                    value = string_to_event_id(formdata.Value("value"));
+                }
+                setting = (long long)value;
+                reply->SetStatus(200);
+                reply->SetContentType("text/plain");
+                reply->Puts("\r\n");
+                break;
+            }
+        case libconfig::Setting::TypeString:
+            setting = formdata.Value("value");
+            reply->SetStatus(200);
+            reply->SetContentType("text/plain");
+            reply->Puts("\r\n");
+            break;
+        case libconfig::Setting::TypeBoolean:
+            setting = (bool)formdata.IValue("value");
+            reply->SetStatus(200);
+            reply->SetContentType("text/plain");
+            reply->Puts("\r\n");
+            break;
+        case libconfig::Setting::TypeFloat:
+            try
+            {
+                double value = std::stod(formdata.Value("value"));
+                setting = value;
+                reply->SetStatus(200);
+                reply->SetContentType("text/plain");
+                reply->Puts("\r\n");
+            }
+            catch (const std::exception& e)
+            {
+                reply->SetStatus(500);
+                reply->SetContentType("text/plain");
+                reply->Puts("Value conversion error: ");
+                reply->Puts(e.what());
+                reply->Puts("\r\n");
+            }
+            break;
+        default:
+            reply->SetStatus(403);
+            reply->SetContentType("text/plain");
+            reply->Puts("Bad set operation\r\n");
+            break;
+        }
+    }
+    else
+    {
+        reply->SetStatus(404);
+        reply->SetContentType("text/plain");
+        reply->Puts("404 No such configuation option\r\n");
+    }
+    reply->SendReply();
+}
+
+extern const char *USERCONFIG;
+
+void CommandStationHttpd::writeConfiguration_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply)
+{
+    try {
+        configuration.writeFile(USERCONFIG);
+        reply->SetStatus(200);
+        reply->SetContentType("text/plain");
+        reply->Puts("\r\n");
+    }
+    catch(const libconfig::FileIOException &fioex)
+    {
+        reply->SetStatus(500);
+        reply->SetContentType("text/plain");
+        reply->Puts(fioex.what());
+        reply->Puts("\r\n");
+    }
+    reply->SendReply();
+}
+
 void CommandStationHttpd::staticFile_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply)
 {
     String path = docRoot_ + request->RequestUri();
@@ -781,3 +1043,18 @@ const String CommandStationHttpd::ParseQuery::unquoteInput_(const String s) cons
     return result;
 }
 
+DccOutput *get_dcc_output(DccOutput::Type type)
+{
+#ifdef DccOutputDefined
+    switch (type)
+    {
+    case DccOutput::Type::TRACK:
+        return DccOutputImpl<BeagleCS::DccHardware::OPSDccOutput>::instance();
+    case DccOutput::Type::PGM:
+        return DccOutputImpl<BeagleCS::DccHardware::PROGDccOutput>::instance();
+    case DccOutput::Type::LCC:
+        return DccOutputImpl<BeagleCS::DccHardware::LCCDccOutput>::instance();
+    }
+#endif
+    return nullptr;
+}

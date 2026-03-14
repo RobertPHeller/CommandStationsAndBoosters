@@ -117,6 +117,8 @@
  * 
  * @arg NodeID The node ID to use as a long long.  The default is 
  * 0x050101012200L (05:01:01:01:22:00).
+ * @arg PersistentTrainFilePath The path of the presistent train file.  The
+ * default is /tmp/persistent_train_file_<Node Id in Hex>.
  * @arg UseGCHost Connect to a GC host.  The default is false.
  * @arg GCHost The GridConnect host. The default is a build option, normally 
  * "localhost".
@@ -236,8 +238,8 @@ withrottle::Server *WiThrottleServer;
 
 libconfig::Config configuration;
 
-#define SYSTEMDEFAULTCONFIG "/etc/default/commandstation.cfg"
-#define USERCONFIG "/home/debian/commandstation.cfg"
+extern const char SYSTEMDEFAULTCONFIG[] = "/etc/default/commandstation.cfg";
+extern const char USERCONFIG[] =  "/home/heller/commandstation.cfg";
 
 extern const char *const openlcb::SNIP_DYNAMIC_FILENAME = NULL;
 
@@ -410,7 +412,7 @@ static void ProcessConfiguration(libconfig::Config &config)
     {
         libconfig::Setting &gcport = root.add("GCPort",
                                              libconfig::Setting::TypeInt);
-        gcport = DEFAULT_TCP_GRIDCONNECT_HOST;
+        gcport = DEFAULT_TCP_GRIDCONNECT_PORT;
         updated = true;
     }
     if (!root.exists("CanSocket"))
@@ -485,11 +487,11 @@ static void ProcessConfiguration(libconfig::Config &config)
     shortoff <<= 16;
     shortoff |= next_event++;
     openlcb::EventId shutdownon = node_id;
-    shorton <<= 16;
-    shorton |= next_event++;
+    shutdownon <<= 16;
+    shutdownon |= next_event++;
     openlcb::EventId shutdownoff = node_id;
-    shortoff <<= 16;
-    shortoff |= next_event++;
+    shutdownoff <<= 16;
+    shutdownoff |= next_event++;
     updated = InitializeDCCConfig(root.lookup("Main"),
                                   "MainTrackDCC.out",
                                   shorton,
@@ -509,17 +511,17 @@ static void ProcessConfiguration(libconfig::Config &config)
     shortoff <<= 16;
     shortoff |= next_event++;
     shutdownon = node_id;
-    shorton <<= 16;
-    shorton |= next_event++;
+    shutdownon <<= 16;
+    shutdownon |= next_event++;
     shutdownoff = node_id;
-    shortoff <<= 16;
-    shortoff |= next_event++;
+    shutdownoff <<= 16;
+    shutdownoff |= next_event++;
     updated = InitializeDCCConfig(root.lookup("Programming"),
                                   "ProgTrackDCC.out",
                                   shorton,
                                   shortoff,
                                   shutdownon,
-                                  shutdownon,
+                                  shutdownoff,
                                   updated);
     if (!root.exists("FanControl"))
     {

@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:31 2019
-//  Last Modified : <260304.1429>
+//  Last Modified : <260305.1243>
 //
 //  Description	
 //
@@ -62,6 +62,7 @@ static const char rcsid[] = "@(#) : $Id$";
 #include <numeric>
 
 #include <libconfig.h++>
+#include "DRV8873_SPI.hxx"
 
 HBridgeControl::HBridgeControl(openlcb::Node *node, 
                                const libconfig::Setting &cfg, 
@@ -178,7 +179,8 @@ HBridgeControlSPI::HBridgeControlSPI(openlcb::Node *node,
                                      const uint32_t limitMilliAmps,
                                      const uint32_t maxMilliAmps, 
                                      const Gpio *enableGpio)
-      : node_(node)
+      : DRV8873_SPI(spidevice)
+, node_(node)
 , sysFSCurrent_(sysFSCurrent)
 , enableGpio_(enableGpio)
 , maxMilliAmps_(maxMilliAmps)     
@@ -200,6 +202,71 @@ HBridgeControlSPI::HBridgeControlSPI(openlcb::Node *node,
     read(fd,buffer,sizeof(buffer));
     close(fd);
     lastReading_ = atol(buffer);
-    spifd_ = open(spidevice,O_RDWR);
-    HASSERT(spifd_ >= 0);
+}
+
+HBridgeControlSPI::~HBridgeControlSPI()
+{
+}
+
+void HBridgeControlSPI::poll_33hz(openlcb::WriteHelper *helper, Notifiable *done)
+{
+    char buffer[32];
+    bool overtemp, UVLO, CPUV, overCurrent, overTempShut, openLoad;
+    if (CheckFault(overtemp, UVLO, CPUV, overCurrent, overTempShut, openLoad))
+    {
+        LOG(WARNING,"[DRV8873] Fault: overtemp = %d, UVLO = %d, CPUV = %d, overCurrent = %d, overTempShut = %d, openLoad = %d",
+            overtemp, UVLO, CPUV, overCurrent, overTempShut, openLoad);
+        ClearFault();
+    }
+    int fd = open(sysFSCurrent_,O_RDONLY);
+    HASSERT(fd >= 0);
+    read(fd,buffer,sizeof(buffer));
+    close(fd);
+    lastReading_ = atol(buffer);
+    
+    uint8_t previous_state = state_;
+    
+    if (lastReading_ >= shutdownLimit_)
+    {
+        enableGpio_->clr();
+        state_ = STATE_SHUTDOWN;
+    }
+    else if (lastReading_ >= overCurrentLimit_)
+    {
+        if (overCurrentCheckCount_++ >= overCurrentRetryCount_)
+        {
+            enableGpio_->clr();
+            state_ = STATE_OVERCURRENT;
+        }
+    }
+    else
+    {
+        if (enableGpio_->is_set())
+        {
+            overCurrentCheckCount_ = 0;
+            state_ = STATE_ON;
+        }
+        else
+        {
+            state_ = STATE_OFF;
+        }
+    }
+    bool async_event_req = false;
+    if (previous_state != state_)
+    {
+        if (previous_state == STATE_SHUTDOWN || state_ == STATE_SHUTDOWN)
+        {
+            shutdownProducer_.SendEventReport(helper, done);
+            async_event_req = true;
+        }
+        else if (previous_state == STATE_OVERCURRENT || state_ == STATE_OVERCURRENT)
+        {
+            shortProducer_.SendEventReport(helper, done);
+            async_event_req = true;
+        }
+    }
+    if (!async_event_req)
+    {
+        done->notify();
+    }
 }

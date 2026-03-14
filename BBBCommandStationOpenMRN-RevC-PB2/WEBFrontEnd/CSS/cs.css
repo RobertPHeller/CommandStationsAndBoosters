@@ -1,0 +1,49 @@
+/*
+  Command Station styles
+  */
+
+#tools {
+    background-color: #cccccc;
+    padding: 10px;
+}
+
+#upper {
+    width: 100%;
+    background-color: #cccccc;
+}
+
+#describe {
+    width: 50%;
+    float: left;
+    background-color: #cccccc;
+}
+
+span.labelEntry {
+    width: 100%;
+}
+
+#locolist {
+    width: 20%;
+    float: left;
+    height: 300px;
+    display: inline-block;
+    vertical-align: top;
+    overflow: hidden;
+}
+
+#locolist > select {
+    padding: 10px;
+}
+
+
+#StatusWindow {
+    width: 30%;
+    float: right;
+    background-color: #cccccc;
+}
+
+#logmessages {
+    width:100%;
+    overflow: scroll;
+}
+

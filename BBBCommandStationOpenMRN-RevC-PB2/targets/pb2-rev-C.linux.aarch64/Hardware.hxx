@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : 2026-03-02 07:38:28
-//  Last Modified : <260304.1437>
+//  Last Modified : <260313.1632>
 //
 //  Description	
 //
@@ -131,7 +131,7 @@ typedef GpioInitializer<MainEN_Pin, ProgEN_Pin,
 #define DEFAULT_CAN_SOCKET "can0"
 
 #define WEBSERVERPORT 9090
-#define WEBSERVERROOT "/home/heller/CommandStationsAndBoosters/BBBCommandStationOpenMRN/WEBFrontEnd/"
+#define WEBSERVERROOT "/home/heller/CommandStationsAndBoosters/BBBCommandStationOpenMRN-RevC-PB2/WEBFrontEnd/"
 
 
 

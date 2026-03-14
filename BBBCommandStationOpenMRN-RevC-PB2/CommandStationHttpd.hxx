@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Mar 17 12:47:00 2025
-//  Last Modified : <260304.1432>
+//  Last Modified : <260313.1306>
 //
 //  Description	
 //
@@ -240,6 +240,9 @@ private:
     void writeprogcvbit_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply);
     void writeopscvbyte_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply);
     void writeopscvbit_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply);
+    void lookupConfiguration_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply);
+    void setConfiguration_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply);
+    void writeConfiguration_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply);
     void staticFile_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply);
     void CommonHeader_(String title, HTTPD::HttpReply *reply)
     {

@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:15 2019
-//  Last Modified : <260304.1431>
+//  Last Modified : <260305.1244>
 //
 //  Description	
 //
@@ -57,6 +57,7 @@
 #include <utils/Debouncer.hxx>
 
 #include <libconfig.h++>
+#include "DRV8873_SPI.hxx"
 
 #define BIT(n) (1 << n)
 
@@ -107,7 +108,7 @@ private:
     uint32_t lastReading_{0};
 };            
 
-class HBridgeControlSPI : public openlcb::Polling {
+class HBridgeControlSPI : public openlcb::Polling, public DRV8873_SPI {
 public:
     HBridgeControlSPI(openlcb::Node *node, 
                       const libconfig::Setting &cfg, 
@@ -139,12 +140,12 @@ private:
     const Gpio *enableGpio_;
     const uint32_t maxMilliAmps_;
     const uint32_t overCurrentLimit_;
+    const uint8_t overCurrentRetryCount_{3};
     const uint32_t shutdownLimit_;
     openlcb::MemoryBit<uint8_t> shortBit_;
     openlcb::MemoryBit<uint8_t> shutdownBit_;
     openlcb::BitEventProducer shortProducer_;
     openlcb::BitEventProducer shutdownProducer_;
-    int spifd_;
     uint8_t state_{STATE_OFF};
     uint8_t overCurrentCheckCount_{0};
     uint32_t lastReading_{0};

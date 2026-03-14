@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Wed Mar 24 09:44:24 2021
-//  Last Modified : <221117.1550>
+//  Last Modified : <260313.1115>
 //
 //  Description	
 //
@@ -149,9 +149,10 @@ public:
     {
         HW::RC_ENABLE::set(false);
     }
-    void set_feedback_key(uint32_t key) override
+    void set_feedback_key(uint32_t key, uint16_t dcc_address) override
     {
         railcomFeedbackKey_ = key;
+        railcomDCCAddress_ = dcc_address;
     }
     void feedback_sample() override
     {
@@ -171,7 +172,7 @@ public:
         dcc::RailcomHubData *data = nullptr;
         if (railComFeedbackBuffer_->data_write_pointer(&data) > 0)
         {
-            data->reset(railcomFeedbackKey_);
+            data->reset(railcomFeedbackKey_,railcomDCCAddress_);
         }
         return data;
     }
@@ -205,6 +206,7 @@ public:
 private:
     int uart_fd_;
     uintptr_t railcomFeedbackKey_{0};
+    uint16_t railcomDCCAddress_{0};
     dcc::RailcomHubFlow *railComHubFlow_;
     ExtendedRingBuffer<dcc::RailcomHubData> *railComFeedbackBuffer_;
     RailComPhase railcomPhase_{RailComPhase::PRE_CUTOUT};
