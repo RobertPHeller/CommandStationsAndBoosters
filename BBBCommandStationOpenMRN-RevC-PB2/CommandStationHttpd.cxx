@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Mar 17 13:52:59 2025
-//  Last Modified : <260314.1706>
+//  Last Modified : <260315.1228>
 //
 //  Description	
 //
@@ -1033,6 +1033,10 @@ void CommandStationHttpd::staticFile_UriHandler(const HTTPD::HttpRequest *reques
 {
     String path = docRoot_ + request->RequestUri();
     if (request->RequestUri() == "/") path += "static/index.html";
+    if (request->RequestUri() == "/index.html")
+    {
+        path = docRoot_ + "/static/index.html";
+    }
     if (path.back() == '/') path += "index.html";
     if (access(path.c_str(),F_OK))
     {
