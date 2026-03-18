@@ -245,11 +245,15 @@ extern const char SYSTEMDEFAULTCONFIG[] = "/etc/default/commandstation.cfg";
 char userconfigfile[256];
 extern const char *const USERCONFIG =  userconfigfile;
 
-extern const char *const openlcb::SNIP_DYNAMIC_FILENAME = NULL;
+namespace openlcb
+{
 
-extern const openlcb::SimpleNodeStaticValues SNIP_STATIC_DATA = {
+extern const char *const SNIP_DYNAMIC_FILENAME = NULL;
+
+extern const SimpleNodeStaticValues SNIP_STATIC_DATA = {
     4, "Deepwoods Software", "PocketBeagleCommandStation", "SMD Rev C", "1.0"};
 
+}
 
 // Specifies the default 48-bit OpenLCB node identifier. This must be unique for every
 // hardware manufactured, so in production this should be replaced by some
