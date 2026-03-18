@@ -1,0 +1,8 @@
+.vertical-range {
+  writing-mode: vertical-lr;
+  direction: rtl;
+}
+.bar {
+  float: left;
+  padding: 0px 5px;
+}

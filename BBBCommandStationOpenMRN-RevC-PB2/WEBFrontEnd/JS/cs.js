@@ -8,7 +8,7 @@
      Created By    : Robert Heller, Deepwoods Software
      Created       : Wed Feb 5 17:08:40 2025
 
-     Last Modified : <260314.1602>
+     Last Modified : <260316.1122>
      ID            : $Id$
      Source        : $Source$
      Description	
@@ -27,15 +27,15 @@ CS.Save = function () {
 }
 
 CS.Service = function () {
-  window.open('/service/','_blank');
+  location.href='/service/';
 }
 
 CS.Configure = function () {
-  window.open('/configure/','_blank');
+  location.href='/configure/';
 }
 
-CS.Help = function () {
-    window.open('/help/','_blank');
+CS.Help = function (path) {
+    location.href='/help/'+path;
 }
 
 CS.describeLoco = function () {
@@ -253,12 +253,6 @@ CS.StatusRefresh = function () {
         } else {
             document.getElementById('mains_enabled').src = "/images/off.png";
         }
-        mainsTF     = pattern.exec(response);
-        if (mainsTF) {
-            document.getElementById('mains_therm').src = "/images/on.png";
-        } else {
-            document.getElementById('mains_therm').src = "/images/off.png";
-        }
         mainsOC     = pattern.exec(response);
         if (mainsOC) {
             document.getElementById('mains_over').src = "/images/on.png";
@@ -270,12 +264,6 @@ CS.StatusRefresh = function () {
             document.getElementById('programming_enabled').src = "/images/on.png";
         } else {
             document.getElementById('programming_enabled').src = "/images/off.png";
-        }
-        progTF      = pattern.exec(response);
-        if (progTF) {
-            document.getElementById('programming_therm').src = "/images/on.png";
-        } else {
-            document.getElementById('programming_therm').src = "/images/off.png";
         }
         progOC      = pattern.exec(response);
         if (progOC) {

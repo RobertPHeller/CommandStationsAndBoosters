@@ -13,7 +13,7 @@
             <button type="button" name="Save" value="Save" onclick="CS.Save()">Save</button>
             <button type="button" name="Service" value="Service" onclick="CS.Service()">Service</button>
             <button type="button" name="Configure" value="Configure" onclick="CS.Configure()">Configure</button>
-            <button type="button" name="Help" value="Help" onclick="CS.Help()">Help</button>
+            <button type="button" name="Help" value="Help" onclick="CS.Help('homepage.html')">Help</button>
         </div>
         <div id="upper">
             <div id="describe">
@@ -70,7 +70,6 @@
                     <span id="mains_status" class="TrackCurrent">Current <span id="mains_current">000.000</span>A</span><br />
                     <span id="mains_flags">
                         Enabled<img id="mains_enabled" src="/images/off.png" />
-                        Thermal Flag<img id="mains_therm" src="/images/off.png" />
                         Over Current<img id="mains_over" src="/images/off.png" />
                     </span><br />
                 </div>
@@ -78,7 +77,6 @@
                     <span id="programming_status" class="TrackCurrent">Current <span id="programming_current">000.000</span>A</span><br />
                     <span id="programming_flags">
                         Enabled<img id="programming_enabled" src="/images/off.png" />
-                        Thermal Flag<img id="programming_therm" src="/images/off.png" />
                         Over Current<img id="programming_over" src="/images/off.png" />
                     </span><br />
                 </div>

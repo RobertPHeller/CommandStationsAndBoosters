@@ -4,11 +4,345 @@
         <link rel="stylesheet" href="/CSS/font_awesome_all.min.css" />
         <link rel="stylesheet" href="/CSS/cs.css" />
         <link rel="stylesheet" href="/CSS/UI.css" />
+        <link rel="stylesheet" href="/CSS/tabs.css" />
+        <link rel="stylesheet" href="/CSS/vslider.css" />
         <script id="cs" type="text/javascript" src="/JS/cs.js"></script>
 </head>
 <body>
   <H1>Command Station Programming Track</H1>
-
+  <div id="tools" class="toolbar">
+    <button type="button" name="Return" value="Return" onclick="location.href='/'">Return</button>
+    <button type="button" name="Help" value="Help" onclick="CS.Help('service.html')">Help</button>
+  </div>
+  <div id="messages"></div>
+  <!-- 
+  HTML design adapted from "CSS Tab", by Wendy (Wendy-Ho) 
+  Created on: November 11, 2019 
+  https://codepen.io/Wendy-Ho/pen/MWWBvmd
+  -->
+  <div class="warpper">
+    <input class="radio" id="one" name="group" type="radio" checked>
+    <input class="radio" id="two" name="group" type="radio">
+    <input class="radio" id="three" name="group" type="radio">
+    <input class="radio" id="four" name="group" type="radio">
+    <input class="radio" id="five" name="group" type="radio">
+    <input class="radio" id="six" name="group" type="radio">
+    <input class="radio" id="seven" name="group" type="radio">
+    <input class="radio" id="eight" name="group" type="radio">
+    <input class="radio" id="nine" name="group" type="radio">
+    <input class="radio" id="ten" name="group" type="radio">
+    <input class="radio" id="eleven" name="group" type="radio">
+    <input class="radio" id="twelve" name="group" type="radio">
+    <input class="radio" id="thirteen" name="group" type="radio">
+    <input class="radio" id="fourteen" name="group" type="radio">
+    <input class="radio" id="fithteen" name="group" type="radio">
+    <div class="tabs">
+      <label class="tab" id="one-tab" for="one">Basic</label>
+      <label class="tab" id="two-tab" for="two">Motor</label>
+      <label class="tab" id="three-tab" for="three">Basic Speed Control</label>
+      <label class="tab" id="four-tab" for="four">Speed Table</label>
+      <label class="tab" id="five-tab" for="five">Function Map</label>
+      <label class="tab" id="six-tab" for="six">Lights</label>
+      <label class="tab" id="seven-tab" for="seven">Analog Controls</label>
+      <label class="tab" id="eight-tab" for="eight">Consist</label>
+      <label class="tab" id="nine-tab" for="nine">Advanced</label>
+      <label class="tab" id="ten-tab" for="ten">Sound</label>
+      <label class="tab" id="eleven-tab" for="eleven">Sound Levels</label>
+      <label class="tab" id="twelve-tab" for="twelve">CVs</label>
+      <label class="tab" id="thirteen-tab" for="thirteen">Aux1</label>
+      <label class="tab" id="fourteen-tab" for="fourteen">Aux2</label>
+      <label class="tab" id="fithteen-tab" for="fithteen">Aux3</label>
+    </div>
+    <div class="panels">
+      <div class="panel" id="one-panel">
+        <div class="panel-title">Basic</div>
+        <div id="basic-left" style="float:left;width='60%';">
+          <input id="short" name="address-type" type="radio" checked />
+          <label for="short">Short (one byte) address</label><br />
+          <input id="long" name="address-type" type="radio" />
+          <label for="long">Long (two byte) address</label><br />
+          <label for="address">Active Address:</label><br />
+          <input id="address" type="number" value="3" /><br /><br />
+          <label for="primary-address">Primary Address</label><input id="primary-address" type="number" value="3" /><br />
+          <label for="extended-address">Extended Address</label><input id="extended-address" type="number" value="1000" /><br />
+          <label for="address-format">Address Format</label>
+          <select id="address-format">
+            <option value="short" selected>Short (one byte) addess</option>
+            <option value="long">Long (two byte) address</option>
+          </select><br /><br />
+          <label for="direction">Locomotive Direction</label>
+          <select id="direction">
+            <option value="normal" selected>normal</option>
+            <option value="reversed">reversed</option>
+          </select><br />
+          <label for="steps">Speed Steps</label>
+          <select id="steps">
+            <option value="14">14 speed step format</option>
+            <option value="28">28/256 speed step format</option>
+          </select><br />
+          <label for "power">Power Source Conversion</label>
+          <select id="power">
+            <option value="dcc" selected>NMRA Digital only</option>
+            <option value="dc">DC Conversison Enabled</option>
+          </select><br />
+        </div>
+        <div id="basic-right" style="float: right;width:'40%';text-align:right;">
+          <hrule style="width:'100%';" />
+          <label for="man-id">Manufacturer ID:</label>
+          <input id="man-id" type="number" value="0" /><br />
+          <label for="man-version">Manufacturer Version No:</label>
+          <input id="man-version" type="number" value="0" /><br />
+        </div>
+      </div>
+      <div class="panel" id="two-panel">
+        <div class="panel-title">Motor</div>
+        <div id="motor" style="text-align:right;">
+          <label for="kick">Kick Start</label><input id="kick" type="number" value="0" /><br />
+          <label for="accel">Acceleration Rate</label><input id="accel" type="number" value="0" /><br />
+          <label for="decel">Deceleration Rate</label><input id="decel" type="number" value="0" /><br />
+          <br /><br />
+          <label for="freq">Motor drive frequency</label><input id="freq" type="number" value="0" /><br />
+        </div>
+      </div>
+      <div class="panel" id="three-panel">
+        <div class="panel-title">Basic Speed Control</div>
+        <div id="basic-speed-control">
+          <div style="text-align:center;">
+            Select this button to use the setting shown below<br />
+            <input id="basic-speed" name="speed-mode" value="basic" type="radio" checked />
+            <label for="basic-speed">Use Vstart, Vmid, Vhigh (CV29, bit 4)</label><br />
+            To turn off, use Speed Table pane<br />
+            <div class="slidecontainer">
+              <label for="Vstart">Vstart</label><input value="0" size="4" id="Vstart-value" type="text"><input type="range" min="0" max="255" value="0" class="slider" id="Vstart">
+              <script>
+                var Vstart = document.getElementById("Vstart");
+                var VstartValue = document.getElementById("Vstart-value");
+                Vstart.oninput = function() {
+                  VstartValue.value = this.value;
+                }
+              </script>
+            </div>
+            <div class="slidecontainer">
+              <label for="Vmid">Vmid</label><input value="0" size="4" id="Vmid-value" type="text"><input type="range" min="0" max="255" value="0" class="slider" id="Vmid">
+              <script>
+                var Vmid = document.getElementById("Vmid");
+                var VmidValue = document.getElementById("Vmid-value");
+                Vmid.oninput = function() {
+                  VmidValue.value = this.value;
+                }
+                
+              </script>
+            </div>
+            <div class="slidecontainer">
+              <label for="Vhigh">Vhigh</label><input value="0" size="4" id="Vhigh-value" type="text"><input type="range" min="0" max="255" value="0" class="slider" id="Vhigh">
+              <script>
+                var Vhigh = document.getElementById("Vhigh");
+                var VhighValue = document.getElementById("Vhigh-value");
+                Vhigh.oninput = function() {
+                  VhighValue.value = this.value;
+                }
+              </script>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" id="four-panel">
+        <div class="panel-title">Speed Table</div>
+        <div id="speed-table">
+          <div style="text-align:center;">
+            Select this button to use a Speed Table for Speed Control<br />
+            <input id="speed-table" name="speed-mode" value="table" type="radio" />
+            <label for="speed-table">Use Speed Table (CV's 67-94)</label><br />
+            To turn off, use Basic Speed Control pane<br />
+          </div>
+          <div id="table" style="text-align:left;">
+            Speed Table<br />
+            <div class="bar">
+              <label id="b1Value" for="b1">0</label><br />
+              <input id="b1" type="range" min="0" max="255" value="0" class="vertical-range" /><br />
+              <input id="b1checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b2Value" for="b2">9</label><br />
+              <input id="b2" type="range" min="0" max="255" value="9" class="vertical-range" /><br />
+              <input id="b2checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b3Value" for="b3">18</label><br />
+              <input id="b3" type="range" min="0" max="255" value="18" class="vertical-range" /><br />
+              <input id="b3checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b4Value" for="b4">20</label><br />
+              <input id="b4" type="range" min="0" max="255" value="20" class="vertical-range" /><br />
+              <input id="b4checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b5Value" for="b5">37</label><br />
+              <input id="b5" type="range" min="0" max="255" value="37" class="vertical-range" /><br />
+              <input id="b5checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b6Value" for="b6">47</label><br />
+              <input id="b6" type="range" min="0" max="255" value="47" class="vertical-range" /><br />
+              <input id="b6checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b7Value" for="b7">56</label><br />
+              <input id="b7" type="range" min="0" max="255" value="56" class="vertical-range" /><br />
+              <input id="b7checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b8Value" for="b8">66</label><br />
+              <input id="b8" type="range" min="0" max="255" value="66" class="vertical-range" /><br />
+              <input id="b8checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b9Value" for="b9">75</label><br />
+              <input id="b9" type="range" min="0" max="255" value="75" class="vertical-range" /><br />
+              <input id="b9checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b10Value" for="b10">85</label><br />
+              <input id="b10" type="range" min="0" max="255" value="85" class="vertical-range" /><br />
+              <input id="b10checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b11Value" for="b11">94</label><br />
+              <input id="b11" type="range" min="0" max="255" value="94" class="vertical-range" /><br />
+              <input id="b11checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b12Value" for="b12">103</label><br />
+              <input id="b12" type="range" min="0" max="255" value="103" class="vertical-range" /><br />
+              <input id="b12checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b13Value" for="b13">113</label><br />
+              <input id="b13" type="range" min="0" max="255" value="113" class="vertical-range" /><br />
+              <input id="b13checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b14Value" for="b14">122</label><br />
+              <input id="b14" type="range" min="0" max="255" value="122" class="vertical-range" /><br />
+              <input id="b14checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b15Value" for="b15">132</label><br />
+              <input id="b15" type="range" min="0" max="255" value="132" class="vertical-range" /><br />
+              <input id="b15checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b16Value" for="b16">141</label><br />
+              <input id="b16" type="range" min="0" max="255" value="141" class="vertical-range" /><br />
+              <input id="b16checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b17Value" for="b17">151</label><br />
+              <input id="b17" type="range" min="0" max="255" value="151" class="vertical-range" /><br />
+              <input id="b17checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b18Value" for="b18">160</label><br />
+              <input id="b18" type="range" min="0" max="255" value="160" class="vertical-range" /><br />
+              <input id="b18checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b19Value" for="b19">170</label><br />
+              <input id="b19" type="range" min="0" max="255" value="170" class="vertical-range" /><br />
+              <input id="b19checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b20Value" for="b20">179</label><br />
+              <input id="b20" type="range" min="0" max="255" value="179" class="vertical-range" /><br />
+              <input id="b20checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b21Value" for="b21">188</label><br />
+              <input id="b21" type="range" min="0" max="255" value="188" class="vertical-range" /><br />
+              <input id="b21checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b22Value" for="b22">198</label><br />
+              <input id="b22" type="range" min="0" max="255" value="198" class="vertical-range" /><br />
+              <input id="b22checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b23Value" for="b23">207</label><br />
+              <input id="b23" type="range" min="0" max="255" value="207" class="vertical-range" /><br />
+              <input id="b23checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b24Value" for="b24">217</label><br />
+              <input id="b24" type="range" min="0" max="255" value="217" class="vertical-range" /><br />
+              <input id="b24checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b25Value" for="b25">226</label><br />
+              <input id="b25" type="range" min="0" max="255" value="226" class="vertical-range" /><br />
+              <input id="b25checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b26Value" for="b26">236</label><br />
+              <input id="b26" type="range" min="0" max="255" value="236" class="vertical-range" /><br />
+              <input id="b26checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b27Value" for="b27">245</label><br />
+              <input id="b27" type="range" min="0" max="255" value="245" class="vertical-range" /><br />
+              <input id="b27checkbox" type="checkbox" />
+            </div>
+            <div class="bar">
+              <label id="b28Value" for="b28">255</label><br />
+              <input id="b28" type="range" min="0" max="255" value="255" class="vertical-range" /><br />
+              <input id="b28checkbox" type="checkbox" />
+            </div>
+          </div><br clear="all" />
+          <div class="button-box" style="text-align:center;">
+            <button type="button" onclick="CS.ServiceForceStraight();">Force Straight</button>
+            <button type="button" onclick="CS.ServiceMatchEnds();">Match Ends</button>
+            <button type="button" onclick="CS.ServiceConstantRatioCurve();">Constant ratio curve</button>
+            <button type="button" onclick="CS.ServiceLogCurve();">Log curve</button>
+            <button type="button" onclick="CS.ServiceShiftLeft();">Shift left</button>
+            <button type="button" onclick="CS.ServiceShiftRight();">Shift right</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel" id="five-panel">
+        <div class="panel-title">Function Map</div>
+      </div>
+      <div class="panel" id="six-panel">
+        <div class="panel-title">Lights</div>
+      </div>
+      <div class="panel" id="seven-panel">
+        <div class="panel-title">Analog Controls</div>
+      </div>
+      <div class="panel" id="eight-panel">
+        <div class="panel-title">Consist</div>
+      </div>
+      <div class="panel" id="nine-panel">
+        <div class="panel-title">Advanced</div>
+      </div>
+      <div class="panel" id="ten-panel">
+        <div class="panel-title">Sound</div>
+      </div>
+      <div class="panel" id="eleven-panel">
+        <div class="panel-title">Sound Levels</div>
+      </div>
+      <div class="panel" id="twelve-panel">
+        <div class="panel-title">CVs</div>
+      </div>
+      <div class="panel" id="thirteen-panel">
+        <div class="panel-title">Aux1</div>
+      </div>
+      <div class="panel" id="fourteen-panel">
+        <div class="panel-title">Aux2</div>
+      </div>
+      <div class="panel" id="fithteen-panel">
+        <div class="panel-title">Aux3</div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
 

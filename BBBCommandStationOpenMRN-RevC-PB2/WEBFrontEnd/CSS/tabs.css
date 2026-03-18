@@ -66,7 +66,12 @@ h2{
 #seven:checked ~ .panels #seven-panel,
 #eight:checked ~ .panels #eight-panel,
 #nine:checked ~ .panels #nine-panel,
-#ten:checked ~ .panels #ten-panel{
+#ten:checked ~ .panels #ten-panel,
+#eleven:checked ~ .panels #eleven-panel,
+#twelve:checked ~ .panels #twelve-panel,
+#thirteen:checked ~ .panels #thirteen-panel,
+#fourteen:checked ~ .panels #fourteen-panel,
+#fithteen:checked ~ .panels #fithteen-panel{
   display:block
 }
 #one:checked ~ .tabs #one-tab,
@@ -78,7 +83,12 @@ h2{
 #seven:checked ~ .tabs #seven-tab,
 #eight:checked ~ .tabs #eight-tab,
 #nine:checked ~ .tabs #nine-tab,
-#ten:checked ~ .tabs #ten-tab{
+#ten:checked ~ .tabs #ten-tab,
+#eleven:checked ~ .tabs #eleven-tab,
+#twelve:checked ~ .tabs #twelve-tab,
+#thirteen:checked ~ .tabs #thirteen-tab,
+#fourteen:checked ~ .tabs #fourteen-tab,
+#fithteen:checked ~ .tabs #fithteen-tab{
   background:#fffffff6;
   color:#000;
   border-top: 3px solid #000;
