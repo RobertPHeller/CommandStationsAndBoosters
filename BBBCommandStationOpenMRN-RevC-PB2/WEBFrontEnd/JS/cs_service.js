@@ -8,7 +8,7 @@
      Created By    : Robert Heller, Robert Heller
      Created       : 2026-03-18 13:32:23
 
-     Last Modified : <260318.1529>
+     Last Modified : <260318.1705>
      ID            : $Id$
      Source        : $Source$
      Description	
@@ -122,7 +122,25 @@ CS_Service.SelectPowerSourceConversion = function () {
 CS_Service.SelectConsistAddress = function () {
 }
 
-CS_Service.SelectDirectionInConsist = function () {                                 
+CS_Service.SelectDirectionInConsist = function () {
+}
+
+CS_Service.SetConsistAccelerationAdj = function () {
+}
+
+CS_Service.SetConsistAccelerationAdjSign = function () {
+}
+
+CS_Service.SetConsistDecelerationAdj = function () {
+}
+
+CS_Service.SetConsistDecelerationAdjSign = function () {
+}
+
+CS_Service.SelectConsistRespondFunction = function (fun,forward=false) {                            $
+}
+
+CS_Service.SelectAdvancedAck = function () {
 }
 
 CS_Service.ReadCV = function (cv) {
