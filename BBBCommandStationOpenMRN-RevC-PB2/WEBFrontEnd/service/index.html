@@ -310,9 +310,160 @@
       </div>
       <div class="panel" id="five-panel">
         <div class="panel-title">Function Map</div>
+        <div id="function-map">
+          Use this sheet to determine which functions will control wich outputs
+          <table class="function-map-table">
+            <thead>
+            <tr><th>Description</th>
+              <th colspan="4">Output wire or operation</th></tr>
+            <tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th></tr>
+            <tr><th></th><th>White</th><th>Yellow</th><th>Green</th><th>Vlt./Brwn</th></tr>
+            </thead>
+            <tbody>
+            <tr><td>Forward Headlight F0(f)</td>
+              <td><input id="F0_f-1" type="checkbox" checked /></td>
+              <td><input id="F0_f-2" type="checkbox" /></td>
+              <td><input id="F0_f-3" type="checkbox" /></td>
+              <td><input id="F0_f-4" type="checkbox" /></td></tr>
+            <tr><td>Reverse Headlight F0(r)</td>
+              <td><input id="F0_r-1" type="checkbox" /></td>
+              <td><input id="F0_r-2" type="checkbox" checked /></td>
+              <td><input id="F0_r-3" type="checkbox" /></td>
+              <td><input id="F0_r-4" type="checkbox" /></td></tr>
+            <tr><td>Function 1</td>
+              <td><input id="F1_1" type="checkbox" /></td>
+              <td><input id="F1_2" type="checkbox" /></td>
+              <td><input id="F1_3" type="checkbox" checked /></td>
+              <td><input id="F1_4" type="checkbox" /></td></tr>
+            <tr><td>Function 2</td>
+              <td><input id="F2_1" type="checkbox" /></td>
+              <td><input id="F2_2" type="checkbox" /></td>
+              <td><input id="F2_3" type="checkbox" /></td>
+              <td><input id="F2_4" type="checkbox" checked /></td></tr>
+            <tr><td>Function 3</td>
+              <td><input id="F3_1" type="checkbox" /></td>
+              <td><input id="F3_2" type="checkbox" /></td>
+              <td><input id="F3_3" type="checkbox" /></td>
+              <td><input id="F3_4" type="checkbox" /></td></tr>
+            <tr><td>Function 4</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td><input id="F4_4" type="checkbox" /></td></tr>
+            <tr><td>Function 5</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td><input id="F5_4" type="checkbox" /></td></tr>
+            <tr><td>Function 6</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td><input id="F6_4" type="checkbox" /></td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <div class="panel" id="six-panel">
         <div class="panel-title">Lights</div>
+        <div id="lights">
+          <div class="left-lights" style="float:left;width:25%"">
+            <label for="ditch-light-hold">Ditch light hold time</label>
+            <input type="number" min="0" max="255" value="20" id="ditch-light-hold" /><br />
+            <label for="light-effects-page">Lighting Effects Page</label>
+            <input type="number" min="0" max="255" value="255" id="light-effects-page" /><br />
+          </div>
+          <div class="left-lights" style="float:right;width:75%;">
+            <label for="O1_effect">Output 1 effect generated</label>
+            <select id="O1_effect">
+              <option value="standard" selected>Standard on/off function output</option>
+              <option value="mars">Mars light</option>
+              <option value="rotary">Rotary beacon</option>
+              <option value="gyralight">Gyralight</option>
+              <option value="double">Double Strobe</option>
+              <option value="A">Strobe A</option>
+              <option value="B">Strobe B (alternates with strobe A</option>
+              <option value="dim">Dim when F0 and F4 on, otherwise bright</option>
+            </select></br />
+            <label for="O1_active">Output 1 active</label>
+            <select id="O1_active">
+              <option value="both" selected>Both directions</option>
+              <option value="forward">Only in forward</option>
+              <option value="reverse">Only in reverse</option>
+            </select><br />
+            <label for="O1_connected">Output 1 connected to</label>
+            <select id="O1_connected">
+              <option value="incand" selected>30-40ma incandesent bulb</option>
+              <option value="led">LED and limiting resistor</option>
+            </select><br />
+            <label for="O2_effect">Output 2 effect generated</label>
+            <select id="O2_effect">
+              <option value="standard" selected>Standard on/off function output</option>
+              <option value="mars">Mars light</option>
+              <option value="rotary">Rotary beacon</option>
+              <option value="gyralight">Gyralight</option>
+              <option value="double">Double Strobe</option>
+              <option value="A">Strobe A</option>
+              <option value="B">Strobe B (alternates with strobe A</option>
+              <option value="dim">Dim when F0 and F4 on, otherwise bright</option>
+            </select></br />
+            <label for="O2_active">Output 2 active</label>
+            <select id="O2_active">
+              <option value="both" selected>Both directions</option>
+              <option value="forward">Only in forward</option>
+              <option value="reverse">Only in reverse</option>
+            </select><br />
+            <label for="O2_connected">Output 2 connected to</label>
+            <select id="O2_connected">
+              <option value="incand" selected>30-40ma incandesent bulb</option>
+              <option value="led">LED and limiting resistor</option>
+            </select><br />
+            <label for="O3_effect">Output 3 effect generated</label>
+            <select id="O3_effect">
+              <option value="standard" selected>Standard on/off function output</option>
+              <option value="mars">Mars light</option>
+              <option value="rotary">Rotary beacon</option>
+              <option value="gyralight">Gyralight</option>
+              <option value="double">Double Strobe</option>
+              <option value="A">Strobe A</option>
+              <option value="B">Strobe B (alternates with strobe A</option>
+              <option value="dim">Dim when F0 and F4 on, otherwise bright</option>
+            </select></br />
+            <label for="O3_active">Output 3 active</label>
+            <select id="O3_active">
+              <option value="both" selected>Both directions</option>
+              <option value="forward">Only in forward</option>
+              <option value="reverse">Only in reverse</option>
+            </select><br />
+            <label for="O3_connected">Output 3 connected to</label>
+            <select id="O3_connected">
+              <option value="incand" selected>30-40ma incandesent bulb</option>
+              <option value="led">LED and limiting resistor</option>
+            </select><br />
+            <label for="O4_effect">Output 4 effect generated</label>
+            <select id="O4_effect">
+              <option value="standard" selected>Standard on/off function output</option>
+              <option value="mars">Mars light</option>
+              <option value="rotary">Rotary beacon</option>
+              <option value="gyralight">Gyralight</option>
+              <option value="double">Double Strobe</option>
+              <option value="A">Strobe A</option>
+              <option value="B">Strobe B (alternates with strobe A</option>
+              <option value="dim">Dim when F0 and F4 on, otherwise bright</option>
+            </select></br />
+            <label for="O4_active">Output 4 active</label>
+            <select id="O4_active">
+              <option value="both" selected>Both directions</option>
+              <option value="forward">Only in forward</option>
+              <option value="reverse">Only in reverse</option>
+            </select><br />
+            <label for="O4_connected">Output 4 connected to</label>
+            <select id="O4_connected">
+              <option value="incand" selected>30-40ma incandesent bulb</option>
+              <option value="led">LED and limiting resistor</option>
+            </select><br />
+          </div>
+        </div>
       </div>
       <div class="panel" id="seven-panel">
         <div class="panel-title">Analog Controls</div>
