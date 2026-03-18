@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="/CSS/tabs.css" />
         <link rel="stylesheet" href="/CSS/vslider.css" />
         <script id="cs" type="text/javascript" src="/JS/cs.js"></script>
+        <script id="cs-service" type="text/javascript" src="/JS/cs_service.js"></script>
 </head>
 <body>
   <H1>Command Station Programming Track</H1>
@@ -33,9 +34,6 @@
     <input class="radio" id="ten" name="group" type="radio">
     <input class="radio" id="eleven" name="group" type="radio">
     <input class="radio" id="twelve" name="group" type="radio">
-    <input class="radio" id="thirteen" name="group" type="radio">
-    <input class="radio" id="fourteen" name="group" type="radio">
-    <input class="radio" id="fithteen" name="group" type="radio">
     <div class="tabs">
       <label class="tab" id="one-tab" for="one">Basic</label>
       <label class="tab" id="two-tab" for="two">Motor</label>
@@ -49,39 +47,36 @@
       <label class="tab" id="ten-tab" for="ten">Sound</label>
       <label class="tab" id="eleven-tab" for="eleven">Sound Levels</label>
       <label class="tab" id="twelve-tab" for="twelve">CVs</label>
-      <label class="tab" id="thirteen-tab" for="thirteen">Aux1</label>
-      <label class="tab" id="fourteen-tab" for="fourteen">Aux2</label>
-      <label class="tab" id="fithteen-tab" for="fithteen">Aux3</label>
     </div>
     <div class="panels">
       <div class="panel" id="one-panel">
         <div class="panel-title">Basic</div>
         <div id="basic-left" style="float:left;width='60%';">
-          <input id="short" name="address-type" type="radio" checked />
+          <input id="short" onchange="CS_Service.SelectShortAddress();" name="address-type" type="radio" checked />
           <label for="short">Short (one byte) address</label><br />
-          <input id="long" name="address-type" type="radio" />
+          <input id="long" onchange="CS_Service.SelectLongAddress();" name="address-type" type="radio" />
           <label for="long">Long (two byte) address</label><br />
           <label for="address">Active Address:</label><br />
-          <input id="address" type="number" value="3" /><br /><br />
-          <label for="primary-address">Primary Address</label><input id="primary-address" type="number" value="3" /><br />
-          <label for="extended-address">Extended Address</label><input id="extended-address" type="number" value="1000" /><br />
+          <input id="address" onchange="CS_Service.UpdateAddress();" type="number" value="3" /><br /><br />
+          <label for="primary-address">Primary Address</label><input onchange="CS_Service.UpdatePrimaryAddress();" id="primary-address" type="number" value="3" /><br />
+          <label for="extended-address">Extended Address</label><input onchange="CS_Service.UpdateExtendedAddress();" id="extended-address" type="number" value="1000" /><br />
           <label for="address-format">Address Format</label>
-          <select id="address-format">
+          <select onchange="CS_Service.SelectAddressFormat();" id="address-format">
             <option value="short" selected>Short (one byte) addess</option>
             <option value="long">Long (two byte) address</option>
           </select><br /><br />
           <label for="direction">Locomotive Direction</label>
-          <select id="direction">
+          <select onchange="CS_Service.SelectDirection();" id="direction">
             <option value="normal" selected>normal</option>
             <option value="reversed">reversed</option>
           </select><br />
           <label for="steps">Speed Steps</label>
-          <select id="steps">
+          <select id="steps" onchange="CS_Service.SelectSpeedSteps();" >
             <option value="14">14 speed step format</option>
             <option value="28">28/256 speed step format</option>
           </select><br />
           <label for "power">Power Source Conversion</label>
-          <select id="power">
+          <select id="power" onchange="CS_Service.SelectPowerConversion();" >
             <option value="dcc" selected>NMRA Digital only</option>
             <option value="dc">DC Conversison Enabled</option>
           </select><br />
@@ -89,19 +84,19 @@
         <div id="basic-right" style="float: right;width:'40%';text-align:right;">
           <hrule style="width:'100%';" />
           <label for="man-id">Manufacturer ID:</label>
-          <input id="man-id" type="number" value="0" /><br />
+          <input id="man-id" type="number" value="0" readonly /><br />
           <label for="man-version">Manufacturer Version No:</label>
-          <input id="man-version" type="number" value="0" /><br />
+          <input id="man-version" type="number" value="0" readonly /><br />
         </div>
       </div>
       <div class="panel" id="two-panel">
         <div class="panel-title">Motor</div>
         <div id="motor" style="text-align:right;">
-          <label for="kick">Kick Start</label><input id="kick" type="number" value="0" /><br />
-          <label for="accel">Acceleration Rate</label><input id="accel" type="number" value="0" /><br />
-          <label for="decel">Deceleration Rate</label><input id="decel" type="number" value="0" /><br />
+          <label for="kick">Kick Start</label><input onchange="CS_Service.SelectKickStart();" id="kick" type="number" value="0" /><br />
+          <label for="accel">Acceleration Rate</label><input onchange="CS_Service.SelectAccelerationRate();" id="accel" type="number" value="0" /><br />
+          <label for="decel">Deceleration Rate</label><input onchange="CS_Service.SelectDecelerationRate();" id="decel" type="number" value="0" /><br />
           <br /><br />
-          <label for="freq">Motor drive frequency</label><input id="freq" type="number" value="0" /><br />
+          <label for="freq">Motor drive frequency</label><input onchange="CS_Service.SelectMotorFreq();" id="freq" type="number" value="0" /><br />
         </div>
       </div>
       <div class="panel" id="three-panel">
@@ -109,7 +104,7 @@
         <div id="basic-speed-control">
           <div style="text-align:center;">
             Select this button to use the setting shown below<br />
-            <input id="basic-speed" name="speed-mode" value="basic" type="radio" checked />
+            <input onchange="CS_Service.SelectBasicSpeed();" id="basic-speed" name="speed-mode" value="basic" type="radio" checked />
             <label for="basic-speed">Use Vstart, Vmid, Vhigh (CV29, bit 4)</label><br />
             To turn off, use Speed Table pane<br />
             <div class="slidecontainer">
@@ -120,6 +115,11 @@
                 Vstart.oninput = function() {
                   VstartValue.value = this.value;
                 }
+                Vstart.onchange = CS_Service.SelectVStart();
+                VstartValue.oninput = function() {
+                  Vstart.value = this.value;
+                }
+                VstartValue.onchange = CS_Service.SelectVStart();
               </script>
             </div>
             <div class="slidecontainer">
@@ -130,7 +130,11 @@
                 Vmid.oninput = function() {
                   VmidValue.value = this.value;
                 }
-                
+                Vmid.onchange = CS_Service.SelectVMid();
+                VmidValue.oninput = function() {
+                  Vmid.value = this.value;
+                }
+                VmidValue.onchange = CS_Service.SelectVMid();
               </script>
             </div>
             <div class="slidecontainer">
@@ -141,6 +145,11 @@
                 Vhigh.oninput = function() {
                   VhighValue.value = this.value;
                 }
+                Vhigh.onchange = CS_Service.SelectVHigh();
+                VhighValue.oninput = function() {
+                  Vhigh.value = this.value;
+                }
+                VhighValue.onchange = CS_Service.SelectVHigh();
               </script>
             </div>
           </div>
@@ -151,7 +160,7 @@
         <div id="speed-table">
           <div style="text-align:center;">
             Select this button to use a Speed Table for Speed Control<br />
-            <input id="speed-table" name="speed-mode" value="table" type="radio" />
+            <input onchange="CS_Service.SelectSpeedTable();" id="speed-table" name="speed-mode" value="table" type="radio" />
             <label for="speed-table">Use Speed Table (CV's 67-94)</label><br />
             To turn off, use Basic Speed Control pane<br />
           </div>
@@ -159,152 +168,152 @@
             Speed Table<br />
             <div class="bar">
               <label id="b1Value" for="b1">0</label><br />
-              <input id="b1" type="range" min="0" max="255" value="0" class="vertical-range" /><br />
-              <input id="b1checkbox" type="checkbox" />
+              <input id="b1" onchange="CS_Service.SpeedTableBar(1);" type="range" min="0" max="255" value="0" class="vertical-range" /><br />
+              <input id="b1checkbox" onchange="CS_Service.SpeedTableCheckbox(1);" type="checkbox" />
             </div>
             <div class="bar">
               <label id="b2Value" for="b2">9</label><br />
-              <input id="b2" type="range" min="0" max="255" value="9" class="vertical-range" /><br />
-              <input id="b2checkbox" type="checkbox" />
+              <input id="b2" onchange="CS_Service.SpeedTableBar(2);" type="range" min="0" max="255" value="9" class="vertical-range" /><br />
+              <input id="b2checkbox" onchange="CS_Service.SpeedTableCheckbox(2);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b3Value" for="b3">18</label><br />
-              <input id="b3" type="range" min="0" max="255" value="18" class="vertical-range" /><br />
-              <input id="b3checkbox" type="checkbox" />
+              <input id="b3" onchange="CS_Service.SpeedTableBar(3);" type="range" min="0" max="255" value="18" class="vertical-range" /><br />
+              <input id="b3checkbox" onchange="CS_Service.SpeedTableCheckbox(3);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b4Value" for="b4">20</label><br />
-              <input id="b4" type="range" min="0" max="255" value="20" class="vertical-range" /><br />
-              <input id="b4checkbox" type="checkbox" />
+              <input id="b4" onchange="CS_Service.SpeedTableBar(4);" type="range" min="0" max="255" value="20" class="vertical-range" /><br />
+              <input id="b4checkbox" onchange="CS_Service.SpeedTableCheckbox(4);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b5Value" for="b5">37</label><br />
-              <input id="b5" type="range" min="0" max="255" value="37" class="vertical-range" /><br />
-              <input id="b5checkbox" type="checkbox" />
+              <input id="b5" onchange="CS_Service.SpeedTableBar(5);" type="range" min="0" max="255" value="37" class="vertical-range" /><br />
+              <input id="b5checkbox" onchange="CS_Service.SpeedTableCheckbox(5);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b6Value" for="b6">47</label><br />
-              <input id="b6" type="range" min="0" max="255" value="47" class="vertical-range" /><br />
-              <input id="b6checkbox" type="checkbox" />
+              <input id="b6" onchange="CS_Service.SpeedTableBar(6);" type="range" min="0" max="255" value="47" class="vertical-range" /><br />
+              <input id="b6checkbox" onchange="CS_Service.SpeedTableCheckbox(6);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b7Value" for="b7">56</label><br />
-              <input id="b7" type="range" min="0" max="255" value="56" class="vertical-range" /><br />
-              <input id="b7checkbox" type="checkbox" />
+              <input id="b7" onchange="CS_Service.SpeedTableBar(7);" type="range" min="0" max="255" value="56" class="vertical-range" /><br />
+              <input id="b7checkbox" onchange="CS_Service.SpeedTableCheckbox(7);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b8Value" for="b8">66</label><br />
-              <input id="b8" type="range" min="0" max="255" value="66" class="vertical-range" /><br />
-              <input id="b8checkbox" type="checkbox" />
+              <input id="b8" onchange="CS_Service.SpeedTableBar(8);" type="range" min="0" max="255" value="66" class="vertical-range" /><br />
+              <input id="b8checkbox" onchange="CS_Service.SpeedTableCheckbox(8);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b9Value" for="b9">75</label><br />
-              <input id="b9" type="range" min="0" max="255" value="75" class="vertical-range" /><br />
-              <input id="b9checkbox" type="checkbox" />
+              <input id="b9" onchange="CS_Service.SpeedTableBar(9);" type="range" min="0" max="255" value="75" class="vertical-range" /><br />
+              <input id="b9checkbox" onchange="CS_Service.SpeedTableCheckbox(9);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b10Value" for="b10">85</label><br />
-              <input id="b10" type="range" min="0" max="255" value="85" class="vertical-range" /><br />
-              <input id="b10checkbox" type="checkbox" />
+              <input id="b10"onchange="CS_Service.SpeedTableBar(10);"  type="range" min="0" max="255" value="85" class="vertical-range" /><br />
+              <input id="b10checkbox" onchange="CS_Service.SpeedTableCheckbox(10);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b11Value" for="b11">94</label><br />
-              <input id="b11" type="range" min="0" max="255" value="94" class="vertical-range" /><br />
-              <input id="b11checkbox" type="checkbox" />
+              <input id="b11"onchange="CS_Service.SpeedTableBar(11);"  type="range" min="0" max="255" value="94" class="vertical-range" /><br />
+              <input id="b11checkbox" onchange="CS_Service.SpeedTableCheckbox(11);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b12Value" for="b12">103</label><br />
-              <input id="b12" type="range" min="0" max="255" value="103" class="vertical-range" /><br />
-              <input id="b12checkbox" type="checkbox" />
+              <input id="b12"onchange="CS_Service.SpeedTableBar(12);"  type="range" min="0" max="255" value="103" class="vertical-range" /><br />
+              <input id="b12checkbox" onchange="CS_Service.SpeedTableCheckbox(12);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b13Value" for="b13">113</label><br />
-              <input id="b13" type="range" min="0" max="255" value="113" class="vertical-range" /><br />
-              <input id="b13checkbox" type="checkbox" />
+              <input id="b13"onchange="CS_Service.SpeedTableBar(13);"  type="range" min="0" max="255" value="113" class="vertical-range" /><br />
+              <input id="b13checkbox" onchange="CS_Service.SpeedTableCheckbox(13);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b14Value" for="b14">122</label><br />
-              <input id="b14" type="range" min="0" max="255" value="122" class="vertical-range" /><br />
-              <input id="b14checkbox" type="checkbox" />
+              <input id="b14"onchange="CS_Service.SpeedTableBar(14);"  type="range" min="0" max="255" value="122" class="vertical-range" /><br />
+              <input id="b14checkbox" onchange="CS_Service.SpeedTableCheckbox(14);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b15Value" for="b15">132</label><br />
-              <input id="b15" type="range" min="0" max="255" value="132" class="vertical-range" /><br />
-              <input id="b15checkbox" type="checkbox" />
+              <input id="b15"onchange="CS_Service.SpeedTableBar(15);"  type="range" min="0" max="255" value="132" class="vertical-range" /><br />
+              <input id="b15checkbox" onchange="CS_Service.SpeedTableCheckbox(15);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b16Value" for="b16">141</label><br />
-              <input id="b16" type="range" min="0" max="255" value="141" class="vertical-range" /><br />
-              <input id="b16checkbox" type="checkbox" />
+              <input id="b16"onchange="CS_Service.SpeedTableBar(16);"  type="range" min="0" max="255" value="141" class="vertical-range" /><br />
+              <input id="b16checkbox" onchange="CS_Service.SpeedTableCheckbox(16);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b17Value" for="b17">151</label><br />
-              <input id="b17" type="range" min="0" max="255" value="151" class="vertical-range" /><br />
-              <input id="b17checkbox" type="checkbox" />
+              <input id="b17"onchange="CS_Service.SpeedTableBar(17);"  type="range" min="0" max="255" value="151" class="vertical-range" /><br />
+              <input id="b17checkbox" onchange="CS_Service.SpeedTableCheckbox(17);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b18Value" for="b18">160</label><br />
-              <input id="b18" type="range" min="0" max="255" value="160" class="vertical-range" /><br />
-              <input id="b18checkbox" type="checkbox" />
+              <input id="b18"onchange="CS_Service.SpeedTableBar(18);"  type="range" min="0" max="255" value="160" class="vertical-range" /><br />
+              <input id="b18checkbox" onchange="CS_Service.SpeedTableCheckbox(18);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b19Value" for="b19">170</label><br />
-              <input id="b19" type="range" min="0" max="255" value="170" class="vertical-range" /><br />
-              <input id="b19checkbox" type="checkbox" />
+              <input id="b19"onchange="CS_Service.SpeedTableBar(19);"  type="range" min="0" max="255" value="170" class="vertical-range" /><br />
+              <input id="b19checkbox" onchange="CS_Service.SpeedTableCheckbox(19);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b20Value" for="b20">179</label><br />
-              <input id="b20" type="range" min="0" max="255" value="179" class="vertical-range" /><br />
-              <input id="b20checkbox" type="checkbox" />
+              <input id="b20"onchange="CS_Service.SpeedTableBar(20);"  type="range" min="0" max="255" value="179" class="vertical-range" /><br />
+              <input id="b20checkbox" onchange="CS_Service.SpeedTableCheckbox(20);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b21Value" for="b21">188</label><br />
-              <input id="b21" type="range" min="0" max="255" value="188" class="vertical-range" /><br />
-              <input id="b21checkbox" type="checkbox" />
+              <input id="b21"onchange="CS_Service.SpeedTableBar(21);"  type="range" min="0" max="255" value="188" class="vertical-range" /><br />
+              <input id="b21checkbox" onchange="CS_Service.SpeedTableCheckbox(21);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b22Value" for="b22">198</label><br />
-              <input id="b22" type="range" min="0" max="255" value="198" class="vertical-range" /><br />
-              <input id="b22checkbox" type="checkbox" />
+              <input id="b22"onchange="CS_Service.SpeedTableBar(22);"  type="range" min="0" max="255" value="198" class="vertical-range" /><br />
+              <input id="b22checkbox" onchange="CS_Service.SpeedTableCheckbox(22);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b23Value" for="b23">207</label><br />
-              <input id="b23" type="range" min="0" max="255" value="207" class="vertical-range" /><br />
-              <input id="b23checkbox" type="checkbox" />
+              <input id="b23"onchange="CS_Service.SpeedTableBar(23);"  type="range" min="0" max="255" value="207" class="vertical-range" /><br />
+              <input id="b23checkbox" onchange="CS_Service.SpeedTableCheckbox(23);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b24Value" for="b24">217</label><br />
-              <input id="b24" type="range" min="0" max="255" value="217" class="vertical-range" /><br />
-              <input id="b24checkbox" type="checkbox" />
+              <input id="b24"onchange="CS_Service.SpeedTableBar(24);"  type="range" min="0" max="255" value="217" class="vertical-range" /><br />
+              <input id="b24checkbox" onchange="CS_Service.SpeedTableCheckbox(24);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b25Value" for="b25">226</label><br />
-              <input id="b25" type="range" min="0" max="255" value="226" class="vertical-range" /><br />
-              <input id="b25checkbox" type="checkbox" />
+              <input id="b25"onchange="CS_Service.SpeedTableBar(25);"  type="range" min="0" max="255" value="226" class="vertical-range" /><br />
+              <input id="b25checkbox" onchange="CS_Service.SpeedTableCheckbox(25);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b26Value" for="b26">236</label><br />
-              <input id="b26" type="range" min="0" max="255" value="236" class="vertical-range" /><br />
-              <input id="b26checkbox" type="checkbox" />
+              <input id="b26"onchange="CS_Service.SpeedTableBar(26);"  type="range" min="0" max="255" value="236" class="vertical-range" /><br />
+              <input id="b26checkbox" onchange="CS_Service.SpeedTableCheckbox(26);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b27Value" for="b27">245</label><br />
-              <input id="b27" type="range" min="0" max="255" value="245" class="vertical-range" /><br />
-              <input id="b27checkbox" type="checkbox" />
+              <input id="b27"onchange="CS_Service.SpeedTableBar(27);"  type="range" min="0" max="255" value="245" class="vertical-range" /><br />
+              <input id="b27checkbox" onchange="CS_Service.SpeedTableCheckbox(27);"  type="checkbox" />
             </div>
             <div class="bar">
               <label id="b28Value" for="b28">255</label><br />
-              <input id="b28" type="range" min="0" max="255" value="255" class="vertical-range" /><br />
-              <input id="b28checkbox" type="checkbox" />
+              <input id="b28"onchange="CS_Service.SpeedTableBar(28);"  type="range" min="0" max="255" value="255" class="vertical-range" /><br />
+              <input id="b28checkbox" onchange="CS_Service.SpeedTableCheckbox(28);"  type="checkbox" />
             </div>
           </div><br clear="all" />
-          <div class="button-box" style="text-align:center;">
-            <button type="button" onclick="CS.ServiceForceStraight();">Force Straight</button>
-            <button type="button" onclick="CS.ServiceMatchEnds();">Match Ends</button>
-            <button type="button" onclick="CS.ServiceConstantRatioCurve();">Constant ratio curve</button>
-            <button type="button" onclick="CS.ServiceLogCurve();">Log curve</button>
-            <button type="button" onclick="CS.ServiceShiftLeft();">Shift left</button>
-            <button type="button" onclick="CS.ServiceShiftRight();">Shift right</button>
+          <div class="button-box">
+            <button type="button" onclick="CS_Service.ServiceForceStraight();">Force Straight</button>
+            <button type="button" onclick="CS_Service.ServiceMatchEnds();">Match Ends</button>
+            <button type="button" onclick="CS_Service.ServiceConstantRatioCurve();">Constant ratio curve</button>
+            <button type="button" onclick="CS_Service.ServiceLogCurve();">Log curve</button>
+            <button type="button" onclick="CS_Service.ServiceShiftLeft();">Shift left</button>
+            <button type="button" onclick="CS_Service.ServiceShiftRight();">Shift right</button>
           </div>
         </div>
       </div>
@@ -321,45 +330,45 @@
             </thead>
             <tbody>
             <tr><td>Forward Headlight F0(f)</td>
-              <td><input id="F0_f-1" type="checkbox" checked /></td>
-              <td><input id="F0_f-2" type="checkbox" /></td>
-              <td><input id="F0_f-3" type="checkbox" /></td>
-              <td><input id="F0_f-4" type="checkbox" /></td></tr>
+              <td><input onchange="CS_Service.SelectFunctionMap(0,1,true);" id="F0_f-1" type="checkbox" checked /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(0,2,true);" id="F0_f-2" type="checkbox" /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(0,3,true);" id="F0_f-3" type="checkbox" /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(0,4,true);" id="F0_f-4" type="checkbox" /></td></tr>
             <tr><td>Reverse Headlight F0(r)</td>
-              <td><input id="F0_r-1" type="checkbox" /></td>
-              <td><input id="F0_r-2" type="checkbox" checked /></td>
-              <td><input id="F0_r-3" type="checkbox" /></td>
-              <td><input id="F0_r-4" type="checkbox" /></td></tr>
+              <td><input onchange="CS_Service.SelectFunctionMap(0,1,false);" id="F0_r-1" type="checkbox" /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(0,2,false);" id="F0_r-2" type="checkbox" checked /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(0,3,false);" id="F0_r-3" type="checkbox" /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(0,4,false);" id="F0_r-4" type="checkbox" /></td></tr>
             <tr><td>Function 1</td>
-              <td><input id="F1_1" type="checkbox" /></td>
-              <td><input id="F1_2" type="checkbox" /></td>
-              <td><input id="F1_3" type="checkbox" checked /></td>
-              <td><input id="F1_4" type="checkbox" /></td></tr>
+              <td><input onchange="CS_Service.SelectFunctionMap(1,1);" id="F1_1" type="checkbox" /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(1,2);" id="F1_2" type="checkbox" /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(1,3);" id="F1_3" type="checkbox" checked /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(1,4);" id="F1_4" type="checkbox" /></td></tr>
             <tr><td>Function 2</td>
-              <td><input id="F2_1" type="checkbox" /></td>
-              <td><input id="F2_2" type="checkbox" /></td>
-              <td><input id="F2_3" type="checkbox" /></td>
-              <td><input id="F2_4" type="checkbox" checked /></td></tr>
+              <td><input onchange="CS_Service.SelectFunctionMap(2,1);" id="F2_1" type="checkbox" /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(2,2);" id="F2_2" type="checkbox" /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(2,3);" id="F2_3" type="checkbox" /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(2,4);" id="F2_4" type="checkbox" checked /></td></tr>
             <tr><td>Function 3</td>
-              <td><input id="F3_1" type="checkbox" /></td>
-              <td><input id="F3_2" type="checkbox" /></td>
-              <td><input id="F3_3" type="checkbox" /></td>
-              <td><input id="F3_4" type="checkbox" /></td></tr>
+              <td><input onchange="CS_Service.SelectFunctionMap(3,1);" id="F3_1" type="checkbox" /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(3,2);" id="F3_2" type="checkbox" /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(3,3);" id="F3_3" type="checkbox" /></td>
+              <td><input onchange="CS_Service.SelectFunctionMap(3,4);" id="F3_4" type="checkbox" /></td></tr>
             <tr><td>Function 4</td>
               <td></td>
               <td></td>
               <td></td>
-              <td><input id="F4_4" type="checkbox" /></td></tr>
+              <td><input onchange="CS_Service.SelectFunctionMap(4,4);" id="F4_4" type="checkbox" /></td></tr>
             <tr><td>Function 5</td>
               <td></td>
               <td></td>
               <td></td>
-              <td><input id="F5_4" type="checkbox" /></td></tr>
+              <td><input onchange="CS_Service.SelectFunctionMap(5,4);" id="F5_4" type="checkbox" /></td></tr>
             <tr><td>Function 6</td>
               <td></td>
               <td></td>
               <td></td>
-              <td><input id="F6_4" type="checkbox" /></td></tr>
+              <td><input onchange="CS_Service.SelectFunctionMap(6,4);" id="F6_4" type="checkbox" /></td></tr>
             </tbody>
           </table>
         </div>
@@ -369,13 +378,13 @@
         <div id="lights">
           <div class="left-lights" style="float:left;width:25%"">
             <label for="ditch-light-hold">Ditch light hold time</label>
-            <input type="number" min="0" max="255" value="20" id="ditch-light-hold" /><br />
+            <input onchange="CS_Service.SelectDitchLightHold();" type="number" min="0" max="255" value="20" id="ditch-light-hold" /><br />
             <label for="light-effects-page">Lighting Effects Page</label>
-            <input type="number" min="0" max="255" value="255" id="light-effects-page" /><br />
+            <input onchange="CS_Service.SelectLightingEffectsPage();" type="number" min="0" max="255" value="255" id="light-effects-page" /><br />
           </div>
           <div class="left-lights" style="float:right;width:75%;">
             <label for="O1_effect">Output 1 effect generated</label>
-            <select id="O1_effect">
+            <select onchange="CS_Service.SelectOutputEffectGenerated(1);" id="O1_effect">
               <option value="standard" selected>Standard on/off function output</option>
               <option value="mars">Mars light</option>
               <option value="rotary">Rotary beacon</option>
@@ -386,18 +395,18 @@
               <option value="dim">Dim when F0 and F4 on, otherwise bright</option>
             </select></br />
             <label for="O1_active">Output 1 active</label>
-            <select id="O1_active">
+            <select onchange="CS_Service.SelectOutputActive(output);" id="O1_active">
               <option value="both" selected>Both directions</option>
               <option value="forward">Only in forward</option>
               <option value="reverse">Only in reverse</option>
             </select><br />
             <label for="O1_connected">Output 1 connected to</label>
-            <select id="O1_connected">
+            <select onchange="CS_Service.SelectOutputConnected(1);" id="O1_connected">
               <option value="incand" selected>30-40ma incandesent bulb</option>
               <option value="led">LED and limiting resistor</option>
             </select><br />
             <label for="O2_effect">Output 2 effect generated</label>
-            <select id="O2_effect">
+            <select onchange="CS_Service.SelectOutputEffectGenerated(2);" id="O2_effect">
               <option value="standard" selected>Standard on/off function output</option>
               <option value="mars">Mars light</option>
               <option value="rotary">Rotary beacon</option>
@@ -408,18 +417,18 @@
               <option value="dim">Dim when F0 and F4 on, otherwise bright</option>
             </select></br />
             <label for="O2_active">Output 2 active</label>
-            <select id="O2_active">
+            <select onchange="CS_Service.SelectOutputActive(2);" id="O2_active">
               <option value="both" selected>Both directions</option>
               <option value="forward">Only in forward</option>
               <option value="reverse">Only in reverse</option>
             </select><br />
             <label for="O2_connected">Output 2 connected to</label>
-            <select id="O2_connected">
+            <select onchange="CS_Service.SelectOutputConnected(2);" id="O2_connected">
               <option value="incand" selected>30-40ma incandesent bulb</option>
               <option value="led">LED and limiting resistor</option>
             </select><br />
             <label for="O3_effect">Output 3 effect generated</label>
-            <select id="O3_effect">
+            <select onchange="CS_Service.SelectOutputEffectGenerated(3);" id="O3_effect">
               <option value="standard" selected>Standard on/off function output</option>
               <option value="mars">Mars light</option>
               <option value="rotary">Rotary beacon</option>
@@ -430,18 +439,18 @@
               <option value="dim">Dim when F0 and F4 on, otherwise bright</option>
             </select></br />
             <label for="O3_active">Output 3 active</label>
-            <select id="O3_active">
+            <select onchange="CS_Service.SelectOutputActive(3);" id="O3_active">
               <option value="both" selected>Both directions</option>
               <option value="forward">Only in forward</option>
               <option value="reverse">Only in reverse</option>
             </select><br />
             <label for="O3_connected">Output 3 connected to</label>
-            <select id="O3_connected">
+            <select onchange="CS_Service.SelectOutputConnected(3);" id="O3_connected">
               <option value="incand" selected>30-40ma incandesent bulb</option>
               <option value="led">LED and limiting resistor</option>
             </select><br />
             <label for="O4_effect">Output 4 effect generated</label>
-            <select id="O4_effect">
+            <select onchange="CS_Service.SelectOutputEffectGenerated(4);" id="O4_effect">
               <option value="standard" selected>Standard on/off function output</option>
               <option value="mars">Mars light</option>
               <option value="rotary">Rotary beacon</option>
@@ -452,13 +461,13 @@
               <option value="dim">Dim when F0 and F4 on, otherwise bright</option>
             </select></br />
             <label for="O4_active">Output 4 active</label>
-            <select id="O4_active">
+            <select onchange="CS_Service.SelectOutputActive(4);" id="O4_active">
               <option value="both" selected>Both directions</option>
               <option value="forward">Only in forward</option>
               <option value="reverse">Only in reverse</option>
             </select><br />
             <label for="O4_connected">Output 4 connected to</label>
-            <select id="O4_connected">
+            <select onchange="CS_Service.SelectOutputConnected(4);" id="O4_connected">
               <option value="incand" selected>30-40ma incandesent bulb</option>
               <option value="led">LED and limiting resistor</option>
             </select><br />
@@ -467,12 +476,109 @@
       </div>
       <div class="panel" id="seven-panel">
         <div class="panel-title">Analog Controls</div>
+        <div class="analog-controls">
+          <label for="power-source">Power Source Conversion<.label>
+          <select onchange="CS_Service.SelectPowerSourceConversion();" id="power-source">
+            <option value="dcc" selected>NMRA Digitial only</opyion>
+            <option value="dc">DC conversion enabled<.option>
+          </select>
+        </div>
       </div>
       <div class="panel" id="eight-panel">
         <div class="panel-title">Consist</div>
+        <div class="consist">
+          <div class="upper">
+            <div class="left" style="float:left;">
+              <label for="consist-address">Advanced Consist Address</label>
+              <input onchange="CS_Service.SelectConsistAddress();" id="consist-address" type="number" min="0" max="127" value="0" /><br />
+              <label for="direction">Locomotive Direction In Consist</label>
+              <select onchange="CS_Service.SelectDirectionInConsist();" id="direction">
+                <option value="normal" selected>normal</option>
+                <option value="reversed">reversed</option>
+              </select>
+            </div>
+            <div class="right" style="float:right;">
+              <label for="accel-adj">Consist Acceleration Adjustment</label>
+              <input id="accel-adj" type="number" min="0" max="255" value="0" /><br />
+              <label for="accel-sign">Consist Acceleration Adjustment Sign</label>
+              <select id="accel-sign">
+                <option value="+" selected>Adjustment Added</option>
+                <option value="-">Adjustment Subtracted</option>
+              </select><br />
+              <label for="decel-adj">Consist Deceleration Adjustment</label>
+              <input id="decel-adj" type="number" min="0" max="255" value="0" /><br />
+              <label for="decel-sign">Consist Deceleration Adjustment Sign</label>
+              <select id="decel-sign">
+                <option value="+" selected>Adjustment Added</option>
+                <option value="-">Adjustment Subtracted</option>
+              </select><br />
+            </div>
+          </div><br clear="all" />
+          <hrule /><br />
+          <div class="lower">
+            Will decoder respond to function requests at consist address?<br /><br />
+            <label for="consist-F0F">Consist Address Active for FL in forward</label>
+            <select id="consist-F0F">
+              <option value="0" selected>Locomotive Address Only</option>
+              <option value="1">Respond to Consist Address</option>
+            </select><br />
+            <label for="consist-F0R">Consist Address Active for FL in reverse</label>
+            <select id="consist-F0R">
+              <option value="0" selected>Locomotive Address Only</option>
+              <option value="1">Respond to Consist Address</option>
+            </select><br />
+            <label for="consist-F1">Consist Address Active for F1</label>
+            <select id="consist-F1">
+              <option value="0" selected>Locomotive Address Only</option>
+              <option value="1">Respond to Consist Address</option>
+            </select><br />
+            <label for="consist-F2">Consist Address Active for F2</label>
+            <select id="consist-F2">
+              <option value="0" selected>Locomotive Address Only</option>
+              <option value="1">Respond to Consist Address</option>
+            </select><br />
+            <label for="consist-F3">Consist Address Active for F3</label>
+            <select id="consist-F3">
+              <option value="0" selected>Locomotive Address Only</option>
+              <option value="1">Respond to Consist Address</option>
+            </select><br />
+            <label for="consist-F4">Consist Address Active for F4</label>
+            <select id="consist-F4">
+              <option value="0" selected>Locomotive Address Only</option>
+              <option value="1">Respond to Consist Address</option>
+            </select><br />
+            <label for="consist-F5">Consist Address Active for F5</label>
+            <select id="consist-F5">
+              <option value="0" selected>Locomotive Address Only</option>
+              <option value="1">Respond to Consist Address</option>
+            </select><br />
+            <label for="consist-F6">Consist Address Active for F6</label>
+            <select id="consist-F6">
+              <option value="0" selected>Locomotive Address Only</option>
+              <option value="1">Respond to Consist Address</option>
+            </select><br />
+            <label for="consist-F7">Consist Address Active for F7</label>
+            <select id="consist-F7">
+              <option value="0" selected>Locomotive Address Only</option>
+              <option value="1">Respond to Consist Address</option>
+            </select><br />
+            <label for="consist-F8">Consist Address Active for F8</label>
+            <select id="consist-F8">
+              <option value="0" selected>Locomotive Address Only</option>
+              <option value="1">Respond to Consist Address</option>
+            </select><br />
+          </div>
+        </div>
       </div>
       <div class="panel" id="nine-panel">
         <div class="panel-title">Advanced</div>
+        <div class="advanced">
+          <label for="advanced-ack">Advanced Decoder Acknowledgement</label>
+          <select id="advanced-ack">
+            <option value="disabled" selected>Disabled</option>
+            <option value="enabled">Enabled</option>
+          </select>
+        </div>
       </div>
       <div class="panel" id="ten-panel">
         <div class="panel-title">Sound</div>
@@ -482,16 +588,1017 @@
       </div>
       <div class="panel" id="twelve-panel">
         <div class="panel-title">CVs</div>
+        <div class="cvs" style="overflow:scroll;">
+          <table class="cvs">
+            <thead>
+            <tr><th>CV</th><th>Value (decimal)</th><th>State</th><th>Read</th>
+              <th>Write</th><th>Compare</th></tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>1</td>
+              <td><input id="CV1_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV1_State">Unknown</span></td>
+              <td><button id="CV1_Read" type="button" onclick="CS_Service.ReadCV(1);">Read</button></td>
+              <td><button id="CV1_Write" type="button" onclick="CS_Service.WriteCV(1);">Write</button></td>
+              <td><button id="CV1_Compare" type="button" onclick="CS_Service.CompareCV(1);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><input id="CV2_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV2_State">Unknown</span></td>
+              <td><button id="CV2_Read" type="button" onclick="CS_Service.ReadCV(2);">Read</button></td>
+              <td><button id="CV2_Write" type="button" onclick="CS_Service.WriteCV(2);">Write</button></td>
+              <td><button id="CV2_Compare" type="button" onclick="CS_Service.CompareCV(2);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><input id="CV3_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV3_State">Unknown</span></td>
+              <td><button id="CV3_Read" type="button" onclick="CS_Service.ReadCV(3);">Read</button></td>
+              <td><button id="CV3_Write" type="button" onclick="CS_Service.WriteCV(3);">Write</button></td>
+              <td><button id="CV3_Compare" type="button" onclick="CS_Service.CompareCV(3);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td><input id="CV4_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV4_State">Unknown</span></td>
+              <td><button id="CV4_Read" type="button" onclick="CS_Service.ReadCV(4);">Read</button></td>
+              <td><button id="CV4_Write" type="button" onclick="CS_Service.WriteCV(4);">Write</button></td>
+              <td><button id="CV4_Compare" type="button" onclick="CS_Service.CompareCV(4);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td><input id="CV5_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV5_State">Unknown</span></td>
+              <td><button id="CV5_Read" type="button" onclick="CS_Service.ReadCV(5);">Read</button></td>
+              <td><button id="CV5_Write" type="button" onclick="CS_Service.WriteCV(5);">Write</button></td>
+              <td><button id="CV5_Compare" type="button" onclick="CS_Service.CompareCV(5);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td><input id="CV6_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV6_State">Unknown</span></td>
+              <td><button id="CV6_Read" type="button" onclick="CS_Service.ReadCV(6);">Read</button></td>
+              <td><button id="CV6_Write" type="button" onclick="CS_Service.WriteCV(6);">Write</button></td>
+              <td><button id="CV6_Compare" type="button" onclick="CS_Service.CompareCV(6);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td><input id="CV7_Value" readonly type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV7_State">Unknown</span></td>
+              <td><button id="CV7_Read" type="button" onclick="CS_Service.ReadCV(7);">Read</button></td>
+              <td><button disabled id="CV7_Write" type="button" onclick="CS_Service.WriteCV(7);">Write</button></td>
+              <td><button id="CV7_Compare" type="button" onclick="CS_Service.CompareCV(7);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td><input readonly id="CV8_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV8_State">Unknown</span></td>
+              <td><button id="CV8_Read" type="button" onclick="CS_Service.ReadCV(8);">Read</button></td>
+              <td><button disabled id="CV8_Write" type="button" onclick="CS_Service.WriteCV(8);">Write</button></td>
+              <td><button id="CV8_Compare" type="button" onclick="CS_Service.CompareCV(8);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td><input id="CV9_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV9_State">Unknown</span></td>
+              <td><button id="CV9_Read" type="button" onclick="CS_Service.ReadCV(9);">Read</button></td>
+              <td><button id="CV9_Write" type="button" onclick="CS_Service.WriteCV(9);">Write</button></td>
+              <td><button id="CV9_Compare" type="button" onclick="CS_Service.CompareCV(9);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>10</td>
+              <td><input id="CV10_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV10_State">Unknown</span></td>
+              <td><button id="CV10_Read" type="button" onclick="CS_Service.ReadCV(10);">Read</button></td>
+              <td><button id="CV10_Write" type="button" onclick="CS_Service.WriteCV(10);">Write</button></td>
+              <td><button id="CV10_Compare" type="button" onclick="CS_Service.CompareCV(10);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>11</td>
+              <td><input id="CV11_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV11_State">Unknown</span></td>
+              <td><button id="CV11_Read" type="button" onclick="CS_Service.ReadCV(11);">Read</button></td>
+              <td><button id="CV11_Write" type="button" onclick="CS_Service.WriteCV(11);">Write</button></td>
+              <td><button id="CV11_Compare" type="button" onclick="CS_Service.CompareCV(11);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>12</td>
+              <td><input id="CV12_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV12_State">Unknown</span></td>
+              <td><button id="CV12_Read" type="button" onclick="CS_Service.ReadCV(12);">Read</button></td>
+              <td><button id="CV12_Write" type="button" onclick="CS_Service.WriteCV(12);">Write</button></td>
+              <td><button id="CV12_Compare" type="button" onclick="CS_Service.CompareCV(12);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>13</td>
+              <td><input id="CV13_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV13_State">Unknown</span></td>
+              <td><button id="CV13_Read" type="button" onclick="CS_Service.ReadCV(13);">Read</button></td>
+              <td><button id="CV13_Write" type="button" onclick="CS_Service.WriteCV(13);">Write</button></td>
+              <td><button id="CV13_Compare" type="button" onclick="CS_Service.CompareCV(13);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>14</td>
+              <td><input id="CV14_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV14_State">Unknown</span></td>
+              <td><button id="CV14_Read" type="button" onclick="CS_Service.ReadCV(14);">Read</button></td>
+              <td><button id="CV14_Write" type="button" onclick="CS_Service.WriteCV(14);">Write</button></td>
+              <td><button id="CV14_Compare" type="button" onclick="CS_Service.CompareCV(14);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>15</td>
+              <td><input id="CV15_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV15_State">Unknown</span></td>
+              <td><button id="CV15_Read" type="button" onclick="CS_Service.ReadCV(15);">Read</button></td>
+              <td><button id="CV15_Write" type="button" onclick="CS_Service.WriteCV(15);">Write</button></td>
+              <td><button id="CV15_Compare" type="button" onclick="CS_Service.CompareCV(15);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>16</td>
+              <td><input id="CV16_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV16_State">Unknown</span></td>
+              <td><button id="CV16_Read" type="button" onclick="CS_Service.ReadCV(16);">Read</button></td>
+              <td><button id="CV16_Write" type="button" onclick="CS_Service.WriteCV(16);">Write</button></td>
+              <td><button id="CV16_Compare" type="button" onclick="CS_Service.CompareCV(16);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>17</td>
+              <td><input id="CV17_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV17_State">Unknown</span></td>
+              <td><button id="CV17_Read" type="button" onclick="CS_Service.ReadCV(17);">Read</button></td>
+              <td><button id="CV17_Write" type="button" onclick="CS_Service.WriteCV(17);">Write</button></td>
+              <td><button id="CV17_Compare" type="button" onclick="CS_Service.CompareCV(17);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>18</td>
+              <td><input id="CV18_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV18_State">Unknown</span></td>
+              <td><button id="CV18_Read" type="button" onclick="CS_Service.ReadCV(18);">Read</button></td>
+              <td><button id="CV18_Write" type="button" onclick="CS_Service.WriteCV(18);">Write</button></td>
+              <td><button id="CV18_Compare" type="button" onclick="CS_Service.CompareCV(18);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>19</td>
+              <td><input id="CV19_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV19_State">Unknown</span></td>
+              <td><button id="CV19_Read" type="button" onclick="CS_Service.ReadCV(19);">Read</button></td>
+              <td><button id="CV19_Write" type="button" onclick="CS_Service.WriteCV(19);">Write</button></td>
+              <td><button id="CV19_Compare" type="button" onclick="CS_Service.CompareCV(19);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>20</td>
+              <td><input id="CV20_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV20_State">Unknown</span></td>
+              <td><button id="CV20_Read" type="button" onclick="CS_Service.ReadCV(20);">Read</button></td>
+              <td><button id="CV20_Write" type="button" onclick="CS_Service.WriteCV(20);">Write</button></td>
+              <td><button id="CV20_Compare" type="button" onclick="CS_Service.CompareCV(20);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>21</td>
+              <td><input id="CV21_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV21_State">Unknown</span></td>
+              <td><button id="CV21_Read" type="button" onclick="CS_Service.ReadCV(21);">Read</button></td>
+              <td><button id="CV21_Write" type="button" onclick="CS_Service.WriteCV(21);">Write</button></td>
+              <td><button id="CV21_Compare" type="button" onclick="CS_Service.CompareCV(21);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>22</td>
+              <td><input id="CV22_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV22_State">Unknown</span></td>
+              <td><button id="CV22_Read" type="button" onclick="CS_Service.ReadCV(22);">Read</button></td>
+              <td><button id="CV22_Write" type="button" onclick="CS_Service.WriteCV(22);">Write</button></td>
+              <td><button id="CV22_Compare" type="button" onclick="CS_Service.CompareCV(22);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>23</td>
+              <td><input id="CV23_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV23_State">Unknown</span></td>
+              <td><button id="CV23_Read" type="button" onclick="CS_Service.ReadCV(23);">Read</button></td>
+              <td><button id="CV23_Write" type="button" onclick="CS_Service.WriteCV(23);">Write</button></td>
+              <td><button id="CV23_Compare" type="button" onclick="CS_Service.CompareCV(23);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>24</td>
+              <td><input id="CV24_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV24_State">Unknown</span></td>
+              <td><button id="CV24_Read" type="button" onclick="CS_Service.ReadCV(24);">Read</button></td>
+              <td><button id="CV24_Write" type="button" onclick="CS_Service.WriteCV(24);">Write</button></td>
+              <td><button id="CV24_Compare" type="button" onclick="CS_Service.CompareCV(24);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>25</td>
+              <td><input id="CV25_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV25_State">Unknown</span></td>
+              <td><button id="CV25_Read" type="button" onclick="CS_Service.ReadCV(25);">Read</button></td>
+              <td><button id="CV25_Write" type="button" onclick="CS_Service.WriteCV(25);">Write</button></td>
+              <td><button id="CV25_Compare" type="button" onclick="CS_Service.CompareCV(25);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>26</td>
+              <td><input id="CV26_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV26_State">Unknown</span></td>
+              <td><button id="CV26_Read" type="button" onclick="CS_Service.ReadCV(26);">Read</button></td>
+              <td><button id="CV26_Write" type="button" onclick="CS_Service.WriteCV(26);">Write</button></td>
+              <td><button id="CV26_Compare" type="button" onclick="CS_Service.CompareCV(26);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>27</td>
+              <td><input id="CV27_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV27_State">Unknown</span></td>
+              <td><button id="CV27_Read" type="button" onclick="CS_Service.ReadCV(27);">Read</button></td>
+              <td><button id="CV27_Write" type="button" onclick="CS_Service.WriteCV(27);">Write</button></td>
+              <td><button id="CV27_Compare" type="button" onclick="CS_Service.CompareCV(27);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>28</td>
+              <td><input id="CV28_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV28_State">Unknown</span></td>
+              <td><button id="CV28_Read" type="button" onclick="CS_Service.ReadCV(28);">Read</button></td>
+              <td><button id="CV28_Write" type="button" onclick="CS_Service.WriteCV(28);">Write</button></td>
+              <td><button id="CV28_Compare" type="button" onclick="CS_Service.CompareCV(28);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>29</td>
+              <td><input id="CV29_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV29_State">Unknown</span></td>
+              <td><button id="CV29_Read" type="button" onclick="CS_Service.ReadCV(29);">Read</button></td>
+              <td><button id="CV29_Write" type="button" onclick="CS_Service.WriteCV(29);">Write</button></td>
+              <td><button id="CV29_Compare" type="button" onclick="CS_Service.CompareCV(29);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>30</td>
+              <td><input id="CV30_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV30_State">Unknown</span></td>
+              <td><button id="CV30_Read" type="button" onclick="CS_Service.ReadCV(30);">Read</button></td>
+              <td><button id="CV30_Write" type="button" onclick="CS_Service.WriteCV(30);">Write</button></td>
+              <td><button id="CV30_Compare" type="button" onclick="CS_Service.CompareCV(30);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>31</td>
+              <td><input id="CV31_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV31_State">Unknown</span></td>
+              <td><button id="CV31_Read" type="button" onclick="CS_Service.ReadCV(31);">Read</button></td>
+              <td><button id="CV31_Write" type="button" onclick="CS_Service.WriteCV(31);">Write</button></td>
+              <td><button id="CV31_Compare" type="button" onclick="CS_Service.CompareCV(31);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>32</td>
+              <td><input id="CV32_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV32_State">Unknown</span></td>
+              <td><button id="CV32_Read" type="button" onclick="CS_Service.ReadCV(32);">Read</button></td>
+              <td><button id="CV32_Write" type="button" onclick="CS_Service.WriteCV(32);">Write</button></td>
+              <td><button id="CV32_Compare" type="button" onclick="CS_Service.CompareCV(32);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>33</td>
+              <td><input id="CV33_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV33_State">Unknown</span></td>
+              <td><button id="CV33_Read" type="button" onclick="CS_Service.ReadCV(33);">Read</button></td>
+              <td><button id="CV33_Write" type="button" onclick="CS_Service.WriteCV(33);">Write</button></td>
+              <td><button id="CV33_Compare" type="button" onclick="CS_Service.CompareCV(33);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>34</td>
+              <td><input id="CV34_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV34_State">Unknown</span></td>
+              <td><button id="CV34_Read" type="button" onclick="CS_Service.ReadCV(34);">Read</button></td>
+              <td><button id="CV34_Write" type="button" onclick="CS_Service.WriteCV(34);">Write</button></td>
+              <td><button id="CV34_Compare" type="button" onclick="CS_Service.CompareCV(34);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>35</td>
+              <td><input id="CV35_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV35_State">Unknown</span></td>
+              <td><button id="CV35_Read" type="button" onclick="CS_Service.ReadCV(35);">Read</button></td>
+              <td><button id="CV35_Write" type="button" onclick="CS_Service.WriteCV(35);">Write</button></td>
+              <td><button id="CV35_Compare" type="button" onclick="CS_Service.CompareCV(35);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>36</td>
+              <td><input id="CV36_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV36_State">Unknown</span></td>
+              <td><button id="CV36_Read" type="button" onclick="CS_Service.ReadCV(36);">Read</button></td>
+              <td><button id="CV36_Write" type="button" onclick="CS_Service.WriteCV(36);">Write</button></td>
+              <td><button id="CV36_Compare" type="button" onclick="CS_Service.CompareCV(36);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>37</td>
+              <td><input id="CV37_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV37_State">Unknown</span></td>
+              <td><button id="CV37_Read" type="button" onclick="CS_Service.ReadCV(37);">Read</button></td>
+              <td><button id="CV37_Write" type="button" onclick="CS_Service.WriteCV(37);">Write</button></td>
+              <td><button id="CV37_Compare" type="button" onclick="CS_Service.CompareCV(37);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>38</td>
+              <td><input id="CV38_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV38_State">Unknown</span></td>
+              <td><button id="CV38_Read" type="button" onclick="CS_Service.ReadCV(38);">Read</button></td>
+              <td><button id="CV38_Write" type="button" onclick="CS_Service.WriteCV(38);">Write</button></td>
+              <td><button id="CV38_Compare" type="button" onclick="CS_Service.CompareCV(38);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>39</td>
+              <td><input id="CV39_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV39_State">Unknown</span></td>
+              <td><button id="CV39_Read" type="button" onclick="CS_Service.ReadCV(39);">Read</button></td>
+              <td><button id="CV39_Write" type="button" onclick="CS_Service.WriteCV(39);">Write</button></td>
+              <td><button id="CV39_Compare" type="button" onclick="CS_Service.CompareCV(39);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>40</td>
+              <td><input id="CV40_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV40_State">Unknown</span></td>
+              <td><button id="CV40_Read" type="button" onclick="CS_Service.ReadCV(40);">Read</button></td>
+              <td><button id="CV40_Write" type="button" onclick="CS_Service.WriteCV(40);">Write</button></td>
+              <td><button id="CV40_Compare" type="button" onclick="CS_Service.CompareCV(40);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>41</td>
+              <td><input id="CV41_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV41_State">Unknown</span></td>
+              <td><button id="CV41_Read" type="button" onclick="CS_Service.ReadCV(41);">Read</button></td>
+              <td><button id="CV41_Write" type="button" onclick="CS_Service.WriteCV(41);">Write</button></td>
+              <td><button id="CV41_Compare" type="button" onclick="CS_Service.CompareCV(41);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>42</td>
+              <td><input id="CV42_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV42_State">Unknown</span></td>
+              <td><button id="CV42_Read" type="button" onclick="CS_Service.ReadCV(42);">Read</button></td>
+              <td><button id="CV42_Write" type="button" onclick="CS_Service.WriteCV(42);">Write</button></td>
+              <td><button id="CV42_Compare" type="button" onclick="CS_Service.CompareCV(42);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>43</td>
+              <td><input id="CV43_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV43_State">Unknown</span></td>
+              <td><button id="CV43_Read" type="button" onclick="CS_Service.ReadCV(43);">Read</button></td>
+              <td><button id="CV43_Write" type="button" onclick="CS_Service.WriteCV(43);">Write</button></td>
+              <td><button id="CV43_Compare" type="button" onclick="CS_Service.CompareCV(43);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>44</td>
+              <td><input id="CV44_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV44_State">Unknown</span></td>
+              <td><button id="CV44_Read" type="button" onclick="CS_Service.ReadCV(44);">Read</button></td>
+              <td><button id="CV44_Write" type="button" onclick="CS_Service.WriteCV(44);">Write</button></td>
+              <td><button id="CV44_Compare" type="button" onclick="CS_Service.CompareCV(44);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>45</td>
+              <td><input id="CV45_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV45_State">Unknown</span></td>
+              <td><button id="CV45_Read" type="button" onclick="CS_Service.ReadCV(45);">Read</button></td>
+              <td><button id="CV45_Write" type="button" onclick="CS_Service.WriteCV(45);">Write</button></td>
+              <td><button id="CV45_Compare" type="button" onclick="CS_Service.CompareCV(45);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>46</td>
+              <td><input id="CV46_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV46_State">Unknown</span></td>
+              <td><button id="CV46_Read" type="button" onclick="CS_Service.ReadCV(46);">Read</button></td>
+              <td><button id="CV46_Write" type="button" onclick="CS_Service.WriteCV(46);">Write</button></td>
+              <td><button id="CV46_Compare" type="button" onclick="CS_Service.CompareCV(46);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>47</td>
+              <td><input id="CV47_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV47_State">Unknown</span></td>
+              <td><button id="CV47_Read" type="button" onclick="CS_Service.ReadCV(47);">Read</button></td>
+              <td><button id="CV47_Write" type="button" onclick="CS_Service.WriteCV(47);">Write</button></td>
+              <td><button id="CV47_Compare" type="button" onclick="CS_Service.CompareCV(47);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>48</td>
+              <td><input id="CV48_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV48_State">Unknown</span></td>
+              <td><button id="CV48_Read" type="button" onclick="CS_Service.ReadCV(48);">Read</button></td>
+              <td><button id="CV48_Write" type="button" onclick="CS_Service.WriteCV(48);">Write</button></td>
+              <td><button id="CV48_Compare" type="button" onclick="CS_Service.CompareCV(48);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>49</td>
+              <td><input id="CV49_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV49_State">Unknown</span></td>
+              <td><button id="CV49_Read" type="button" onclick="CS_Service.ReadCV(49);">Read</button></td>
+              <td><button id="CV49_Write" type="button" onclick="CS_Service.WriteCV(49);">Write</button></td>
+              <td><button id="CV49_Compare" type="button" onclick="CS_Service.CompareCV(49);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>50</td>
+              <td><input id="CV50_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV50_State">Unknown</span></td>
+              <td><button id="CV50_Read" type="button" onclick="CS_Service.ReadCV(50);">Read</button></td>
+              <td><button id="CV50_Write" type="button" onclick="CS_Service.WriteCV(50);">Write</button></td>
+              <td><button id="CV50_Compare" type="button" onclick="CS_Service.CompareCV(50);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>51</td>
+              <td><input id="CV51_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV51_State">Unknown</span></td>
+              <td><button id="CV51_Read" type="button" onclick="CS_Service.ReadCV(51);">Read</button></td>
+              <td><button id="CV51_Write" type="button" onclick="CS_Service.WriteCV(51);">Write</button></td>
+              <td><button id="CV51_Compare" type="button" onclick="CS_Service.CompareCV(51);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>52</td>
+              <td><input id="CV52_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV52_State">Unknown</span></td>
+              <td><button id="CV52_Read" type="button" onclick="CS_Service.ReadCV(52);">Read</button></td>
+              <td><button id="CV52_Write" type="button" onclick="CS_Service.WriteCV(52);">Write</button></td>
+              <td><button id="CV52_Compare" type="button" onclick="CS_Service.CompareCV(52);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>53</td>
+              <td><input id="CV53_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV53_State">Unknown</span></td>
+              <td><button id="CV53_Read" type="button" onclick="CS_Service.ReadCV(53);">Read</button></td>
+              <td><button id="CV53_Write" type="button" onclick="CS_Service.WriteCV(53);">Write</button></td>
+              <td><button id="CV53_Compare" type="button" onclick="CS_Service.CompareCV(53);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>54</td>
+              <td><input id="CV54_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV54_State">Unknown</span></td>
+              <td><button id="CV54_Read" type="button" onclick="CS_Service.ReadCV(54);">Read</button></td>
+              <td><button id="CV54_Write" type="button" onclick="CS_Service.WriteCV(54);">Write</button></td>
+              <td><button id="CV54_Compare" type="button" onclick="CS_Service.CompareCV(54);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>55</td>
+              <td><input id="CV55_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV55_State">Unknown</span></td>
+              <td><button id="CV55_Read" type="button" onclick="CS_Service.ReadCV(55);">Read</button></td>
+              <td><button id="CV55_Write" type="button" onclick="CS_Service.WriteCV(55);">Write</button></td>
+              <td><button id="CV55_Compare" type="button" onclick="CS_Service.CompareCV(55);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>56</td>
+              <td><input id="CV56_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV56_State">Unknown</span></td>
+              <td><button id="CV56_Read" type="button" onclick="CS_Service.ReadCV(56);">Read</button></td>
+              <td><button id="CV56_Write" type="button" onclick="CS_Service.WriteCV(56);">Write</button></td>
+              <td><button id="CV56_Compare" type="button" onclick="CS_Service.CompareCV(56);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>57</td>
+              <td><input id="CV57_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV57_State">Unknown</span></td>
+              <td><button id="CV57_Read" type="button" onclick="CS_Service.ReadCV(57);">Read</button></td>
+              <td><button id="CV57_Write" type="button" onclick="CS_Service.WriteCV(57);">Write</button></td>
+              <td><button id="CV57_Compare" type="button" onclick="CS_Service.CompareCV(57);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>58</td>
+              <td><input id="CV58_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV58_State">Unknown</span></td>
+              <td><button id="CV58_Read" type="button" onclick="CS_Service.ReadCV(58);">Read</button></td>
+              <td><button id="CV58_Write" type="button" onclick="CS_Service.WriteCV(58);">Write</button></td>
+              <td><button id="CV58_Compare" type="button" onclick="CS_Service.CompareCV(58);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>59</td>
+              <td><input id="CV59_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV59_State">Unknown</span></td>
+              <td><button id="CV59_Read" type="button" onclick="CS_Service.ReadCV(59);">Read</button></td>
+              <td><button id="CV59_Write" type="button" onclick="CS_Service.WriteCV(59);">Write</button></td>
+              <td><button id="CV59_Compare" type="button" onclick="CS_Service.CompareCV(59);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>60</td>
+              <td><input id="CV60_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV60_State">Unknown</span></td>
+              <td><button id="CV60_Read" type="button" onclick="CS_Service.ReadCV(60);">Read</button></td>
+              <td><button id="CV60_Write" type="button" onclick="CS_Service.WriteCV(60);">Write</button></td>
+              <td><button id="CV60_Compare" type="button" onclick="CS_Service.CompareCV(60);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>61</td>
+              <td><input id="CV61_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV61_State">Unknown</span></td>
+              <td><button id="CV61_Read" type="button" onclick="CS_Service.ReadCV(61);">Read</button></td>
+              <td><button id="CV61_Write" type="button" onclick="CS_Service.WriteCV(61);">Write</button></td>
+              <td><button id="CV61_Compare" type="button" onclick="CS_Service.CompareCV(61);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>62</td>
+              <td><input id="CV62_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV62_State">Unknown</span></td>
+              <td><button id="CV62_Read" type="button" onclick="CS_Service.ReadCV(62);">Read</button></td>
+              <td><button id="CV62_Write" type="button" onclick="CS_Service.WriteCV(62);">Write</button></td>
+              <td><button id="CV62_Compare" type="button" onclick="CS_Service.CompareCV(62);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>63</td>
+              <td><input id="CV63_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV63_State">Unknown</span></td>
+              <td><button id="CV63_Read" type="button" onclick="CS_Service.ReadCV(63);">Read</button></td>
+              <td><button id="CV63_Write" type="button" onclick="CS_Service.WriteCV(63);">Write</button></td>
+              <td><button id="CV63_Compare" type="button" onclick="CS_Service.CompareCV(63);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>64</td>
+              <td><input id="CV64_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV64_State">Unknown</span></td>
+              <td><button id="CV64_Read" type="button" onclick="CS_Service.ReadCV(64);">Read</button></td>
+              <td><button id="CV64_Write" type="button" onclick="CS_Service.WriteCV(64);">Write</button></td>
+              <td><button id="CV64_Compare" type="button" onclick="CS_Service.CompareCV(64);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>65</td>
+              <td><input id="CV65_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV65_State">Unknown</span></td>
+              <td><button id="CV65_Read" type="button" onclick="CS_Service.ReadCV(65);">Read</button></td>
+              <td><button id="CV65_Write" type="button" onclick="CS_Service.WriteCV(65);">Write</button></td>
+              <td><button id="CV65_Compare" type="button" onclick="CS_Service.CompareCV(65);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>66</td>
+              <td><input id="CV66_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV66_State">Unknown</span></td>
+              <td><button id="CV66_Read" type="button" onclick="CS_Service.ReadCV(66);">Read</button></td>
+              <td><button id="CV66_Write" type="button" onclick="CS_Service.WriteCV(66);">Write</button></td>
+              <td><button id="CV66_Compare" type="button" onclick="CS_Service.CompareCV(66);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>67</td>
+              <td><input id="CV67_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV67_State">Unknown</span></td>
+              <td><button id="CV67_Read" type="button" onclick="CS_Service.ReadCV(67);">Read</button></td>
+              <td><button id="CV67_Write" type="button" onclick="CS_Service.WriteCV(67);">Write</button></td>
+              <td><button id="CV67_Compare" type="button" onclick="CS_Service.CompareCV(67);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>68</td>
+              <td><input id="CV68_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV68_State">Unknown</span></td>
+              <td><button id="CV68_Read" type="button" onclick="CS_Service.ReadCV(68);">Read</button></td>
+              <td><button id="CV68_Write" type="button" onclick="CS_Service.WriteCV(68);">Write</button></td>
+              <td><button id="CV68_Compare" type="button" onclick="CS_Service.CompareCV(68);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>69</td>
+              <td><input id="CV69_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV69_State">Unknown</span></td>
+              <td><button id="CV69_Read" type="button" onclick="CS_Service.ReadCV(69);">Read</button></td>
+              <td><button id="CV69_Write" type="button" onclick="CS_Service.WriteCV(69);">Write</button></td>
+              <td><button id="CV69_Compare" type="button" onclick="CS_Service.CompareCV(69);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>70</td>
+              <td><input id="CV70_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV70_State">Unknown</span></td>
+              <td><button id="CV70_Read" type="button" onclick="CS_Service.ReadCV(70);">Read</button></td>
+              <td><button id="CV70_Write" type="button" onclick="CS_Service.WriteCV(70);">Write</button></td>
+              <td><button id="CV70_Compare" type="button" onclick="CS_Service.CompareCV(70);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>71</td>
+              <td><input id="CV71_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV71_State">Unknown</span></td>
+              <td><button id="CV71_Read" type="button" onclick="CS_Service.ReadCV(71);">Read</button></td>
+              <td><button id="CV71_Write" type="button" onclick="CS_Service.WriteCV(71);">Write</button></td>
+              <td><button id="CV71_Compare" type="button" onclick="CS_Service.CompareCV(71);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>72</td>
+              <td><input id="CV72_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV72_State">Unknown</span></td>
+              <td><button id="CV72_Read" type="button" onclick="CS_Service.ReadCV(72);">Read</button></td>
+              <td><button id="CV72_Write" type="button" onclick="CS_Service.WriteCV(72);">Write</button></td>
+              <td><button id="CV72_Compare" type="button" onclick="CS_Service.CompareCV(72);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>73</td>
+              <td><input id="CV73_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV73_State">Unknown</span></td>
+              <td><button id="CV73_Read" type="button" onclick="CS_Service.ReadCV(73);">Read</button></td>
+              <td><button id="CV73_Write" type="button" onclick="CS_Service.WriteCV(73);">Write</button></td>
+              <td><button id="CV73_Compare" type="button" onclick="CS_Service.CompareCV(73);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>74</td>
+              <td><input id="CV74_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV74_State">Unknown</span></td>
+              <td><button id="CV74_Read" type="button" onclick="CS_Service.ReadCV(74);">Read</button></td>
+              <td><button id="CV74_Write" type="button" onclick="CS_Service.WriteCV(74);">Write</button></td>
+              <td><button id="CV74_Compare" type="button" onclick="CS_Service.CompareCV(74);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>75</td>
+              <td><input id="CV75_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV75_State">Unknown</span></td>
+              <td><button id="CV75_Read" type="button" onclick="CS_Service.ReadCV(75);">Read</button></td>
+              <td><button id="CV75_Write" type="button" onclick="CS_Service.WriteCV(75);">Write</button></td>
+              <td><button id="CV75_Compare" type="button" onclick="CS_Service.CompareCV(75);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>76</td>
+              <td><input id="CV76_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV76_State">Unknown</span></td>
+              <td><button id="CV76_Read" type="button" onclick="CS_Service.ReadCV(76);">Read</button></td>
+              <td><button id="CV76_Write" type="button" onclick="CS_Service.WriteCV(76);">Write</button></td>
+              <td><button id="CV76_Compare" type="button" onclick="CS_Service.CompareCV(76);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>77</td>
+              <td><input id="CV77_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV77_State">Unknown</span></td>
+              <td><button id="CV77_Read" type="button" onclick="CS_Service.ReadCV(77);">Read</button></td>
+              <td><button id="CV77_Write" type="button" onclick="CS_Service.WriteCV(77);">Write</button></td>
+              <td><button id="CV77_Compare" type="button" onclick="CS_Service.CompareCV(77);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>78</td>
+              <td><input id="CV78_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV78_State">Unknown</span></td>
+              <td><button id="CV78_Read" type="button" onclick="CS_Service.ReadCV(78);">Read</button></td>
+              <td><button id="CV78_Write" type="button" onclick="CS_Service.WriteCV(78);">Write</button></td>
+              <td><button id="CV78_Compare" type="button" onclick="CS_Service.CompareCV(78);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>79</td>
+              <td><input id="CV79_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV79_State">Unknown</span></td>
+              <td><button id="CV79_Read" type="button" onclick="CS_Service.ReadCV(79);">Read</button></td>
+              <td><button id="CV79_Write" type="button" onclick="CS_Service.WriteCV(79);">Write</button></td>
+              <td><button id="CV79_Compare" type="button" onclick="CS_Service.CompareCV(79);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>80</td>
+              <td><input id="CV80_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV80_State">Unknown</span></td>
+              <td><button id="CV80_Read" type="button" onclick="CS_Service.ReadCV(80);">Read</button></td>
+              <td><button id="CV80_Write" type="button" onclick="CS_Service.WriteCV(80);">Write</button></td>
+              <td><button id="CV80_Compare" type="button" onclick="CS_Service.CompareCV(80);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>81</td>
+              <td><input id="CV81_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV81_State">Unknown</span></td>
+              <td><button id="CV81_Read" type="button" onclick="CS_Service.ReadCV(81);">Read</button></td>
+              <td><button id="CV81_Write" type="button" onclick="CS_Service.WriteCV(81);">Write</button></td>
+              <td><button id="CV81_Compare" type="button" onclick="CS_Service.CompareCV(81);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>82</td>
+              <td><input id="CV82_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV82_State">Unknown</span></td>
+              <td><button id="CV82_Read" type="button" onclick="CS_Service.ReadCV(82);">Read</button></td>
+              <td><button id="CV82_Write" type="button" onclick="CS_Service.WriteCV(82);">Write</button></td>
+              <td><button id="CV82_Compare" type="button" onclick="CS_Service.CompareCV(82);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>83</td>
+              <td><input id="CV83_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV83_State">Unknown</span></td>
+              <td><button id="CV83_Read" type="button" onclick="CS_Service.ReadCV(83);">Read</button></td>
+              <td><button id="CV83_Write" type="button" onclick="CS_Service.WriteCV(83);">Write</button></td>
+              <td><button id="CV83_Compare" type="button" onclick="CS_Service.CompareCV(83);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>84</td>
+              <td><input id="CV84_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV84_State">Unknown</span></td>
+              <td><button id="CV84_Read" type="button" onclick="CS_Service.ReadCV(84);">Read</button></td>
+              <td><button id="CV84_Write" type="button" onclick="CS_Service.WriteCV(84);">Write</button></td>
+              <td><button id="CV84_Compare" type="button" onclick="CS_Service.CompareCV(84);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>85</td>
+              <td><input id="CV85_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV85_State">Unknown</span></td>
+              <td><button id="CV85_Read" type="button" onclick="CS_Service.ReadCV(85);">Read</button></td>
+              <td><button id="CV85_Write" type="button" onclick="CS_Service.WriteCV(85);">Write</button></td>
+              <td><button id="CV85_Compare" type="button" onclick="CS_Service.CompareCV(85);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>86</td>
+              <td><input id="CV86_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV86_State">Unknown</span></td>
+              <td><button id="CV86_Read" type="button" onclick="CS_Service.ReadCV(86);">Read</button></td>
+              <td><button id="CV86_Write" type="button" onclick="CS_Service.WriteCV(86);">Write</button></td>
+              <td><button id="CV86_Compare" type="button" onclick="CS_Service.CompareCV(86);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>87</td>
+              <td><input id="CV87_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV87_State">Unknown</span></td>
+              <td><button id="CV87_Read" type="button" onclick="CS_Service.ReadCV(87);">Read</button></td>
+              <td><button id="CV87_Write" type="button" onclick="CS_Service.WriteCV(87);">Write</button></td>
+              <td><button id="CV87_Compare" type="button" onclick="CS_Service.CompareCV(87);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>88</td>
+              <td><input id="CV88_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV88_State">Unknown</span></td>
+              <td><button id="CV88_Read" type="button" onclick="CS_Service.ReadCV(88);">Read</button></td>
+              <td><button id="CV88_Write" type="button" onclick="CS_Service.WriteCV(88);">Write</button></td>
+              <td><button id="CV88_Compare" type="button" onclick="CS_Service.CompareCV(88);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>89</td>
+              <td><input id="CV89_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV89_State">Unknown</span></td>
+              <td><button id="CV89_Read" type="button" onclick="CS_Service.ReadCV(89);">Read</button></td>
+              <td><button id="CV89_Write" type="button" onclick="CS_Service.WriteCV(89);">Write</button></td>
+              <td><button id="CV89_Compare" type="button" onclick="CS_Service.CompareCV(89);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>90</td>
+              <td><input id="CV90_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV90_State">Unknown</span></td>
+              <td><button id="CV90_Read" type="button" onclick="CS_Service.ReadCV(90);">Read</button></td>
+              <td><button id="CV90_Write" type="button" onclick="CS_Service.WriteCV(90);">Write</button></td>
+              <td><button id="CV90_Compare" type="button" onclick="CS_Service.CompareCV(90);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>91</td>
+              <td><input id="CV91_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV91_State">Unknown</span></td>
+              <td><button id="CV91_Read" type="button" onclick="CS_Service.ReadCV(91);">Read</button></td>
+              <td><button id="CV91_Write" type="button" onclick="CS_Service.WriteCV(91);">Write</button></td>
+              <td><button id="CV91_Compare" type="button" onclick="CS_Service.CompareCV(91);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>92</td>
+              <td><input id="CV92_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV92_State">Unknown</span></td>
+              <td><button id="CV92_Read" type="button" onclick="CS_Service.ReadCV(92);">Read</button></td>
+              <td><button id="CV92_Write" type="button" onclick="CS_Service.WriteCV(92);">Write</button></td>
+              <td><button id="CV92_Compare" type="button" onclick="CS_Service.CompareCV(92);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>93</td>
+              <td><input id="CV93_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV93_State">Unknown</span></td>
+              <td><button id="CV93_Read" type="button" onclick="CS_Service.ReadCV(93);">Read</button></td>
+              <td><button id="CV93_Write" type="button" onclick="CS_Service.WriteCV(93);">Write</button></td>
+              <td><button id="CV93_Compare" type="button" onclick="CS_Service.CompareCV(93);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>94</td>
+              <td><input id="CV94_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV94_State">Unknown</span></td>
+              <td><button id="CV94_Read" type="button" onclick="CS_Service.ReadCV(94);">Read</button></td>
+              <td><button id="CV94_Write" type="button" onclick="CS_Service.WriteCV(94);">Write</button></td>
+              <td><button id="CV94_Compare" type="button" onclick="CS_Service.CompareCV(94);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>95</td>
+              <td><input id="CV95_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV95_State">Unknown</span></td>
+              <td><button id="CV95_Read" type="button" onclick="CS_Service.ReadCV(95);">Read</button></td>
+              <td><button id="CV95_Write" type="button" onclick="CS_Service.WriteCV(95);">Write</button></td>
+              <td><button id="CV95_Compare" type="button" onclick="CS_Service.CompareCV(95);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>96</td>
+              <td><input id="CV96_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV96_State">Unknown</span></td>
+              <td><button id="CV96_Read" type="button" onclick="CS_Service.ReadCV(96);">Read</button></td>
+              <td><button id="CV96_Write" type="button" onclick="CS_Service.WriteCV(96);">Write</button></td>
+              <td><button id="CV96_Compare" type="button" onclick="CS_Service.CompareCV(96);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>97</td>
+              <td><input id="CV97_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV97_State">Unknown</span></td>
+              <td><button id="CV97_Read" type="button" onclick="CS_Service.ReadCV(97);">Read</button></td>
+              <td><button id="CV97_Write" type="button" onclick="CS_Service.WriteCV(97);">Write</button></td>
+              <td><button id="CV97_Compare" type="button" onclick="CS_Service.CompareCV(97);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>98</td>
+              <td><input id="CV98_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV98_State">Unknown</span></td>
+              <td><button id="CV98_Read" type="button" onclick="CS_Service.ReadCV(98);">Read</button></td>
+              <td><button id="CV98_Write" type="button" onclick="CS_Service.WriteCV(98);">Write</button></td>
+              <td><button id="CV98_Compare" type="button" onclick="CS_Service.CompareCV(98);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>99</td>
+              <td><input id="CV99_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV99_State">Unknown</span></td>
+              <td><button id="CV99_Read" type="button" onclick="CS_Service.ReadCV(99);">Read</button></td>
+              <td><button id="CV99_Write" type="button" onclick="CS_Service.WriteCV(99);">Write</button></td>
+              <td><button id="CV99_Compare" type="button" onclick="CS_Service.CompareCV(99);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>100</td>
+              <td><input id="CV100_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV100_State">Unknown</span></td>
+              <td><button id="CV100_Read" type="button" onclick="CS_Service.ReadCV(100);">Read</button></td>
+              <td><button id="CV100_Write" type="button" onclick="CS_Service.WriteCV(100);">Write</button></td>
+              <td><button id="CV100_Compare" type="button" onclick="CS_Service.CompareCV(100);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>101</td>
+              <td><input id="CV101_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV101_State">Unknown</span></td>
+              <td><button id="CV101_Read" type="button" onclick="CS_Service.ReadCV(101);">Read</button></td>
+              <td><button id="CV101_Write" type="button" onclick="CS_Service.WriteCV(101);">Write</button></td>
+              <td><button id="CV101_Compare" type="button" onclick="CS_Service.CompareCV(101);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>102</td>
+              <td><input id="CV102_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV102_State">Unknown</span></td>
+              <td><button id="CV102_Read" type="button" onclick="CS_Service.ReadCV(102);">Read</button></td>
+              <td><button id="CV102_Write" type="button" onclick="CS_Service.WriteCV(102);">Write</button></td>
+              <td><button id="CV102_Compare" type="button" onclick="CS_Service.CompareCV(102);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>103</td>
+              <td><input id="CV103_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV103_State">Unknown</span></td>
+              <td><button id="CV103_Read" type="button" onclick="CS_Service.ReadCV(103);">Read</button></td>
+              <td><button id="CV103_Write" type="button" onclick="CS_Service.WriteCV(103);">Write</button></td>
+              <td><button id="CV103_Compare" type="button" onclick="CS_Service.CompareCV(103);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>104</td>
+              <td><input id="CV104_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV104_State">Unknown</span></td>
+              <td><button id="CV104_Read" type="button" onclick="CS_Service.ReadCV(104);">Read</button></td>
+              <td><button id="CV104_Write" type="button" onclick="CS_Service.WriteCV(104);">Write</button></td>
+              <td><button id="CV104_Compare" type="button" onclick="CS_Service.CompareCV(104);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>105</td>
+              <td><input id="CV105_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV105_State">Unknown</span></td>
+              <td><button id="CV105_Read" type="button" onclick="CS_Service.ReadCV(105);">Read</button></td>
+              <td><button id="CV105_Write" type="button" onclick="CS_Service.WriteCV(105);">Write</button></td>
+              <td><button id="CV105_Compare" type="button" onclick="CS_Service.CompareCV(105);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>106</td>
+              <td><input id="CV106_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV106_State">Unknown</span></td>
+              <td><button id="CV106_Read" type="button" onclick="CS_Service.ReadCV(106);">Read</button></td>
+              <td><button id="CV106_Write" type="button" onclick="CS_Service.WriteCV(106);">Write</button></td>
+              <td><button id="CV106_Compare" type="button" onclick="CS_Service.CompareCV(106);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>107</td>
+              <td><input id="CV107_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV107_State">Unknown</span></td>
+              <td><button id="CV107_Read" type="button" onclick="CS_Service.ReadCV(107);">Read</button></td>
+              <td><button id="CV107_Write" type="button" onclick="CS_Service.WriteCV(107);">Write</button></td>
+              <td><button id="CV107_Compare" type="button" onclick="CS_Service.CompareCV(107);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>108</td>
+              <td><input id="CV108_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV108_State">Unknown</span></td>
+              <td><button id="CV108_Read" type="button" onclick="CS_Service.ReadCV(108);">Read</button></td>
+              <td><button id="CV108_Write" type="button" onclick="CS_Service.WriteCV(108);">Write</button></td>
+              <td><button id="CV108_Compare" type="button" onclick="CS_Service.CompareCV(108);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>109</td>
+              <td><input id="CV109_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV109_State">Unknown</span></td>
+              <td><button id="CV109_Read" type="button" onclick="CS_Service.ReadCV(109);">Read</button></td>
+              <td><button id="CV109_Write" type="button" onclick="CS_Service.WriteCV(109);">Write</button></td>
+              <td><button id="CV109_Compare" type="button" onclick="CS_Service.CompareCV(109);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>110</td>
+              <td><input id="CV110_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV110_State">Unknown</span></td>
+              <td><button id="CV110_Read" type="button" onclick="CS_Service.ReadCV(110);">Read</button></td>
+              <td><button id="CV110_Write" type="button" onclick="CS_Service.WriteCV(110);">Write</button></td>
+              <td><button id="CV110_Compare" type="button" onclick="CS_Service.CompareCV(110);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>111</td>
+              <td><input id="CV111_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV111_State">Unknown</span></td>
+              <td><button id="CV111_Read" type="button" onclick="CS_Service.ReadCV(111);">Read</button></td>
+              <td><button id="CV111_Write" type="button" onclick="CS_Service.WriteCV(111);">Write</button></td>
+              <td><button id="CV111_Compare" type="button" onclick="CS_Service.CompareCV(111);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>112</td>
+              <td><input id="CV112_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV112_State">Unknown</span></td>
+              <td><button id="CV112_Read" type="button" onclick="CS_Service.ReadCV(112);">Read</button></td>
+              <td><button id="CV112_Write" type="button" onclick="CS_Service.WriteCV(112);">Write</button></td>
+              <td><button id="CV112_Compare" type="button" onclick="CS_Service.CompareCV(112);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>113</td>
+              <td><input id="CV113_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV113_State">Unknown</span></td>
+              <td><button id="CV113_Read" type="button" onclick="CS_Service.ReadCV(113);">Read</button></td>
+              <td><button id="CV113_Write" type="button" onclick="CS_Service.WriteCV(113);">Write</button></td>
+              <td><button id="CV113_Compare" type="button" onclick="CS_Service.CompareCV(113);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>114</td>
+              <td><input id="CV114_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV114_State">Unknown</span></td>
+              <td><button id="CV114_Read" type="button" onclick="CS_Service.ReadCV(114);">Read</button></td>
+              <td><button id="CV114_Write" type="button" onclick="CS_Service.WriteCV(114);">Write</button></td>
+              <td><button id="CV114_Compare" type="button" onclick="CS_Service.CompareCV(114);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>115</td>
+              <td><input id="CV115_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV115_State">Unknown</span></td>
+              <td><button id="CV115_Read" type="button" onclick="CS_Service.ReadCV(115);">Read</button></td>
+              <td><button id="CV115_Write" type="button" onclick="CS_Service.WriteCV(115);">Write</button></td>
+              <td><button id="CV115_Compare" type="button" onclick="CS_Service.CompareCV(115);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>116</td>
+              <td><input id="CV116_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV116_State">Unknown</span></td>
+              <td><button id="CV116_Read" type="button" onclick="CS_Service.ReadCV(116);">Read</button></td>
+              <td><button id="CV116_Write" type="button" onclick="CS_Service.WriteCV(116);">Write</button></td>
+              <td><button id="CV116_Compare" type="button" onclick="CS_Service.CompareCV(116);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>117</td>
+              <td><input id="CV117_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV117_State">Unknown</span></td>
+              <td><button id="CV117_Read" type="button" onclick="CS_Service.ReadCV(117);">Read</button></td>
+              <td><button id="CV117_Write" type="button" onclick="CS_Service.WriteCV(117);">Write</button></td>
+              <td><button id="CV117_Compare" type="button" onclick="CS_Service.CompareCV(117);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>118</td>
+              <td><input id="CV118_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV118_State">Unknown</span></td>
+              <td><button id="CV118_Read" type="button" onclick="CS_Service.ReadCV(118);">Read</button></td>
+              <td><button id="CV118_Write" type="button" onclick="CS_Service.WriteCV(118);">Write</button></td>
+              <td><button id="CV118_Compare" type="button" onclick="CS_Service.CompareCV(118);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>119</td>
+              <td><input id="CV119_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV119_State">Unknown</span></td>
+              <td><button id="CV119_Read" type="button" onclick="CS_Service.ReadCV(119);">Read</button></td>
+              <td><button id="CV119_Write" type="button" onclick="CS_Service.WriteCV(119);">Write</button></td>
+              <td><button id="CV119_Compare" type="button" onclick="CS_Service.CompareCV(119);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>120</td>
+              <td><input id="CV120_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV120_State">Unknown</span></td>
+              <td><button id="CV120_Read" type="button" onclick="CS_Service.ReadCV(120);">Read</button></td>
+              <td><button id="CV120_Write" type="button" onclick="CS_Service.WriteCV(120);">Write</button></td>
+              <td><button id="CV120_Compare" type="button" onclick="CS_Service.CompareCV(120);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>121</td>
+              <td><input id="CV121_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV121_State">Unknown</span></td>
+              <td><button id="CV121_Read" type="button" onclick="CS_Service.ReadCV(121);">Read</button></td>
+              <td><button id="CV121_Write" type="button" onclick="CS_Service.WriteCV(121);">Write</button></td>
+              <td><button id="CV121_Compare" type="button" onclick="CS_Service.CompareCV(121);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>122</td>
+              <td><input id="CV122_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV122_State">Unknown</span></td>
+              <td><button id="CV122_Read" type="button" onclick="CS_Service.ReadCV(122);">Read</button></td>
+              <td><button id="CV122_Write" type="button" onclick="CS_Service.WriteCV(122);">Write</button></td>
+              <td><button id="CV122_Compare" type="button" onclick="CS_Service.CompareCV(122);">Compare</button></td>
+            </tr>
+            <tr>
+              <td>123</td>
+              <td><input id="CV123_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><span id="CV123_State">Unknown</span></td>
+              <td><button id="CV123_Read" type="button" onclick="CS_Service.ReadCV(123);">Read</button></td>
+              <td><button id="CV123_Write" type="button" onclick="CS_Service.WriteCV(123);">Write</button></td>
+              <td><button id="CV123_Compare" type="button" onclick="CS_Service.CompareCV(123);">Compare</button></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="panel" id="thirteen-panel">
-        <div class="panel-title">Aux1</div>
-      </div>
-      <div class="panel" id="fourteen-panel">
-        <div class="panel-title">Aux2</div>
-      </div>
-      <div class="panel" id="fithteen-panel">
-        <div class="panel-title">Aux3</div>
-      </div>
+    </div>
+  </div>
+  <div class="bottom-buttons">
+    <div class="button-box" id="button-box-1">
+      <button type="button" onclick="CS_Service.ReadChagesOnSheet();">Read changes on sheet</button>
+      <button type="button" onclick="CS_Service.WriteChagesOnSheet();">Write changes on sheet</button>
+      <button type="button" onclick="CS_Service.CompareChagesOnSheet();">Compare changes on sheet</button>
+      <button type="button" onclick="CS_Service.ReadFullSheet();">Read full sheet</button>
+      <button type="button" onclick="CS_Service.WriteFullSheet();">Write full sheet</button>
+      <button type="button" onclick="CS_Service.CompareFullSheet();">Compare full sheet</button>
+    </div>
+    <div class="button-box" id="button-box-2">
+      <button type="button" onclick="CS_Service.ReadChagesOnAllSheets();">Read changes on all sheets</button>
+      <button type="button" onclick="CS_Service.WriteChagesOnAllSheets();">Write changes on all sheets</button>
+      <button type="button" onclick="CS_Service.ReadAllSheets();">Read all sheets</button>
+      <button type="button" onclick="CS_Service.WriteAllSheets();">Write all sheets</button>
     </div>
   </div>
 </body>
