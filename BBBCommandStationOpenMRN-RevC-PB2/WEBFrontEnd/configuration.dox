@@ -1,3 +1,70 @@
 /**   @page configuration Configuration Options Page
- * \ref index
+ * - <a href="/configure/">Return to Command Station Configuration Options</a><br />
+ * - \ref index
+ *
+ * @par
+ *
+ * The Configuration Options Page contains 4 tabs:
+ * -# @c Global 
+ *     These are the global options. These include:
+ *  - Node ID This is the node id to use,  This is a 48 bit number, as 6 pairs 
+ *    of hex digits.
+ *  - Persistent Train File Path This is the path to the persistent trail file.
+ *  - Use GC Host This is a checkbox the selects whether or not to connect to 
+ *    a Grid Connect host server.
+ *  - GC Host This is the hostname of the Grid Connect host to connect to.
+ *  - GC Port This is the port number to use to connect to the Grid Connect 
+ *    host.
+ *  - CAN Socket This is the CAN socket to connect to.
+ *  - Start GC Hub This is a checkbox the selects whether or not to start a
+ *    Grid Connect hub server.
+ *  - GC Hub Port This is the port to use when creating a Grid Connect hub 
+ *    server.  The server listens on all devices (0.0.0.0).
+ *  - Web Server Root This is the root of the static files for the Web Server.
+ *  - Web Server Port This is the port the Web Server listens on.  The server
+ *    listens on all devices (0.0.0.0).
+ *  - Start WiThrotte This is a checkbox that selects whether or not to start
+ *    a WiThrottle server.
+ *  - WiThrottle Name This is the name of the WiThrotte.
+ *  - WiThrottle Port This is the port the WiThrotte listens on. The server
+ *    listens on all devices (0.0.0.0). 
+ * -#  @c Main @c DCC 
+ *     These are the options relating to the main operating DCC output.  These 
+ *     include:
+ *   - PRU Firmware This is the path to the Main DCC's PRU program.
+ *   - Short Event On This is the event id sent when a short on the main is 
+ *     detected.
+ *   - Short Event Off This is the event id sent when a short on the main is
+ *     cleared.
+ *   - Shutdown Event On This is the event id sent when the main track power 
+ *     is shutdown.
+ *   - Shutdown Event Off This is the event id sent when the main track power 
+ *     is restored.
+ * -#  @c Programming @c DCC 
+ *     These are the options relating to the programming track output. These 
+ *     include:
+ *   - PRU Firmware This is the path to the Programming Track DCC's PRU 
+ *     program.
+ *   - Short Event On This is the event id sent when a short on the 
+ *     programming track is detected.
+ *   - Short Event Off This is the event id sent when a short on the 
+ *     programming track is cleared.
+ *   - Shutdown Event On This is the event id sent when the programming track
+ *     is shutdown.
+ *   - Shutdown Event Off This is the event id sent when the programming track
+ *     is restored.
+ * -#  @c Fan @c Control
+ *     These are the options relating to the fan and termorature. These 
+ *     include:
+ *   - Alarm Temporature Threshold This is the alarm over term. threshold.
+ *   - Alarm On This eventid is sent when the board exceeds the alarm over 
+ *     term. threshold.
+ *   - Alarm Off This eventid is sent when the board cools to below the alarm 
+ *     over term. threshold.
+ *   - Fan Temporature Threshold This is the fan term. threshold.
+ *   - Fan On This eventid is sent when the board exceeds the fan term. 
+ *     threshold and turns on the fan.
+ *   - Fan Off This eventid is sent when the board cools to below the fan 
+ *     term. threshold and turns off the fan.
+ *
  */

@@ -1,5 +1,6 @@
-/** @mainpage Command Station Help
- *  - \ref homepage
- *  - \ref service
- *  - \ref configuration
+/** @mainpage Command Station Main Help Page
+ *  - <a href="/">Return to Command Station</a>
+ *  - \ref homepage -- the main command station home page.
+ *  - \ref service  -- the service (programming) track page.
+ *  - \ref configuration -- the command station configuration page.
  */

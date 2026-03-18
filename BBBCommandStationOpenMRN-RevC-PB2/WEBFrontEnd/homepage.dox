@@ -1,3 +1,25 @@
 /**   @page homepage Home Page
- * \ref index
+ * - <a href="/">Return to Command Station</a>
+ * - \ref index
+ *
+ * @par
+ *
+ *
+ * This is the home page of the command station. There are three sections, 
+ * the left most one is the status of a selected engine, the middle section 
+ * lists the current engines in the running database, and the right section
+ * gives the running status of the command station.
+ *
+ * In the engine status section is the address of the engine, its speed step 
+ * mode, its name, description, and current speed and direction.  Then there 
+ * are the function states. And then the controller and if it is in a consist.
+ *
+ * The center section has a list of engines the command station is currently
+ * managing, with three buttons for describing a selected engine, deleting
+ * a selected engine, and adding new engines.
+ *
+ * Finally, the rightmost section displays the the current levels on each the 
+ * mains and programming track, whether the tracks are enabled, the 
+ * temperature of the board, whether the fan is running and if the command 
+ * station is in over temp. alarm state.
  */
