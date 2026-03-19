@@ -57,9 +57,9 @@
           <input id="long" onchange="CS_Service.SelectLongAddress();" name="address-type" type="radio" />
           <label for="long">Long (two byte) address</label><br />
           <label for="address">Active Address:</label><br />
-          <input id="address" onchange="CS_Service.UpdateAddress();" type="number" value="3" /><br /><br />
-          <label for="primary-address">Primary Address</label><input onchange="CS_Service.UpdatePrimaryAddress();" id="primary-address" type="number" value="3" /><br />
-          <label for="extended-address">Extended Address</label><input onchange="CS_Service.UpdateExtendedAddress();" id="extended-address" type="number" value="1000" /><br />
+          <input id="address" onchange="CS_Service.UpdateAddress();" type="number" value="3" min="0" max="16383" /><br /><br />
+          <label for="primary-address">Primary Address</label><input onchange="CS_Service.UpdatePrimaryAddress();" id="primary-address" type="number" value="3" min="1" max="127" /><br />
+          <label for="extended-address">Extended Address</label><input onchange="CS_Service.UpdateExtendedAddress();" id="extended-address" type="number" value="1000" min="0" max="10239" /><br />
           <label for="address-format">Address Format</label>
           <select onchange="CS_Service.SelectAddressFormat();" id="address-format">
             <option value="short" selected>Short (one byte) addess</option>
@@ -108,48 +108,42 @@
             <label for="basic-speed">Use Vstart, Vmid, Vhigh (CV29, bit 4)</label><br />
             To turn off, use Speed Table pane<br />
             <div class="slidecontainer">
-              <label for="Vstart">Vstart</label><input value="0" size="4" id="Vstart-value" type="text"><input type="range" min="0" max="255" value="0" class="slider" id="Vstart">
+              <label for="Vstart">Vstart</label><input onchange="CS_Service.SelectVStart();" value="0" size="4" id="Vstart-value" type="text"><input onchange="CS_Service.SelectVStart();" type="range" min="0" max="255" value="0" class="slider" id="Vstart">
               <script>
                 var Vstart = document.getElementById("Vstart");
                 var VstartValue = document.getElementById("Vstart-value");
                 Vstart.oninput = function() {
                   VstartValue.value = this.value;
                 }
-                Vstart.onchange = CS_Service.SelectVStart();
                 VstartValue.oninput = function() {
                   Vstart.value = this.value;
                 }
-                VstartValue.onchange = CS_Service.SelectVStart();
               </script>
             </div>
             <div class="slidecontainer">
-              <label for="Vmid">Vmid</label><input value="0" size="4" id="Vmid-value" type="text"><input type="range" min="0" max="255" value="0" class="slider" id="Vmid">
+              <label for="Vmid">Vmid</label><input onchange="CS_Service.SelectVMid();" value="0" size="4" id="Vmid-value" type="text"><input onchange="CS_Service.SelectVMid();" type="range" min="0" max="255" value="0" class="slider" id="Vmid">
               <script>
                 var Vmid = document.getElementById("Vmid");
                 var VmidValue = document.getElementById("Vmid-value");
                 Vmid.oninput = function() {
                   VmidValue.value = this.value;
                 }
-                Vmid.onchange = CS_Service.SelectVMid();
                 VmidValue.oninput = function() {
                   Vmid.value = this.value;
                 }
-                VmidValue.onchange = CS_Service.SelectVMid();
               </script>
             </div>
             <div class="slidecontainer">
-              <label for="Vhigh">Vhigh</label><input value="0" size="4" id="Vhigh-value" type="text"><input type="range" min="0" max="255" value="0" class="slider" id="Vhigh">
+              <label for="Vhigh">Vhigh</label><input onchange="CS_Service.SelectVHigh();" value="0" size="4" id="Vhigh-value" type="text"><input onchange="CS_Service.SelectVHigh();" type="range" min="0" max="255" value="0" class="slider" id="Vhigh">
               <script>
                 var Vhigh = document.getElementById("Vhigh");
                 var VhighValue = document.getElementById("Vhigh-value");
                 Vhigh.oninput = function() {
                   VhighValue.value = this.value;
                 }
-                Vhigh.onchange = CS_Service.SelectVHigh();
                 VhighValue.oninput = function() {
                   Vhigh.value = this.value;
                 }
-                VhighValue.onchange = CS_Service.SelectVHigh();
               </script>
             </div>
           </div>
