@@ -8,7 +8,7 @@
      Created By    : Robert Heller, Robert Heller
      Created       : 2026-03-18 13:32:23
 
-     Last Modified : <260319.1518>
+     Last Modified : <260319.2228>
      ID            : $Id$
      Source        : $Source$
      Description	
@@ -384,8 +384,8 @@ CS_Service.ServiceForceStraight = function () {
     var val = ((i-1)*fraction).toFixed();
     var bar = document.getElementById("b"+i);
     var barVal = document.getElementById("b"+i+"Value");
-    var CV =  document.getElementById("CV"+(i+65)+"_Value"); 
-    var CVs =  document.getElementById("CV"+(i+65)+"_State");
+    var CV =  document.getElementById("CV"+(i+66)+"_Value"); 
+    var CVs =  document.getElementById("CV"+(i+66)+"_State");
     CV.value = val;
     CVs.innerHTML = "Edited";
     barVal.innerHTML = val;
@@ -408,8 +408,8 @@ CS_Service.ServiceMatchEnds = function () {
     //console.log("*** ServiceMatchEnds(): @"+i+", val = "+val);
     var bar = document.getElementById("b"+i);
     var barVal = document.getElementById("b"+i+"Value");
-    var CV =  document.getElementById("CV"+(i+65)+"_Value"); 
-    var CVs =  document.getElementById("CV"+(i+65)+"_State");
+    var CV =  document.getElementById("CV"+(i+66)+"_Value"); 
+    var CVs =  document.getElementById("CV"+(i+66)+"_State");
     CV.value = val;
     CVs.innerHTML = "Edited";
     barVal.innerHTML = val;
@@ -431,8 +431,8 @@ CS_Service.ServiceConstantRatioCurve = function () {
     var val = Math.floor(first * Math.exp(step * (i-1))).toFixed();
     var bar = document.getElementById("b"+i);
     var barVal = document.getElementById("b"+i+"Value");
-    var CV =  document.getElementById("CV"+(i+65)+"_Value"); 
-    var CVs =  document.getElementById("CV"+(i+65)+"_State");
+    var CV =  document.getElementById("CV"+(i+66)+"_Value"); 
+    var CVs =  document.getElementById("CV"+(i+66)+"_State");
     CV.value = val;
     CVs.innerHTML = "Edited";
     barVal.innerHTML = val;
@@ -454,8 +454,8 @@ CS_Service.ServiceLogCurve = function () {
     var val = Math.floor(previous).toFixed();
     var bar = document.getElementById("b"+i);
     var barVal = document.getElementById("b"+i+"Value");
-    var CV =  document.getElementById("CV"+(i+65)+"_Value"); 
-    var CVs =  document.getElementById("CV"+(i+65)+"_State");
+    var CV =  document.getElementById("CV"+(i+66)+"_Value"); 
+    var CVs =  document.getElementById("CV"+(i+66)+"_State");
     CV.value = val;
     CVs.innerHTML = "Edited";
     barVal.innerHTML = val;
@@ -472,8 +472,8 @@ CS_Service.ServiceShiftLeft = function () {
     var nextval = Number.parseInt(document.getElementById("b"+i).value);
     var bar = document.getElementById("b"+i);
     var barVal = document.getElementById("b"+i+"Value");
-    var CV =  document.getElementById("CV"+(i+65)+"_Value"); 
-    var CVs =  document.getElementById("CV"+(i+65)+"_State");
+    var CV =  document.getElementById("CV"+(i+66)+"_Value"); 
+    var CVs =  document.getElementById("CV"+(i+66)+"_State");
     CV.value = val;
     CVs.innerHTML = "Edited";
     barVal.innerHTML = val;
@@ -491,8 +491,8 @@ CS_Service.ServiceShiftRight = function () {
     var nextval = Number.parseInt(document.getElementById("b"+i).value);
     var bar = document.getElementById("b"+i);
     var barVal = document.getElementById("b"+i+"Value");
-    var CV =  document.getElementById("CV"+(i+65)+"_Value"); 
-    var CVs =  document.getElementById("CV"+(i+65)+"_State");
+    var CV =  document.getElementById("CV"+(i+66)+"_Value"); 
+    var CVs =  document.getElementById("CV"+(i+66)+"_State");
     CV.value = val;
     CVs.innerHTML = "Edited";
     barVal.innerHTML = val;
@@ -502,27 +502,173 @@ CS_Service.ServiceShiftRight = function () {
 }
 
 CS_Service.SelectFunctionMap = function(funct,wire,forward=true) {
-  console.log("*** SelectFunctionMap()");
+  //console.log("*** SelectFunctionMap("+funct+","+wire+","+forward+")");
+  var CVNum = 0;
+  var shiftOffset = 0;
+  var checkbox;
+  switch (funct)
+  {
+  case 0:
+    if (forward) {
+      CVNum = 33;
+      shiftOffset = -1;
+      checkbox = document.getElementById("F0_f-"+wire);
+    }
+    else
+    {
+      CVNum = 34;
+      shiftOffset = -1;
+      checkbox = document.getElementById("F0_r-"+wire);
+    }
+    break;
+  case 1:
+    CVNum = 35;
+    shiftOffset = -1;
+    checkbox = document.getElementById("F1-"+wire);
+    break;
+  case 2:
+    CVNum = 36;
+    shiftOffset = -1;
+    checkbox = document.getElementById("F2-"+wire);
+    break;
+  case 3:
+    CVNum = 37;
+    shiftOffset = -1;
+    checkbox = document.getElementById("F3-"+wire);
+    break;
+  case 4:
+    CVNum = 38;
+    shiftOffset = -4;
+    checkbox = document.getElementById("F4-"+wire);
+    break;
+  case 5:
+    CVNum = 39;
+    shiftOffset = -4;
+    checkbox = document.getElementById("F5-"+wire);
+    break;
+  case 6:
+    CVNum = 40;
+    shiftOffset = -4;
+    checkbox = document.getElementById("F6-"+wire);
+    break;
+  default:
+    return;
+    break;
+  }
+  var CV = document.getElementById("CV"+CVNum+"_Value");
+  var CVs = document.getElementById("CV"+CVNum+"_State");
+  //console.log("*** SelectFunctionMap(), checkbox.checked is '"+checkbox.checked+"')");
+  if (checkbox.checked) {
+    /* checked */
+    CV.value |= (1 << (wire+shiftOffset));
+  }
+  else
+  {
+    CV.value &= ~(1 << (wire+shiftOffset));
+  }
+  CVs.innerHTML = "Edited";
 }
 
 CS_Service.SelectDitchLightHold = function () { 
   console.log("*** SelectDitchLightHold()");
+  /* CV 118? */
+  var CV = document.getElementById("CV118_Value");
+  var CVs = document.getElementById("CV118_State");
+  var ditch = document.getElementById("ditch-light-hold");
+  CV.value = ditch.value;
+  CVs.innerHTML = "Edited";
 }
 
 CS_Service.SelectLightingEffectsPage = function () {
   console.log("*** SelectLightingEffectsPage()");
+  /* CV 119? */
+  var CV = document.getElementById("CV119_Value");
+  var CVs = document.getElementById("CV119_State");
+  var lighteffects = document.getElementById("light-effects-page");
+  CV.value = lighteffects.value;
+  CVs.innerHTML = "Edited";
 }
 
 CS_Service.SelectOutputEffectGenerated = function (output) {
-  console.log("*** SelectOutputEffectGenerated()");
+  //console.log("*** SelectOutputEffectGenerated()");
+  var sel = document.getElementById("O"+output+"_effect");
+  var CV = document.getElementById("CV"+(119+output)+"_Value");
+  var CVs = document.getElementById("CV"+(119+output)+"_State");
+  var val = CV.value & 0b10000011;
+  if (sel.value == "standard")
+  {
+    val |= 0; //   000000
+  }
+  else if (sel.value == "mars")
+  {
+    val |= 8; //          001000
+  }
+  else if (sel.value == "rotary")
+  {
+    val |= 12; //      001100
+  }
+  else if (sel.value == "gyralight")
+  {
+    val |= 16; // 010000
+  }
+  else if (sel.value == "double")
+  {
+    val |= 20; //     010100
+  }
+  else if (sel.value == "A")
+  {
+    val |= 24; //              011000
+  }
+  else if (sel.value == "B")
+  {
+    val |= 28; //              011100
+  }
+  else if (sel.value == "dim")
+  {
+    val |= 32; //          100000
+  }
+  CV.value = val;
+  CVs.innerHTML = "Edited";
 }
 
 CS_Service.SelectOutputActive = function (output) { 
-  console.log("*** SelectOutputActive()");
+  //console.log("*** SelectOutputActive()");
+  var sel = document.getElementById("O"+output+"_active");
+  var CV = document.getElementById("CV"+(119+output)+"_Value");
+  var CVs = document.getElementById("CV"+(119+output)+"_State");
+  var val = CV.value & 0b11111100;
+  if (sel.value == "both")
+  {
+    val |= 0; //          00
+  }
+  else if (sel.value == "forward")
+  {
+    val |= 1; //        01
+  }
+  else if (sel.value == "reverse")
+  {
+    val |= 2; //        10
+  }
+  CV.value = val;
+  CVs.innerHTML = "Edited";
 }
 
 CS_Service.SelectOutputConnected = function (output) {
-  console.log("*** SelectOutputConnected()");
+  //console.log("*** SelectOutputConnected()");
+  var sel = document.getElementById("O"+output+"_connected");
+  var CV = document.getElementById("CV"+(119+output)+"_Value");
+  var CVs = document.getElementById("CV"+(119+output)+"_State");
+  var val = CV.value & 0b01111111;
+  if (sel.value == "incand")
+  {
+    val |= 0; //      00000000
+  }
+  else if (sel.value == "led")
+  {
+    val |= 128; //        10000000
+  }
+  CV.value = val;
+  CVs.innerHTML = "Edited";
 }
 
 CS_Service.SelectPowerSourceConversion = function () {
