@@ -8,7 +8,7 @@
      Created By    : Robert Heller, Robert Heller
      Created       : 2026-03-18 13:32:23
 
-     Last Modified : <260319.2228>
+     Last Modified : <260320.0906>
      ID            : $Id$
      Source        : $Source$
      Description	
@@ -232,6 +232,8 @@ CS_Service.SelectPowerConversion = function () {
   var CV_29 = document.getElementById("CV29_Value");
   var CV_29s = document.getElementById("CV29_State");
   var power = document.getElementById("power");
+  var otherpower = document.getElementById("power-source");
+  otherpower.value = power.value;
   if (power.value = "dcc")
   {
     CV_29.value &= ~(1 << 2);
@@ -672,51 +674,177 @@ CS_Service.SelectOutputConnected = function (output) {
 }
 
 CS_Service.SelectPowerSourceConversion = function () {
-  console.log("*** SelectPowerSourceConversion()");
+  //console.log("*** SelectPowerSourceConversion()");
+  /* CV_29 bit 2: 0 = NMRA Digital Only, 1 = DC conversion */
+  var CV_29 = document.getElementById("CV29_Value");
+  var CV_29s = document.getElementById("CV29_State");
+  var power = document.getElementById("power-source");
+  var otherpower = document.getElementById("power");
+  otherpower.value = power.value;
+  if (power.value = "dcc")
+  {
+    CV_29.value &= ~(1 << 2);
+  }
+  else
+  {
+    CV_29.value |= (1 << 2);
+  }
+  CV_29s.innerHTML = "Edited";
 }
 
 CS_Service.SelectConsistAddress = function () {
-  console.log("*** SelectConsistAddress()");
+  //console.log("*** SelectConsistAddress()");
+  /* CV19 */
+  var CV =  document.getElementById("CV19_Value");
+  var CVs =  document.getElementById("CV19_State");
+  var consist_address =  document.getElementById("consist-address");
+  var olddir = CV.value & 0b10000000;
+  CV.value = (consist_address.value & 0b01111111) | olddir;
+  CVs.innerHTML = "Edited";
 }
 
 CS_Service.SelectDirectionInConsist = function () {
-  console.log("*** SelectDirectionInConsist()");
+  //console.log("*** SelectDirectionInConsist()");
+  var CV =  document.getElementById("CV19_Value");
+  var CVs =  document.getElementById("CV19_State");
+  var sel = document.getElementById("direction-in-consist");
+  if (sel.value == "normal")
+  {
+    CV.value &= 0b01111111;
+  }
+  else
+  {
+    CV.value |= 0b10000000;
+  }
+  CVs.innerHTML = "Edited";
 }
 
 CS_Service.SetConsistAccelerationAdj = function () {
-  console.log("*** SetConsistAccelerationAdj()");
+  //console.log("*** SetConsistAccelerationAdj()");
+  /* CV23 */
+  var CV =  document.getElementById("CV23_Value");
+  var CVs =  document.getElementById("CV23_State");
+  var val = document.getElementById("accel-adj").value & 0b01111111;;
+  var sign = CV.value & 0b10000000;
+  CV.value = sign | val;
+  CVs.innerHTML = "Edited";
 }
 
 CS_Service.SetConsistAccelerationAdjSign = function () {
-  console.log("*** SetConsistAccelerationAdjSign()");
+  //console.log("*** SetConsistAccelerationAdjSign()");
+  /* CV23 */ 
+  var CV =  document.getElementById("CV23_Value");
+  var CVs =  document.getElementById("CV23_State");
+  var sel =  document.getElementById("accel-sign");
+  if (sel.value == "+")
+  {
+    CV.value &= 0b01111111;
+  }
+  else
+  {
+    CV.value |= 0b10000000;
+  }
 }
 
 CS_Service.SetConsistDecelerationAdj = function () {
-  console.log("*** SetConsistDecelerationAdj()");
+  //console.log("*** SetConsistDecelerationAdj()");
+  /* CV24 */
+  var CV =  document.getElementById("CV24_Value");
+  var CVs =  document.getElementById("CV24_State");
+  var val = document.getElementById("decel-adj").value & 0b01111111;;
+  var sign = CV.value & 0b10000000;
+  CV.value = sign | val;
+  CVs.innerHTML = "Edited";
 }
 
 CS_Service.SetConsistDecelerationAdjSign = function () {
-  console.log("*** SetConsistDecelerationAdjSign()");
+  //console.log("*** SetConsistDecelerationAdjSign()");
+  /* CV24 */
+  var CV =  document.getElementById("CV24_Value");
+  var CVs =  document.getElementById("CV24_State");
+  var sel =  document.getElementById("decel-sign");
+  if (sel.value == "+")
+  {
+    CV.value &= 0b01111111;
+  }
+  else
+  {
+    CV.value |= 0b10000000;
+  }
 }
 
-CS_Service.SelectConsistRespondFunction = function (fun,forward=false) {                            $
-     console.log("*** SelectConsistRespondFunction()");
+CS_Service.SelectConsistRespondFunction = function (fun,forward=false) {
+  //console.log("*** SelectConsistRespondFunction("+fun+","+forward+")");
+  var selname;
+  var bitno;
+  var cvnum;
+  if (fun == 0)
+  {
+    if (forward)
+    {
+      selname = "consist-F0F";
+      bitno = 0;
+      cvnum = 22;
+    }
+    else
+    {
+      selname = "consist-F0R";
+      bitno = 1;
+      cvnum = 22;
+    }
+  }
+  else
+  {
+    selname = "consist-F"+fun;
+    bitno = fun-1;
+    cvnum = 21;
+  }
+  /* CV21 / CV22 */
+  var CV =  document.getElementById("CV"+cvnum+"_Value");
+  var CVs =  document.getElementById("CV"+cvnum+"_State");
+  var bitval = Number.parseInt(document.getElementById(selname).value);
+  if (bitval == 0)
+  {
+    CV.value &= ~(1 << bitno);
+  }
+  else
+  {
+    CV.value |= (1 << bitno);
+  }
+  CVs.innerHTML = "Edited";
 }
 
 CS_Service.SelectAdvancedAck = function () {
-  console.log("*** SelectAdvancedAck()");
+  //console.log("*** SelectAdvancedAck()");
+  /* CV29, bit 3 */
+  var CV =  document.getElementById("CV29_Value"); 
+  var CVs =  document.getElementById("CV29_State"); 
+  var sel = document.getElementById("advanced-ack");
+  if (sel == "disabled")
+  {
+    CV.value &= ~(1 << 3);
+  }
+  else
+  {
+    CV.value |= (1 << 3);
+  }
+  CVs.innerHTML = "Edited";
+}
+
+CS_Service.EditCV = function (cv) {
+  console.log("*** EditCV("+cv+")");
 }
 
 CS_Service.ReadCV = function (cv) {
-  console.log("*** ReadCV()");
+  console.log("*** ReadCV("+cv+")");
 }
 
 CS_Service.WriteCV = function (cv) {
-  console.log("*** WriteCV()");
+  console.log("*** WriteCV("+cv+")");
 }
 
 CS_Service.CompareCV = function (cv) {
-  console.log("*** CompareCV()");
+  console.log("*** CompareCV("+cv+")");
 }
 
 CS_Service.ReadChagesOnSheet = function () {

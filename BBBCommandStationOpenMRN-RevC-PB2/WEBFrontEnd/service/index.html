@@ -471,10 +471,10 @@
       <div class="panel" id="seven-panel">
         <div class="panel-title">Analog Controls</div>
         <div class="analog-controls">
-          <label for="power-source">Power Source Conversion<.label>
+          <label for="power-source">Power Source Conversion</label>
           <select onchange="CS_Service.SelectPowerSourceConversion();" id="power-source">
-            <option value="dcc" selected>NMRA Digitial only</opyion>
-            <option value="dc">DC conversion enabled<.option>
+            <option value="dcc" selected>NMRA Digitial only</option>
+            <option value="dc">DC conversion enabled</option>
           </select>
         </div>
       </div>
@@ -485,22 +485,22 @@
             <div class="left" style="float:left;">
               <label for="consist-address">Advanced Consist Address</label>
               <input onchange="CS_Service.SelectConsistAddress();" id="consist-address" type="number" min="0" max="127" value="0" /><br />
-              <label for="direction">Locomotive Direction In Consist</label>
-              <select onchange="CS_Service.SelectDirectionInConsist();" id="direction">
+              <label for="direction-in-consist">Locomotive Direction In Consist</label>
+              <select onchange="CS_Service.SelectDirectionInConsist();" id="direction-in-consist">
                 <option value="normal" selected>normal</option>
                 <option value="reversed">reversed</option>
               </select>
             </div>
             <div class="right" style="float:right;">
               <label for="accel-adj">Consist Acceleration Adjustment</label>
-              <input onchange="CS_Service.SetConsistAccelerationAdj();" id="accel-adj" type="number" min="0" max="255" value="0" /><br />
+              <input onchange="CS_Service.SetConsistAccelerationAdj();" id="accel-adj" type="number" min="0" max="127" value="0" /><br />
               <label for="accel-sign">Consist Acceleration Adjustment Sign</label>
               <select onchange="CS_Service.SetConsistAccelerationAdjSign();" id="accel-sign">
                 <option value="+" selected>Adjustment Added</option>
                 <option value="-">Adjustment Subtracted</option>
               </select><br />
               <label for="decel-adj">Consist Deceleration Adjustment</label>
-              <input onchange="CS_Service.SetConsistDecelerationAdj();" id="decel-adj" type="number" min="0" max="255" value="0" /><br />
+              <input onchange="CS_Service.SetConsistDecelerationAdj();" id="decel-adj" type="number" min="0" max="127" value="0" /><br />
               <label for="decel-sign">Consist Deceleration Adjustment Sign</label>
               <select onchange="CS_Service.SetConsistDecelerationAdjSign();" id="decel-sign">
                 <option value="+" selected>Adjustment Added</option>
@@ -512,52 +512,52 @@
           <div class="lower">
             Will decoder respond to function requests at consist address?<br /><br />
             <label for="consist-F0F">Consist Address Active for FL in forward</label>
-            <select onchange=CS_Service.SelectConsistRespondFunction(0,true);" id="consist-F0F">
+            <select onchange="CS_Service.SelectConsistRespondFunction(0,true);" id="consist-F0F">
               <option value="0" selected>Locomotive Address Only</option>
               <option value="1">Respond to Consist Address</option>
             </select><br />
             <label for="consist-F0R">Consist Address Active for FL in reverse</label>
-            <select onchange=CS_Service.SelectConsistRespondFunction(0,false);" id="consist-F0R">
+            <select onchange="CS_Service.SelectConsistRespondFunction(0,false);" id="consist-F0R">
               <option value="0" selected>Locomotive Address Only</option>
               <option value="1">Respond to Consist Address</option>
             </select><br />
             <label for="consist-F1">Consist Address Active for F1</label>
-            <select onchange=CS_Service.SelectConsistRespondFunction(1);" id="consist-F1">
+            <select onchange="CS_Service.SelectConsistRespondFunction(1);" id="consist-F1">
               <option value="0" selected>Locomotive Address Only</option>
               <option value="1">Respond to Consist Address</option>
             </select><br />
             <label for="consist-F2">Consist Address Active for F2</label>
-            <select onchange=CS_Service.SelectConsistRespondFunction(2);" id="consist-F2">
+            <select onchange="CS_Service.SelectConsistRespondFunction(2);" id="consist-F2">
               <option value="0" selected>Locomotive Address Only</option>
               <option value="1">Respond to Consist Address</option>
             </select><br />
             <label for="consist-F3">Consist Address Active for F3</label>
-            <select onchange=CS_Service.SelectConsistRespondFunction(3);" id="consist-F3">
+            <select onchange="CS_Service.SelectConsistRespondFunction(3);" id="consist-F3">
               <option value="0" selected>Locomotive Address Only</option>
               <option value="1">Respond to Consist Address</option>
             </select><br />
             <label for="consist-F4">Consist Address Active for F4</label>
-            <select onchange=CS_Service.SelectConsistRespondFunction(4);" id="consist-F4">
+            <select onchange="CS_Service.SelectConsistRespondFunction(4);" id="consist-F4">
               <option value="0" selected>Locomotive Address Only</option>
               <option value="1">Respond to Consist Address</option>
             </select><br />
             <label for="consist-F5">Consist Address Active for F5</label>
-            <select onchange=CS_Service.SelectConsistRespondFunction(5);" id="consist-F5">
+            <select onchange="CS_Service.SelectConsistRespondFunction(5);" id="consist-F5">
               <option value="0" selected>Locomotive Address Only</option>
               <option value="1">Respond to Consist Address</option>
             </select><br />
             <label for="consist-F6">Consist Address Active for F6</label>
-            <select onchange=CS_Service.SelectConsistRespondFunction(6);" id="consist-F6">
+            <select onchange="CS_Service.SelectConsistRespondFunction(6);" id="consist-F6">
               <option value="0" selected>Locomotive Address Only</option>
               <option value="1">Respond to Consist Address</option>
             </select><br />
             <label for="consist-F7">Consist Address Active for F7</label>
-            <select onchange=CS_Service.SelectConsistRespondFunction(7);" id="consist-F7">
+            <select onchange="CS_Service.SelectConsistRespondFunction(7);" id="consist-F7">
               <option value="0" selected>Locomotive Address Only</option>
               <option value="1">Respond to Consist Address</option>
             </select><br />
             <label for="consist-F8">Consist Address Active for F8</label>
-            <select onchange=CS_Service.SelectConsistRespondFunction(8);" id="consist-F8">
+            <select onchange="CS_Service.SelectConsistRespondFunction(8);" id="consist-F8">
               <option value="0" selected>Locomotive Address Only</option>
               <option value="1">Respond to Consist Address</option>
             </select><br />
