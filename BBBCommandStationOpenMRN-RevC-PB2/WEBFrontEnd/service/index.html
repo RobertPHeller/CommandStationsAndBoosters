@@ -5,6 +5,7 @@
         <link rel="stylesheet" href="/CSS/cs.css" />
         <link rel="stylesheet" href="/CSS/UI.css" />
         <link rel="stylesheet" href="/CSS/tabs.css" />
+        <!-- link rel="stylesheet" href="/CSS/slider.css" / -->
         <link rel="stylesheet" href="/CSS/vslider.css" />
         <script id="cs" type="text/javascript" src="/JS/cs.js"></script>
         <script id="cs-service" type="text/javascript" src="/JS/cs_service.js"></script>
@@ -92,11 +93,11 @@
       <div class="panel" id="two-panel">
         <div class="panel-title">Motor</div>
         <div id="motor" style="text-align:right;">
-          <label for="kick">Kick Start</label><input onchange="CS_Service.SelectKickStart();" id="kick" type="number" value="0" /><br />
-          <label for="accel">Acceleration Rate</label><input onchange="CS_Service.SelectAccelerationRate();" id="accel" type="number" value="0" /><br />
-          <label for="decel">Deceleration Rate</label><input onchange="CS_Service.SelectDecelerationRate();" id="decel" type="number" value="0" /><br />
+          <label for="kick">Kick Start</label><input onchange="CS_Service.SelectKickStart();" id="kick" type="number" value="0" min="0" max="255" /><br />
+          <label for="accel">Acceleration Rate</label><input onchange="CS_Service.SelectAccelerationRate();" id="accel" type="number" value="0" min="0" max="255"/><br />
+          <label for="decel">Deceleration Rate</label><input onchange="CS_Service.SelectDecelerationRate();" id="decel" type="number" value="0" min="0" max="255" /><br />
           <br /><br />
-          <label for="freq">Motor drive frequency</label><input onchange="CS_Service.SelectMotorFreq();" id="freq" type="number" value="0" /><br />
+          <label for="freq">Motor drive frequency</label><input onchange="CS_Service.SelectMotorFreq();" id="freq" type="number" value="0" min="0" max="255"/><br />
         </div>
       </div>
       <div class="panel" id="three-panel">
@@ -591,7 +592,7 @@
             <tbody>
             <tr>
               <td>1</td>
-              <td><input id="CV1_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(1);" id="CV1_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV1_State">Unknown</span></td>
               <td><button id="CV1_Read" type="button" onclick="CS_Service.ReadCV(1);">Read</button></td>
               <td><button id="CV1_Write" type="button" onclick="CS_Service.WriteCV(1);">Write</button></td>
@@ -599,7 +600,7 @@
             </tr>
             <tr>
               <td>2</td>
-              <td><input id="CV2_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(2);" id="CV2_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV2_State">Unknown</span></td>
               <td><button id="CV2_Read" type="button" onclick="CS_Service.ReadCV(2);">Read</button></td>
               <td><button id="CV2_Write" type="button" onclick="CS_Service.WriteCV(2);">Write</button></td>
@@ -607,7 +608,7 @@
             </tr>
             <tr>
               <td>3</td>
-              <td><input id="CV3_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(3);" id="CV3_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV3_State">Unknown</span></td>
               <td><button id="CV3_Read" type="button" onclick="CS_Service.ReadCV(3);">Read</button></td>
               <td><button id="CV3_Write" type="button" onclick="CS_Service.WriteCV(3);">Write</button></td>
@@ -615,7 +616,7 @@
             </tr>
             <tr>
               <td>4</td>
-              <td><input id="CV4_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(4);" id="CV4_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV4_State">Unknown</span></td>
               <td><button id="CV4_Read" type="button" onclick="CS_Service.ReadCV(4);">Read</button></td>
               <td><button id="CV4_Write" type="button" onclick="CS_Service.WriteCV(4);">Write</button></td>
@@ -623,7 +624,7 @@
             </tr>
             <tr>
               <td>5</td>
-              <td><input id="CV5_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(5);" id="CV5_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV5_State">Unknown</span></td>
               <td><button id="CV5_Read" type="button" onclick="CS_Service.ReadCV(5);">Read</button></td>
               <td><button id="CV5_Write" type="button" onclick="CS_Service.WriteCV(5);">Write</button></td>
@@ -631,7 +632,7 @@
             </tr>
             <tr>
               <td>6</td>
-              <td><input id="CV6_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(6);" id="CV6_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV6_State">Unknown</span></td>
               <td><button id="CV6_Read" type="button" onclick="CS_Service.ReadCV(6);">Read</button></td>
               <td><button id="CV6_Write" type="button" onclick="CS_Service.WriteCV(6);">Write</button></td>
@@ -655,7 +656,7 @@
             </tr>
             <tr>
               <td>9</td>
-              <td><input id="CV9_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(9);" id="CV9_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV9_State">Unknown</span></td>
               <td><button id="CV9_Read" type="button" onclick="CS_Service.ReadCV(9);">Read</button></td>
               <td><button id="CV9_Write" type="button" onclick="CS_Service.WriteCV(9);">Write</button></td>
@@ -663,7 +664,7 @@
             </tr>
             <tr>
               <td>17</td>
-              <td><input id="CV17_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(17);" id="CV17_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV17_State">Unknown</span></td>
               <td><button id="CV17_Read" type="button" onclick="CS_Service.ReadCV(17);">Read</button></td>
               <td><button id="CV17_Write" type="button" onclick="CS_Service.WriteCV(17);">Write</button></td>
@@ -671,7 +672,7 @@
             </tr>
             <tr>
               <td>18</td>
-              <td><input id="CV18_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(18);" id="CV18_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV18_State">Unknown</span></td>
               <td><button id="CV18_Read" type="button" onclick="CS_Service.ReadCV(18);">Read</button></td>
               <td><button id="CV18_Write" type="button" onclick="CS_Service.WriteCV(18);">Write</button></td>
@@ -679,7 +680,7 @@
             </tr>
             <tr>
               <td>19</td>
-              <td><input id="CV19_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(19);" id="CV19_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV19_State">Unknown</span></td>
               <td><button id="CV19_Read" type="button" onclick="CS_Service.ReadCV(19);">Read</button></td>
               <td><button id="CV19_Write" type="button" onclick="CS_Service.WriteCV(19);">Write</button></td>
@@ -687,7 +688,7 @@
             </tr>
             <tr>
               <td>21</td>
-              <td><input id="CV21_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(21);" id="CV21_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV21_State">Unknown</span></td>
               <td><button id="CV21_Read" type="button" onclick="CS_Service.ReadCV(21);">Read</button></td>
               <td><button id="CV21_Write" type="button" onclick="CS_Service.WriteCV(21);">Write</button></td>
@@ -695,7 +696,7 @@
             </tr>
             <tr>
               <td>22</td>
-              <td><input id="CV22_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(22);" id="CV22_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV22_State">Unknown</span></td>
               <td><button id="CV22_Read" type="button" onclick="CS_Service.ReadCV(22);">Read</button></td>
               <td><button id="CV22_Write" type="button" onclick="CS_Service.WriteCV(22);">Write</button></td>
@@ -703,7 +704,7 @@
             </tr>
             <tr>
               <td>23</td>
-              <td><input id="CV23_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(23);" id="CV23_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV23_State">Unknown</span></td>
               <td><button id="CV23_Read" type="button" onclick="CS_Service.ReadCV(23);">Read</button></td>
               <td><button id="CV23_Write" type="button" onclick="CS_Service.WriteCV(23);">Write</button></td>
@@ -711,7 +712,7 @@
             </tr>
             <tr>
               <td>24</td>
-              <td><input id="CV24_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(24);" id="CV24_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV24_State">Unknown</span></td>
               <td><button id="CV24_Read" type="button" onclick="CS_Service.ReadCV(24);">Read</button></td>
               <td><button id="CV24_Write" type="button" onclick="CS_Service.WriteCV(24);">Write</button></td>
@@ -719,7 +720,7 @@
             </tr>
             <tr>
               <td>29</td>
-              <td><input id="CV29_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(29);" id="CV29_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV29_State">Unknown</span></td>
               <td><button id="CV29_Read" type="button" onclick="CS_Service.ReadCV(29);">Read</button></td>
               <td><button id="CV29_Write" type="button" onclick="CS_Service.WriteCV(29);">Write</button></td>
@@ -727,7 +728,7 @@
             </tr>
             <tr>
               <td>33</td>
-              <td><input id="CV33_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(33);" id="CV33_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV33_State">Unknown</span></td>
               <td><button id="CV33_Read" type="button" onclick="CS_Service.ReadCV(33);">Read</button></td>
               <td><button id="CV33_Write" type="button" onclick="CS_Service.WriteCV(33);">Write</button></td>
@@ -735,7 +736,7 @@
             </tr>
             <tr>
               <td>34</td>
-              <td><input id="CV34_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(34);" id="CV34_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV34_State">Unknown</span></td>
               <td><button id="CV34_Read" type="button" onclick="CS_Service.ReadCV(34);">Read</button></td>
               <td><button id="CV34_Write" type="button" onclick="CS_Service.WriteCV(34);">Write</button></td>
@@ -743,7 +744,7 @@
             </tr>
             <tr>
               <td>35</td>
-              <td><input id="CV35_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(35);" id="CV35_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV35_State">Unknown</span></td>
               <td><button id="CV35_Read" type="button" onclick="CS_Service.ReadCV(35);">Read</button></td>
               <td><button id="CV35_Write" type="button" onclick="CS_Service.WriteCV(35);">Write</button></td>
@@ -751,7 +752,7 @@
             </tr>
             <tr>
               <td>36</td>
-              <td><input id="CV36_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(36);" id="CV36_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV36_State">Unknown</span></td>
               <td><button id="CV36_Read" type="button" onclick="CS_Service.ReadCV(36);">Read</button></td>
               <td><button id="CV36_Write" type="button" onclick="CS_Service.WriteCV(36);">Write</button></td>
@@ -759,7 +760,7 @@
             </tr>
             <tr>
               <td>37</td>
-              <td><input id="CV37_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(37);" id="CV37_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV37_State">Unknown</span></td>
               <td><button id="CV37_Read" type="button" onclick="CS_Service.ReadCV(37);">Read</button></td>
               <td><button id="CV37_Write" type="button" onclick="CS_Service.WriteCV(37);">Write</button></td>
@@ -767,7 +768,7 @@
             </tr>
             <tr>
               <td>38</td>
-              <td><input id="CV38_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(38);" id="CV38_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV38_State">Unknown</span></td>
               <td><button id="CV38_Read" type="button" onclick="CS_Service.ReadCV(38);">Read</button></td>
               <td><button id="CV38_Write" type="button" onclick="CS_Service.WriteCV(38);">Write</button></td>
@@ -775,7 +776,7 @@
             </tr>
             <tr>
               <td>39</td>
-              <td><input id="CV39_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(39);" id="CV39_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV39_State">Unknown</span></td>
               <td><button id="CV39_Read" type="button" onclick="CS_Service.ReadCV(39);">Read</button></td>
               <td><button id="CV39_Write" type="button" onclick="CS_Service.WriteCV(39);">Write</button></td>
@@ -783,7 +784,7 @@
             </tr>
             <tr>
               <td>40</td>
-              <td><input id="CV40_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(40);" id="CV40_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV40_State">Unknown</span></td>
               <td><button id="CV40_Read" type="button" onclick="CS_Service.ReadCV(40);">Read</button></td>
               <td><button id="CV40_Write" type="button" onclick="CS_Service.WriteCV(40);">Write</button></td>
@@ -791,7 +792,7 @@
             </tr>
             <tr>
               <td>65</td>
-              <td><input id="CV65_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(65);" id="CV65_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV65_State">Unknown</span></td>
               <td><button id="CV65_Read" type="button" onclick="CS_Service.ReadCV(65);">Read</button></td>
               <td><button id="CV65_Write" type="button" onclick="CS_Service.WriteCV(65);">Write</button></td>
@@ -799,7 +800,7 @@
             </tr>
             <tr>
               <td>66</td>
-              <td><input id="CV66_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(66);" id="CV66_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV66_State">Unknown</span></td>
               <td><button id="CV66_Read" type="button" onclick="CS_Service.ReadCV(66);">Read</button></td>
               <td><button id="CV66_Write" type="button" onclick="CS_Service.WriteCV(66);">Write</button></td>
@@ -807,7 +808,7 @@
             </tr>
             <tr>
               <td>67</td>
-              <td><input id="CV67_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(67);" id="CV67_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV67_State">Unknown</span></td>
               <td><button id="CV67_Read" type="button" onclick="CS_Service.ReadCV(67);">Read</button></td>
               <td><button id="CV67_Write" type="button" onclick="CS_Service.WriteCV(67);">Write</button></td>
@@ -815,7 +816,7 @@
             </tr>
             <tr>
               <td>68</td>
-              <td><input id="CV68_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(68);" id="CV68_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV68_State">Unknown</span></td>
               <td><button id="CV68_Read" type="button" onclick="CS_Service.ReadCV(68);">Read</button></td>
               <td><button id="CV68_Write" type="button" onclick="CS_Service.WriteCV(68);">Write</button></td>
@@ -823,7 +824,7 @@
             </tr>
             <tr>
               <td>69</td>
-              <td><input id="CV69_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(69);" id="CV69_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV69_State">Unknown</span></td>
               <td><button id="CV69_Read" type="button" onclick="CS_Service.ReadCV(69);">Read</button></td>
               <td><button id="CV69_Write" type="button" onclick="CS_Service.WriteCV(69);">Write</button></td>
@@ -831,7 +832,7 @@
             </tr>
             <tr>
               <td>70</td>
-              <td><input id="CV70_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(70);" id="CV70_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV70_State">Unknown</span></td>
               <td><button id="CV70_Read" type="button" onclick="CS_Service.ReadCV(70);">Read</button></td>
               <td><button id="CV70_Write" type="button" onclick="CS_Service.WriteCV(70);">Write</button></td>
@@ -839,7 +840,7 @@
             </tr>
             <tr>
               <td>71</td>
-              <td><input id="CV71_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(71);" id="CV71_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV71_State">Unknown</span></td>
               <td><button id="CV71_Read" type="button" onclick="CS_Service.ReadCV(71);">Read</button></td>
               <td><button id="CV71_Write" type="button" onclick="CS_Service.WriteCV(71);">Write</button></td>
@@ -847,7 +848,7 @@
             </tr>
             <tr>
               <td>72</td>
-              <td><input id="CV72_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(72);" id="CV72_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV72_State">Unknown</span></td>
               <td><button id="CV72_Read" type="button" onclick="CS_Service.ReadCV(72);">Read</button></td>
               <td><button id="CV72_Write" type="button" onclick="CS_Service.WriteCV(72);">Write</button></td>
@@ -855,7 +856,7 @@
             </tr>
             <tr>
               <td>73</td>
-              <td><input id="CV73_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(73);" id="CV73_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV73_State">Unknown</span></td>
               <td><button id="CV73_Read" type="button" onclick="CS_Service.ReadCV(73);">Read</button></td>
               <td><button id="CV73_Write" type="button" onclick="CS_Service.WriteCV(73);">Write</button></td>
@@ -863,7 +864,7 @@
             </tr>
             <tr>
               <td>74</td>
-              <td><input id="CV74_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(74);" id="CV74_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV74_State">Unknown</span></td>
               <td><button id="CV74_Read" type="button" onclick="CS_Service.ReadCV(74);">Read</button></td>
               <td><button id="CV74_Write" type="button" onclick="CS_Service.WriteCV(74);">Write</button></td>
@@ -871,7 +872,7 @@
             </tr>
             <tr>
               <td>75</td>
-              <td><input id="CV75_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(75);" id="CV75_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV75_State">Unknown</span></td>
               <td><button id="CV75_Read" type="button" onclick="CS_Service.ReadCV(75);">Read</button></td>
               <td><button id="CV75_Write" type="button" onclick="CS_Service.WriteCV(75);">Write</button></td>
@@ -879,7 +880,7 @@
             </tr>
             <tr>
               <td>76</td>
-              <td><input id="CV76_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(76);" id="CV76_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV76_State">Unknown</span></td>
               <td><button id="CV76_Read" type="button" onclick="CS_Service.ReadCV(76);">Read</button></td>
               <td><button id="CV76_Write" type="button" onclick="CS_Service.WriteCV(76);">Write</button></td>
@@ -887,7 +888,7 @@
             </tr>
             <tr>
               <td>77</td>
-              <td><input id="CV77_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(77);" id="CV77_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV77_State">Unknown</span></td>
               <td><button id="CV77_Read" type="button" onclick="CS_Service.ReadCV(77);">Read</button></td>
               <td><button id="CV77_Write" type="button" onclick="CS_Service.WriteCV(77);">Write</button></td>
@@ -895,7 +896,7 @@
             </tr>
             <tr>
               <td>78</td>
-              <td><input id="CV78_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(78);" id="CV78_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV78_State">Unknown</span></td>
               <td><button id="CV78_Read" type="button" onclick="CS_Service.ReadCV(78);">Read</button></td>
               <td><button id="CV78_Write" type="button" onclick="CS_Service.WriteCV(78);">Write</button></td>
@@ -903,7 +904,7 @@
             </tr>
             <tr>
               <td>79</td>
-              <td><input id="CV79_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(79);" id="CV79_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV79_State">Unknown</span></td>
               <td><button id="CV79_Read" type="button" onclick="CS_Service.ReadCV(79);">Read</button></td>
               <td><button id="CV79_Write" type="button" onclick="CS_Service.WriteCV(79);">Write</button></td>
@@ -911,7 +912,7 @@
             </tr>
             <tr>
               <td>80</td>
-              <td><input id="CV80_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(80);" id="CV80_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV80_State">Unknown</span></td>
               <td><button id="CV80_Read" type="button" onclick="CS_Service.ReadCV(80);">Read</button></td>
               <td><button id="CV80_Write" type="button" onclick="CS_Service.WriteCV(80);">Write</button></td>
@@ -919,7 +920,7 @@
             </tr>
             <tr>
               <td>81</td>
-              <td><input id="CV81_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(81);" id="CV81_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV81_State">Unknown</span></td>
               <td><button id="CV81_Read" type="button" onclick="CS_Service.ReadCV(81);">Read</button></td>
               <td><button id="CV81_Write" type="button" onclick="CS_Service.WriteCV(81);">Write</button></td>
@@ -927,7 +928,7 @@
             </tr>
             <tr>
               <td>82</td>
-              <td><input id="CV82_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(82);" id="CV82_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV82_State">Unknown</span></td>
               <td><button id="CV82_Read" type="button" onclick="CS_Service.ReadCV(82);">Read</button></td>
               <td><button id="CV82_Write" type="button" onclick="CS_Service.WriteCV(82);">Write</button></td>
@@ -935,7 +936,7 @@
             </tr>
             <tr>
               <td>83</td>
-              <td><input id="CV83_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(83);" id="CV83_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV83_State">Unknown</span></td>
               <td><button id="CV83_Read" type="button" onclick="CS_Service.ReadCV(83);">Read</button></td>
               <td><button id="CV83_Write" type="button" onclick="CS_Service.WriteCV(83);">Write</button></td>
@@ -943,7 +944,7 @@
             </tr>
             <tr>
               <td>84</td>
-              <td><input id="CV84_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(84);" id="CV84_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV84_State">Unknown</span></td>
               <td><button id="CV84_Read" type="button" onclick="CS_Service.ReadCV(84);">Read</button></td>
               <td><button id="CV84_Write" type="button" onclick="CS_Service.WriteCV(84);">Write</button></td>
@@ -951,7 +952,7 @@
             </tr>
             <tr>
               <td>85</td>
-              <td><input id="CV85_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(85);" id="CV85_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV85_State">Unknown</span></td>
               <td><button id="CV85_Read" type="button" onclick="CS_Service.ReadCV(85);">Read</button></td>
               <td><button id="CV85_Write" type="button" onclick="CS_Service.WriteCV(85);">Write</button></td>
@@ -959,7 +960,7 @@
             </tr>
             <tr>
               <td>86</td>
-              <td><input id="CV86_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(86);" id="CV86_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV86_State">Unknown</span></td>
               <td><button id="CV86_Read" type="button" onclick="CS_Service.ReadCV(86);">Read</button></td>
               <td><button id="CV86_Write" type="button" onclick="CS_Service.WriteCV(86);">Write</button></td>
@@ -967,7 +968,7 @@
             </tr>
             <tr>
               <td>87</td>
-              <td><input id="CV87_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(87);" id="CV87_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV87_State">Unknown</span></td>
               <td><button id="CV87_Read" type="button" onclick="CS_Service.ReadCV(87);">Read</button></td>
               <td><button id="CV87_Write" type="button" onclick="CS_Service.WriteCV(87);">Write</button></td>
@@ -975,7 +976,7 @@
             </tr>
             <tr>
               <td>88</td>
-              <td><input id="CV88_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(88);" id="CV88_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV88_State">Unknown</span></td>
               <td><button id="CV88_Read" type="button" onclick="CS_Service.ReadCV(88);">Read</button></td>
               <td><button id="CV88_Write" type="button" onclick="CS_Service.WriteCV(88);">Write</button></td>
@@ -983,7 +984,7 @@
             </tr>
             <tr>
               <td>89</td>
-              <td><input id="CV89_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(89);" id="CV89_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV89_State">Unknown</span></td>
               <td><button id="CV89_Read" type="button" onclick="CS_Service.ReadCV(89);">Read</button></td>
               <td><button id="CV89_Write" type="button" onclick="CS_Service.WriteCV(89);">Write</button></td>
@@ -991,7 +992,7 @@
             </tr>
             <tr>
               <td>90</td>
-              <td><input id="CV90_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(90);" id="CV90_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV90_State">Unknown</span></td>
               <td><button id="CV90_Read" type="button" onclick="CS_Service.ReadCV(90);">Read</button></td>
               <td><button id="CV90_Write" type="button" onclick="CS_Service.WriteCV(90);">Write</button></td>
@@ -999,7 +1000,7 @@
             </tr>
             <tr>
               <td>91</td>
-              <td><input id="CV91_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(91);" id="CV91_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV91_State">Unknown</span></td>
               <td><button id="CV91_Read" type="button" onclick="CS_Service.ReadCV(91);">Read</button></td>
               <td><button id="CV91_Write" type="button" onclick="CS_Service.WriteCV(91);">Write</button></td>
@@ -1007,7 +1008,7 @@
             </tr>
             <tr>
               <td>92</td>
-              <td><input id="CV92_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(92);" id="CV92_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV92_State">Unknown</span></td>
               <td><button id="CV92_Read" type="button" onclick="CS_Service.ReadCV(92);">Read</button></td>
               <td><button id="CV92_Write" type="button" onclick="CS_Service.WriteCV(92);">Write</button></td>
@@ -1015,7 +1016,7 @@
             </tr>
             <tr>
               <td>93</td>
-              <td><input id="CV93_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(93);" id="CV93_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV93_State">Unknown</span></td>
               <td><button id="CV93_Read" type="button" onclick="CS_Service.ReadCV(93);">Read</button></td>
               <td><button id="CV93_Write" type="button" onclick="CS_Service.WriteCV(93);">Write</button></td>
@@ -1023,7 +1024,7 @@
             </tr>
             <tr>
               <td>94</td>
-              <td><input id="CV94_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(94);" id="CV94_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV94_State">Unknown</span></td>
               <td><button id="CV94_Read" type="button" onclick="CS_Service.ReadCV(94);">Read</button></td>
               <td><button id="CV94_Write" type="button" onclick="CS_Service.WriteCV(94);">Write</button></td>
@@ -1031,7 +1032,7 @@
             </tr>
             <tr>
               <td>118</td>
-              <td><input id="CV118_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(118);" id="CV118_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV118_State">Unknown</span></td>
               <td><button id="CV118_Read" type="button" onclick="CS_Service.ReadCV(118);">Read</button></td>
               <td><button id="CV118_Write" type="button" onclick="CS_Service.WriteCV(118);">Write</button></td>
@@ -1039,7 +1040,7 @@
             </tr>
             <tr>
               <td>119</td>
-              <td><input id="CV119_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(119);" id="CV119_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV119_State">Unknown</span></td>
               <td><button id="CV119_Read" type="button" onclick="CS_Service.ReadCV(119);">Read</button></td>
               <td><button id="CV119_Write" type="button" onclick="CS_Service.WriteCV(119);">Write</button></td>
@@ -1047,7 +1048,7 @@
             </tr>
             <tr>
               <td>120</td>
-              <td><input id="CV120_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(120);" id="CV120_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV120_State">Unknown</span></td>
               <td><button id="CV120_Read" type="button" onclick="CS_Service.ReadCV(120);">Read</button></td>
               <td><button id="CV120_Write" type="button" onclick="CS_Service.WriteCV(120);">Write</button></td>
@@ -1055,7 +1056,7 @@
             </tr>
             <tr>
               <td>121</td>
-              <td><input id="CV121_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(121);" id="CV121_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV121_State">Unknown</span></td>
               <td><button id="CV121_Read" type="button" onclick="CS_Service.ReadCV(121);">Read</button></td>
               <td><button id="CV121_Write" type="button" onclick="CS_Service.WriteCV(121);">Write</button></td>
@@ -1063,7 +1064,7 @@
             </tr>
             <tr>
               <td>122</td>
-              <td><input id="CV122_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(122);" id="CV122_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV122_State">Unknown</span></td>
               <td><button id="CV122_Read" type="button" onclick="CS_Service.ReadCV(122);">Read</button></td>
               <td><button id="CV122_Write" type="button" onclick="CS_Service.WriteCV(122);">Write</button></td>
@@ -1071,7 +1072,7 @@
             </tr>
             <tr>
               <td>123</td>
-              <td><input id="CV123_Value" type="number" min="0" max="255" value="0" /></td>
+              <td><input onchange="CS_Service.EditCV(123);" id="CV123_Value" type="number" min="0" max="255" value="0" /></td>
               <td><span id="CV123_State">Unknown</span></td>
               <td><button id="CV123_Read" type="button" onclick="CS_Service.ReadCV(123);">Read</button></td>
               <td><button id="CV123_Write" type="button" onclick="CS_Service.WriteCV(123);">Write</button></td>
@@ -1085,9 +1086,9 @@
   </div>
   <div class="bottom-buttons">
     <div class="button-box" id="button-box-1">
-      <button type="button" onclick="CS_Service.ReadChagesOnSheet();">Read changes on sheet</button>
-      <button type="button" onclick="CS_Service.WriteChagesOnSheet();">Write changes on sheet</button>
-      <button type="button" onclick="CS_Service.CompareChagesOnSheet();">Compare changes on sheet</button>
+      <button type="button" onclick="CS_Service.ReadChangesOnSheet();">Read changes on sheet</button>
+      <button type="button" onclick="CS_Service.WriteChangesOnSheet();">Write changes on sheet</button>
+      <button type="button" onclick="CS_Service.CompareChangesOnSheet();">Compare changes on sheet</button>
       <button type="button" onclick="CS_Service.ReadFullSheet();">Read full sheet</button>
       <button type="button" onclick="CS_Service.WriteFullSheet();">Write full sheet</button>
       <button type="button" onclick="CS_Service.CompareFullSheet();">Compare full sheet</button>

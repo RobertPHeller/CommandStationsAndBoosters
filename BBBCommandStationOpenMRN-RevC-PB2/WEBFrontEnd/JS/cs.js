@@ -8,17 +8,17 @@
      Created By    : Robert Heller, Deepwoods Software
      Created       : Wed Feb 5 17:08:40 2025
 
-     Last Modified : <260316.1122>
+     Last Modified : <260322.2104>
      ID            : $Id$
      Source        : $Source$
      Description	
      Notes
 */
-var ns4 = document.layers;
-var ie4 = document.all;
-var nn6 = document.getElementById && !document.all;
+let ns4 = document.layers;
+let ie4 = document.all;
+let nn6 = document.getElementById && !document.all;
 
-var CS = {};
+let CS = {};
 
 CS.Load = function () {
 }
@@ -45,17 +45,17 @@ CS.describeLoco = function () {
     address = Number.parseInt(locolistbox.options[locolistbox.selectedIndex].value).toString();
     if (address == "NaN") return;
     //console.log("address is "+address);
-    var url = "/command/describe?address="+address;
-    var method = "GET"
-    var async = true;
-    var request = new XMLHttpRequest();
+    let url = "/command/describe?address="+address;
+    let method = "GET"
+    let async = true;
+    let request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState != 4) {
             return;
         }
-        var status = parseInt(request.status);
-        var errorInfo = null;
-        var response = request.response;
+        let status = parseInt(request.status);
+        let errorInfo = null;
+        let response = request.response;
         //console.log("status is "+status);
         //console.log("response is "+response);
         let pattern = /#describe#\s+/g;
@@ -119,17 +119,17 @@ CS.deleteLoco = function () {
     address = Number.parseInt(locolistbox.options[locolistbox.selectedIndex].value).toString();
     if (address == "NaN") return;
     //console.log("address is "+address);
-    var url = "/command/undefine?address="+address;
-    var method = "GET"
-    var async = true;
-    var request = new XMLHttpRequest();
+    let url = "/command/undefine?address="+address;
+    let method = "GET"
+    let async = true;
+    let request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState != 4) {
             return;
         }
-        var status = parseInt(request.status);
-        var errorInfo = null;
-        var response = request.response;
+        let status = parseInt(request.status);
+        let errorInfo = null;
+        let response = request.response;
     }
     request.open(method, url, async);
     request.send();
@@ -156,28 +156,28 @@ CS.addNewLocoModalClose = function () {
 
     
 CS.addNewLoco = function () {
-    var address = Number.parseInt(document.getElementById('newaddress').value,10).toString();
+    let address = Number.parseInt(document.getElementById('newaddress').value,10).toString();
     if (address == "NaN") return;
-    var stepsSel= document.getElementById('newsteps');
-    var steps   = Number.parseInt(stepsSel.options[stepsSel.selectedIndex].value,10).toString();
+    let stepsSel= document.getElementById('newsteps');
+    let steps   = Number.parseInt(stepsSel.options[stepsSel.selectedIndex].value,10).toString();
     if (steps == "NaN") return;
-    var name    = encodeURIComponent(document.getElementById('newname').value);
-    var descr   = encodeURIComponent(document.getElementById('newdescription').value);
-    console.log('address = '+address+', steps = '+steps+', name = "'+name+'", descr = "'+descr+'"');
+    let name    = encodeURIComponent(document.getElementById('newname').value);
+    let descr   = encodeURIComponent(document.getElementById('newdescription').value);
+    //console.log('address = '+address+', steps = '+steps+', name = "'+name+'", descr = "'+descr+'"');
     CS.addNewLocoModalClose();
-    var url = "/command/define?address="+address+"&steps="+steps+"&name="+name+"&description="+descr
-    var method = "GET"
-    var async = true;
-    var request = new XMLHttpRequest();
+    let url = "/command/define?address="+address+"&steps="+steps+"&name="+name+"&description="+descr
+    let method = "GET"
+    let async = true;
+    let request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState != 4) {
             return;
         }
-        var status = parseInt(request.status);
-        var errorInfo = null;
-        var response = request.response;
-        console.log("status is "+status);
-        console.log("response is "+response);
+        let status = parseInt(request.status);
+        let errorInfo = null;
+        let response = request.response;
+        //console.log("status is "+status);
+        //console.log("response is "+response);
     }
     request.open(method, url, async);
     request.send();
@@ -187,17 +187,17 @@ CS.addNewLoco = function () {
 CS.RefreshLocoList = function () {
     locolistbox = document.getElementById('locolistbox');
     locolistbox.innerHTML = "";
-    var url = "/command/list";
-    var method = "GET"
-    var async = true;
-    var request = new XMLHttpRequest();
+    let url = "/command/list";
+    let method = "GET"
+    let async = true;
+    let request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState != 4) {
             return;
         }
-        var status = parseInt(request.status);
-        var errorInfo = null;
-        var response = request.response;
+        let status = parseInt(request.status);
+        let errorInfo = null;
+        let response = request.response;
         //console.log("status is "+status);
         //console.log("response is "+response);
         let pattern = /^.*#list#\s*/g;
@@ -224,17 +224,17 @@ CS.RefreshLocoList = function () {
 }    
 
 CS.StatusRefresh = function () {
-    var url = "/command/status";
-    var method = "GET"
-    var async = true;
-    var request = new XMLHttpRequest();
+    let url = "/command/status";
+    let method = "GET"
+    let async = true;
+    let request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState != 4) {
             return;
         }
-        var status = parseInt(request.status);
-        var errorInfo = null; 
-        var response = request.response; 
+        let status = parseInt(request.status);
+        let errorInfo = null; 
+        let response = request.response; 
         //console.log("status is "+status);  
         //console.log("response is "+response);
         let pattern = /#status#/g;
@@ -289,33 +289,33 @@ CS.StatusRefresh = function () {
 }
 
 CS.RefreshConfiguration = function () {
-  console.log("CS.RefreshConfiguration()");
-  var url = "/configuration/all"
-  var method = "GET";
-  var async = true;
-  var request = new XMLHttpRequest();
+  //console.log("CS.RefreshConfiguration()");
+  let url = "/configuration/all"
+  let method = "GET";
+  let async = true;
+  let request = new XMLHttpRequest();
   request.onreadystatechange = function() {
     if (request.readyState != 4) {
       return;
     }
-    var status = parseInt(request.status);
-    var errorInfo = null; 
-    var response = request.response;
-    console.log("status is "+status);  
-    console.log("response is '"+response+"'");
+    let status = parseInt(request.status);
+    let errorInfo = null; 
+    let response = request.response;
+    //console.log("status is "+status);  
+    //console.log("response is '"+response+"'");
     pattern = /(.+) = (.+)\r\n/g;
     let match = pattern.exec(response); 
-    console.log("match is "+match);
+    //console.log("match is "+match);
     while (match)
     {
       path = match[1];
-      console.log("path is "+path);
+      //console.log("path is "+path);
       value = match[2];
-      console.log("value is "+value);
+      //console.log("value is "+value);
       field = document.getElementById(path);
       if (field) 
       {
-        console.log("field is "+field);
+        //console.log("field is "+field);
         if (field.type == "checkbox")
         {
           if (value == "1")
@@ -333,7 +333,7 @@ CS.RefreshConfiguration = function () {
         }
       }
       match = pattern.exec(response);
-      console.log("match(new) is "+match);
+      //console.log("match(new) is "+match);
     }
   }
   request.open(method, url, async);
@@ -347,7 +347,7 @@ CS.SetConfig = function (path) {
     let value = "";
     if (field.type == "checkbox")
     {
-      console.log("field.checked is '"+field.checked+"'");
+      //console.log("field.checked is '"+field.checked+"'");
       if (field.checked)
       {
         value = "1";
@@ -361,20 +361,20 @@ CS.SetConfig = function (path) {
     {
       value = field.value;
     }
-    var url = encodeURI("/configuration/set?path="+path+"&value="+value);
-    console.log("url = '"+url+"'");
-    var method = "GET";
-    var async = true;
-    var request = new XMLHttpRequest();
+    let url = encodeURI("/configuration/set?path="+path+"&value="+value);
+    //console.log("url = '"+url+"'");
+    let method = "GET";
+    let async = true;
+    let request = new XMLHttpRequest();
     request.onreadystatechange = function() {
       if (request.readyState != 4) {
         return;
       }
-      var status = parseInt(request.status);
-      var errorInfo = null; 
-      var response = request.response;
-      console.log("status is "+status);  
-      console.log("response is '"+response+"'");
+      let status = parseInt(request.status);
+      let errorInfo = null; 
+      let response = request.response;
+      //console.log("status is "+status);  
+      //console.log("response is '"+response+"'");
       messages = document.getElementById("messages");
       if (status != 200) 
       {
@@ -391,19 +391,19 @@ CS.SetConfig = function (path) {
 }
 
 CS.SaveConfiguration = function() {
-  var url = "/configuration/write";
-  var method = "GET";
-  var async = true;
-  var request = new XMLHttpRequest();
+  let url = "/configuration/write";
+  let method = "GET";
+  let async = true;
+  let request = new XMLHttpRequest();
   request.onreadystatechange = function() {
     if (request.readyState != 4) {
       return;
     }
-    var status = parseInt(request.status);
-    var errorInfo = null; 
-    var response = request.response;
-    console.log("status is "+status);  
-    console.log("response is '"+response+"'");
+    let status = parseInt(request.status);
+    let errorInfo = null; 
+    let response = request.response;
+    //console.log("status is "+status);  
+    //console.log("response is '"+response+"'");
     messages = document.getElementById("messages");
     if (status != 200) 
     {

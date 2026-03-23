@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon May 3 11:20:10 2021
-//  Last Modified : <220720.1212>
+//  Last Modified : <260321.0929>
 //
 //  Description	
 //
@@ -78,7 +78,7 @@ int16_t DCCProgrammer::readCV(const uint16_t cv)
         if (sendServiceModePacketWithAck(pkt))
         {
           LOG(VERBOSE, "[PROG %d/%d] CV %d, bit [%d/7] ON", attempt+1, PROG_TRACK_CV_ATTEMPTS, cv, bit);
-          value &= (1 << bit);
+          value |= (1 << bit);
         } else {
           LOG(VERBOSE, "[PROG %d/%d] CV %d, bit [%d/7] OFF", attempt+1, PROG_TRACK_CV_ATTEMPTS, cv, bit);
         }

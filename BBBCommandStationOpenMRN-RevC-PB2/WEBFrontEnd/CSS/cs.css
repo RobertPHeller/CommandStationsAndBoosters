@@ -49,3 +49,7 @@ span.labelEntry {
 .button-box {
   text-align:center;
 }
+
+.edited {
+  background-color: yellow;
+}

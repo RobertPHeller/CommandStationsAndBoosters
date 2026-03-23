@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:31 2019
-//  Last Modified : <260314.0838>
+//  Last Modified : <260322.2023>
 //
 //  Description	
 //
@@ -217,8 +217,8 @@ void HBridgeControlSPI::poll_33hz(openlcb::WriteHelper *helper, Notifiable *done
     bool overtemp, UVLO, CPUV, overCurrent, overTempShut, openLoad;
     if (CheckFault(overtemp, UVLO, CPUV, overCurrent, overTempShut, openLoad))
     {
-        LOG(WARNING,"[DRV8873] Fault: overtemp = %d, UVLO = %d, CPUV = %d, overCurrent = %d, overTempShut = %d, openLoad = %d",
-            overtemp, UVLO, CPUV, overCurrent, overTempShut, openLoad);
+        //LOG(WARNING,"[DRV8873] Fault: overtemp = %d, UVLO = %d, CPUV = %d, overCurrent = %d, overTempShut = %d, openLoad = %d",
+        //    overtemp, UVLO, CPUV, overCurrent, overTempShut, openLoad);
         ClearFault();
     }
     int fd = open(sysFSCurrent_,O_RDONLY);

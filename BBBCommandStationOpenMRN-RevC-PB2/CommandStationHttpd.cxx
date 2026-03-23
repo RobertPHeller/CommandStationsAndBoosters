@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Mar 17 13:52:59 2025
-//  Last Modified : <260315.1228>
+//  Last Modified : <260322.2024>
 //
 //  Description	
 //
@@ -601,7 +601,7 @@ void CommandStationHttpd::readcvword_UriHandler(const HTTPD::HttpRequest *reques
     }
     else
     {
-        int16_t value_b2 = readCV(addrCV+1);
+        int16_t value_b2 = 0; //readCV(addrCV+1);
         if (value_b2 < 0) {
             reply->Puts(std::to_string(addrCV)+" "+std::to_string(value_b2)+"\r\n");
         }
@@ -1143,18 +1143,20 @@ const String CommandStationHttpd::ParseQuery::unquoteInput_(const String s) cons
     return result;
 }
 
+using ProgBoosterOutput = DccOutputHwDummy<DccOutput::PGM>;
+
 DccOutput *get_dcc_output(DccOutput::Type type)
 {
-#ifdef DccOutputDefined
+//#ifdef DccOutputDefined
     switch (type)
     {
     case DccOutput::Type::TRACK:
-        return DccOutputImpl<BeagleCS::DccHardware::OPSDccOutput>::instance();
+        return nullptr;
     case DccOutput::Type::PGM:
-        return DccOutputImpl<BeagleCS::DccHardware::PROGDccOutput>::instance();
+        return DccOutputImpl<ProgBoosterOutput>::instance();
     case DccOutput::Type::LCC:
-        return DccOutputImpl<BeagleCS::DccHardware::LCCDccOutput>::instance();
+        return nullptr;
     }
-#endif
+//#endif
     return nullptr;
 }
