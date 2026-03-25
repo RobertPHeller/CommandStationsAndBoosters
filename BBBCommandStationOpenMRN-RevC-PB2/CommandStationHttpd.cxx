@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Mar 17 13:52:59 2025
-//  Last Modified : <260322.2024>
+//  Last Modified : <260325.1330>
 //
 //  Description	
 //
@@ -232,6 +232,13 @@ CommandStationHttpd::CommandStationHttpd(openlcb::SimpleStackBase *stack,
                        void *userContext)
                 {
                     ((CommandStationHttpd *)userContext)->writeopscvbit_UriHandler(request,reply);
+                },this);
+    server_.add_uri(HTTPD::Uri("/command/downloadpersist"),
+                    [](const HTTPD::HttpRequest *request,
+                       HTTPD::HttpReply *reply,
+                       void *userContext)
+                {
+                    ((CommandStationHttpd *)userContext)->downloadpersist_UriHandler(request,reply);
                 },this);
     server_.add_uri(HTTPD::UriGlob("/configuration/lookup?*"),
                     [](const HTTPD::HttpRequest *request,
@@ -701,6 +708,25 @@ void CommandStationHttpd::writeopscvbit_UriHandler(const HTTPD::HttpRequest *req
                 std::to_string(value)+"\r\n");
     reply->SendReply();
 }
+
+void CommandStationHttpd::downloadpersist_UriHandler(const HTTPD::HttpRequest *request, HTTPD::HttpReply *reply)
+{
+    reply->SetStatus(200);
+    reply->SetContentType("application/json");
+    FILE *fp = fopen(BeagleCS::TRAIN_DB_JSON_FILE,"rb");
+    if (fp != NULL)
+    {
+        unsigned char buffer[4096];
+        size_t count;
+        while ((count=fread(buffer,sizeof(unsigned char),4096,fp)) > 0)
+        {
+            reply->Puts(String((char *)buffer,count));
+        }
+        fclose(fp);
+    }
+    reply->SendReply();
+}
+
 
 static string node_id_to_string(uint64_t node_id)
 {

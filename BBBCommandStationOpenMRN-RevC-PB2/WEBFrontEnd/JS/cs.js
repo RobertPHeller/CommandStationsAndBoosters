@@ -8,7 +8,7 @@
      Created By    : Robert Heller, Deepwoods Software
      Created       : Wed Feb 5 17:08:40 2025
 
-     Last Modified : <260322.2104>
+     Last Modified : <260325.1335>
      ID            : $Id$
      Source        : $Source$
      Description	
@@ -20,10 +20,10 @@ let nn6 = document.getElementById && !document.all;
 
 let CS = {};
 
-CS.Load = function () {
-}
-
-CS.Save = function () {
+CS.Download = function () {
+  console.log("*** CS.Download()");
+  let url = "/command/downloadpersist";
+  window.open(url);
 }
 
 CS.Service = function () {
