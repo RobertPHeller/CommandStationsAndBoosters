@@ -8,7 +8,7 @@
      Created By    : Robert Heller, Deepwoods Software
      Created       : Wed Feb 5 17:08:40 2025
 
-     Last Modified : <260325.1335>
+     Last Modified : <260326.0728>
      ID            : $Id$
      Source        : $Source$
      Description	
@@ -18,8 +18,13 @@ let ns4 = document.layers;
 let ie4 = document.all;
 let nn6 = document.getElementById && !document.all;
 
+/** Container for command station Javascript actions 
+ */
 let CS = {};
 
+/** @fn CS.Download()
+ * Download train db. 
+ */
 CS.Download = function () {
   console.log("*** CS.Download()");
   let url = "/command/downloadpersist";
