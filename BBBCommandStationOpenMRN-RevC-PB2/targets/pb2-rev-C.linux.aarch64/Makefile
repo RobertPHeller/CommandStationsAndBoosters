@@ -17,4 +17,4 @@ INCLUDES += -I/usr/include/nlohmann
 SUBDIRS = LCCTrainSearchProtocol httpd
 include $(OPENMRNPATH)/etc/prog.mk
 SYSLIBRARIES += -lconfig++
-
+GITREPOS += $(realpath $(CURDIR)/../..)

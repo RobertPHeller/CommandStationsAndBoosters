@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Wed Nov 16 15:17:01 2022
-#  Last Modified : <221117.1539>
+#  Last Modified : <260410.2248>
 #
 #  Description	
 #
@@ -43,26 +43,62 @@
 ##############################################################################
 
 
-SRCS = ../main.cxx ../*.hxx ../*.h \
-	../LCCTrainSearchProtocol/include/*.hxx \
-	../targets/*/*.hxx
+SRCS = ../main.cxx \
+	$(wildcard ../*.hxx) $(wildcard  ../*.h) \
+	$(wildcard ../httpd/*.hxx) \
+	$(wildcard ../LCCTrainSearchProtocol/include/*.hxx) \
+	$(wildcard ../targets/*/*.hxx) \
+	$(wildcard Images/*.png)
 
 
 all: docs
 
 .PHONY:
-docs: html pdf
+docs: html UserManual.pdf UserGuide.pdf
 
-html latex man: $(SRCS) Makefile Doxyfile
+html latex man: $(SRCS) Makefile Doxyfile Revision.h Images/RevCBoardCase.png \
+		header.tex
+	-rm -rf html latex
 	doxygen Doxyfile
 	
-pdf: latex
+latex2: $(SRCS) Makefile Doxyfile.kit Revision.h Images/RevCBoardCase.png \
+		header.tex
+	-rm -rf latex2
+	doxygen Doxyfile.kit
+	
+UserManual.pdf: latex
+	cp Images/RevCBoardCase.png latex/
 	$(MAKE) -C latex
-	touch pdf
+	mv latex/refman.pdf UserManual.pdf
+	
+UserGuide.pdf: latex2
+	cp Images/RevCBoardCase.png latex2/
+	$(MAKE) -C latex2
+	mv latex2/refman.pdf UserGuide.pdf
+
+Revision.h: ../targets/pb2-rev-C.linux.aarch64/Revision.hxxout
+	echo '/** @page Revision Build Revisions' > $@
+	grep '^[[:space:]]*"[^"]*",$$' $< |sed 's/^[[:space:]]*"/ * - /g'|sed 's/",$$//g' >> $@
+	echo '*/' >> $@
+	
+header.tex: Doxyfile.kit Doxyfile Makefile header.sed
+	doxygen -w latex new_header.tex /dev/null /dev/null
+	sed <new_header.tex >header.tex -f header.sed
+	-rm new_header.tex
+
+ 
+../targets/pb2-rev-C.linux.aarch64/Revision.hxxout: ../../.git/index
+	$(MAKE) -C ../targets/pb2-rev-C.linux.aarch64 Revision.hxxout
+
+
+Images/RevCBoardCase.png : Images/RevCBoardCase.pdf
+	pdfimages Images/RevCBoardCase.pdf -png Images/RevCBoardCase
+	mv Images/RevCBoardCase-000.png Images/RevCBoardCase.png
 
 clean::
-	rm -rf latex html warnings man pdf
+	rm -rf latex latex2 warnings header.tex Revision.h \
+		Images/RevCBoardCase.png
 
 veryclean:: clean
-
+	rm -rf html man UserManual.pdf UserGuide.pdf
 

@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : 2026-03-15 12:02:13
-#  Last Modified : <260315.1203>
+#  Last Modified : <260410.2229>
 #
 #  Description	
 #
@@ -45,7 +45,19 @@
 
 all: help/index.html
 
-help/index.html : *.dox
+help/index.html : $(wildcard *.dox) Revision.h Doxyfile Makefile
 	-rm -rf help
 	doxygen
+
+Revision.h: ../targets/pb2-rev-C.linux.aarch64/Revision.hxxout Makefile
+	echo '/** @page Revision Build Revisions' > $@
+	echo ' * - <a href="/">Return to Command Station</a>' >> $@
+	echo ' * - @ref index' >> $@
+	echo ' * @section revhist Revision history:' >> $@
+	grep '^[[:space:]]*"[^"]*",$$' $< |sed 's/^[[:space:]]*"/ * - /g'|sed 's/",$$//g' >> $@
+	echo '*/' >> $@
+	
+
+../targets/pb2-rev-C.linux.aarch64/Revision.hxxout: ../../.git/index
+	$(MAKE) -C ../targets/pb2-rev-C.linux.aarch64 Revision.hxxout
 

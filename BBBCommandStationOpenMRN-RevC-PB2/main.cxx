@@ -42,12 +42,14 @@
  * This is the program for the Beagle Board LCC/DCC/Railcom command 
  * station.  It uses OpenMRN to interface with tha LCC/OpenLCB network
  * to implement a LCC/OpenLCB aware command station node that can 
- * operate DCC/Railcom locomotives.  It should work with any of the
- * Beagle Board addon boards I have designed.  It uses the AM335X's
- * PRUs to generate the DCC signals.  It ises the OpenMRN Console
- * class to communicate over a Tcp/Ip channel with a Tcl/Tk coded
- * GUI program to provide a user friendly point-and-click high level
- * user interface.
+ * operate DCC/Railcom locomotives.  It is designed to work with Rev C 
+ * of the Pocket Beagle SMD board, which is intended to use a 
+ * Pocket Beagle 2 processor board.  It uses the AM62x's
+ * PRUs to generate the DCC signals.  It uses a web-based interface
+ * for a "control panel" and an Adafruit .91" 128x32 OLED display for
+ * a status display.
+ * 
+ * 
  * 
  * @section OPTIONS OPTIONS
  * 
@@ -58,22 +60,27 @@
  * None.
  * 
  * @section FILES FILES
+ * @arg /etc/default/commandstation.cfg
+ * @arg \$(HOME)/commandstation.cfg 
  * @section AUTHOR AUTHOR
  * @author Robert Heller
  * @date 29 Apr 2021
  * 
  * @mainpage Introduction
  * 
+ * @image html RevCBoardCase.png
+ * 
  * This is the program for the Beagle Board LCC/DCC/Railcom command 
  * station.  It uses OpenMRN to interface with tha LCC/OpenLCB network
  * to implement a LCC/OpenLCB aware command station node that can 
- * operate DCC/Railcom locomotives.  It should work with any of the
- * Beagle Board addon boards I have designed.  It uses the AM335X's
- * PRUs to generate the DCC signals.  It uses the OpenMRN Console
- * class to communicate over a Tcp/Ip channel with a Tcl/Tk coded
- * GUI program to provide a user friendly point-and-click high level
- * user interface.
+ * operate DCC/Railcom locomotives.  It is designed to work with Rev C 
+ * of the Pocket Beagle SMD board, which is intended to use a 
+ * Pocket Beagle 2 processor board.  It uses the AM62x's
+ * PRUs to generate the DCC signals.  It uses a web-based interface
+ * for a "control panel" and an Adafruit .91" 128x32 OLED display for
+ * a status display.
  * 
+ * @if BUILDING_SECTION 
  * @page BUILD Building
  * 
  * This program needs the OpenMRN library installed in a "standard"
@@ -84,9 +91,6 @@
  * file in the target directory.  Specificly, the GPIO pin 
  * assignments, whether to build a binary OpenLCB Tcp/Ip connected 
  * node, a GridConnect connected node, or a LCC CAN connected node. 
- * And if a network connected node the default port and host to 
- * connect to, also the console port to or to use a terminal console 
- * (for debugging).
  * 
  * These build options include:
  * 
@@ -105,12 +109,28 @@
  * Webserver doc root
  * @arg WEBSERVERPORT
  * Webserver port to use -- normally 9090
+ * @endif
+ * @page ConnectInd Connections and Indicators
+ * 
+ * @section Ind Indicators and status display: 
+ * @image html RevCBoardCaseTop.png
+ * @image latex RevCBoardCaseTop.png width=7in
+ * @section TrackLayout Track and Layout connections:
+ * @image html RevCBoardCaseFront.png
+ * @image latex RevCBoardCaseFront.png width=7in 
+ * @section USB USB 2.0 connection (for Ethernet or WiFi dongle):
+ * @image html RevCBoardCaseLeft.png  
+ * @image latex RevCBoardCaseLeft.png width=7in 
+ * @section PowerIn Power Input connection
+ * @image html RevCBoardCaseRear.png
+ * @image latex RevCBoardCaseRear.png width=7in
+ * 
  * 
  * 
  * @page Configuration
  * 
- * The configuration is loaded from /home/debian/commandstation.cfg or
- * /etc/default/commandstation.cfg if /home/debian/commandstation.cfg does
+ * The configuration is loaded from \$(HOME)/commandstation.cfg or
+ * /etc/default/commandstation.cfg if \$(HOME)/commandstation.cfg does
  * not exist.
  *
  * @section GLOBAL The global config options include:
@@ -118,7 +138,7 @@
  * @arg NodeID The node ID to use as a long long.  The default is 
  * 0x050101012200L (05:01:01:01:22:00).
  * @arg PersistentTrainFilePath The path of the presistent train file.  The
- * default is /tmp/persistent_train_file_<Node Id in Hex>.
+ * default is /tmp/persistent_train_file_\<Node Id in Hex\>.
  * @arg UseGCHost Connect to a GC host.  The default is false.
  * @arg GCHost The GridConnect host. The default is a build option, normally 
  * "localhost".
@@ -235,6 +255,7 @@ OVERRIDE_CONST(main_thread_stack_size, 2500);
 
 // Persistant train DB file.
 char persistenttrainfile[256];
+// Persistant train DB filename
 extern const char *const BeagleCS::TRAIN_DB_JSON_FILE = persistenttrainfile;
 
 withrottle::Server *WiThrottleServer;
