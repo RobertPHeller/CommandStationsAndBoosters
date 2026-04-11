@@ -115,22 +115,41 @@
  * @section Ind Indicators and status display: 
  * @image html RevCBoardCaseTop.png
  * @image latex RevCBoardCaseTop.png width=7in
+ * There are 7 indicator lights and a small status screen on the top of the
+ * command station:
+ * - Power indicator. This blue light is lit when power is applied.
+ * - LCC network activity indicators: red for transmit, yellow for receive.
+ * - Operations (mains) track DCC activity: Green and Red
+ * - Programming track DCC activity: Green and Red
+ * - Status display: this snall display displays current draw on the DCC 
+ * outputs (mains and programming) and the board temporature.
  * @section TrackLayout Track and Layout connections:
  * @image html RevCBoardCaseFront.png
+ * - LCC Power Out: this 2-position plug in screw terminal can be used to 
+ * access the LCC power bus for local use.
+ * - LCC Network: these two RJ45 connectors connect to the LCC network. 
+ * - LCC Power Power in: this 2-position plug in screw terminal can be used 
+ * to inject power into the LCC Network.  The command ststion does not draw 
+ * power from the LCC power bus.
+ * - DCC track power.  This 4-position plug in screw terminal is used to
+ * supply power to the track.  There are two terminals for the operations 
+ * (main) track and two terminals for the programming track.
  * @image latex RevCBoardCaseFront.png width=7in 
  * @section USB USB 2.0 connection (for Ethernet or WiFi dongle):
  * @image html RevCBoardCaseLeft.png  
  * @image latex RevCBoardCaseLeft.png width=7in 
+ * This is a USB A type host connector.  It can be used for an Ethernet or WiFI
+ * dongle.  Or really any USB device.
  * @section PowerIn Power Input connection
  * @image html RevCBoardCaseRear.png
  * @image latex RevCBoardCaseRear.png width=7in
- * 
- * 
- * 
+ * This is a DC power barrel connector for DC power for the command station.
+ * This should be 15 volts DC with a 5amp capacity.  The center pin is 
+ * positive.
  * @page Configuration
  * 
  * The configuration is loaded from \$(HOME)/commandstation.cfg or
- * /etc/default/commandstation.cfg if \$(HOME)/commandstation.cfg does
+ * /etc/default/commandstation.cfg if \$(HOME) /commandstation.cfg does
  * not exist.
  *
  * @section GLOBAL The global config options include:
