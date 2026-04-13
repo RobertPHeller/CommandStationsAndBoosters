@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Wed Nov 16 15:17:01 2022
-#  Last Modified : <260410.2248>
+#  Last Modified : <260413.1600>
 #
 #  Description	
 #
@@ -82,8 +82,8 @@ Revision.h: ../targets/pb2-rev-C.linux.aarch64/Revision.hxxout
 	echo '*/' >> $@
 	
 header.tex: Doxyfile.kit Doxyfile Makefile header.sed
-	doxygen -w latex new_header.tex /dev/null /dev/null
-	sed <new_header.tex >header.tex -f header.sed
+	doxygen -w latex new_header.tex /dev/null /dev/null Doxyfile
+	sed <new_header.tex  -f header.sed >header.tex
 	-rm new_header.tex
 
  
