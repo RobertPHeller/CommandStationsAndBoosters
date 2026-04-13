@@ -31,47 +31,12 @@
  * @author Robert Heller
  * @date 3 Feb 2019 -- 11 May 2021
  * 
- * @defgroup BBBCommandStationOpenMRN Beagle Board Command Station
- * 
- * @section SYNOPSIS SYNOPSIS
- * 
- * BBBCommandStationOpenMRN [options]
- * 
- * @section DESCRIPTION DESCRIPTION
- * 
- * This is the program for the Beagle Board LCC/DCC/Railcom command 
- * station.  It uses OpenMRN to interface with tha LCC/OpenLCB network
- * to implement a LCC/OpenLCB aware command station node that can 
- * operate DCC/Railcom locomotives.  It is designed to work with Rev C 
- * of the Pocket Beagle SMD board, which is intended to use a 
- * Pocket Beagle 2 processor board.  It uses the AM62x's
- * PRUs to generate the DCC signals.  It uses a web-based interface
- * for a "control panel" and an Adafruit .91" 128x32 OLED display for
- * a status display.
- * 
- * 
- * 
- * @section OPTIONS OPTIONS
- * 
- * None.
- * 
- * @section PARAMETERS PARAMETERS
- * 
- * None.
- * 
- * @section FILES FILES
- * @arg /etc/default/commandstation.cfg
- * @arg \$(HOME)/commandstation.cfg 
- * @section AUTHOR AUTHOR
- * @author Robert Heller
- * @date 29 Apr 2021
- * 
  * @mainpage Introduction
  * 
  * @image html RevCBoardCase.png
  * 
  * This is the program for the Beagle Board LCC/DCC/Railcom command 
- * station.  It uses OpenMRN to interface with tha LCC/OpenLCB network
+ * station.  It uses OpenMRN to interface with the LCC/OpenLCB network
  * to implement a LCC/OpenLCB aware command station node that can 
  * operate DCC/Railcom locomotives.  It is designed to work with Rev C 
  * of the Pocket Beagle SMD board, which is intended to use a 
@@ -111,94 +76,112 @@
  * Webserver port to use -- normally 9090
  * @endif
  * @page ConnectInd Connections and Indicators
- * 
+ * The command station has a collection of indicator lights and a small status
+ * display on it top side.  It also has connectors nd terminals on three of 
+ * its sides. There are also ventilation holes on two of the sides and on top.
+ * You want to be careful to not block these ventilation holes to allow proper
+ * cooling.
  * @section Ind Indicators and status display: 
  * @image html RevCBoardCaseTop.png
- * @image latex RevCBoardCaseTop.png width=7in
+ * @image latex RevCBoardCaseTop.png width=6in
  * There are 7 indicator lights and a small status screen on the top of the
  * command station:
- * - Power indicator. This blue light is lit when power is applied.
+ * - Power indicator. This blue light is lit when power is applied. 
  * - LCC network activity indicators: red for transmit, yellow for receive.
  * - Operations (mains) track DCC activity: Green and Red
  * - Programming track DCC activity: Green and Red
- * - Status display: this snall display displays current draw on the DCC 
- * outputs (mains and programming) and the board temporature.
+ * - Status display: this small display displays current draw on the DCC 
+ * outputs (mains and programming) and the board temperature.
  * @section TrackLayout Track and Layout connections:
  * @image html RevCBoardCaseFront.png
  * - LCC Power Out: this 2-position plug in screw terminal can be used to 
  * access the LCC power bus for local use.
- * - LCC Network: these two RJ45 connectors connect to the LCC network. 
+ * - LCC Network: these two RJ45 connectors connect to the LCC network. They
+ * are wired in parallel.
  * - LCC Power Power in: this 2-position plug in screw terminal can be used 
- * to inject power into the LCC Network.  The command ststion does not draw 
+ * to inject power into the LCC Network.  The command station does not draw 
  * power from the LCC power bus.
  * - DCC track power.  This 4-position plug in screw terminal is used to
  * supply power to the track.  There are two terminals for the operations 
  * (main) track and two terminals for the programming track.
- * @image latex RevCBoardCaseFront.png width=7in 
+ * @image latex RevCBoardCaseFront.png width=6in 
  * @section USB USB 2.0 connection (for Ethernet or WiFi dongle):
  * @image html RevCBoardCaseLeft.png  
- * @image latex RevCBoardCaseLeft.png width=7in 
+ * @image latex RevCBoardCaseLeft.png width=6in 
  * This is a USB A type host connector.  It can be used for an Ethernet or WiFI
  * dongle.  Or really any USB device.
  * @section PowerIn Power Input connection
  * @image html RevCBoardCaseRear.png
- * @image latex RevCBoardCaseRear.png width=7in
+ * @image latex RevCBoardCaseRear.png width=6in
  * This is a DC power barrel connector for DC power for the command station.
  * This should be 15 volts DC with a 5amp capacity.  The center pin is 
  * positive.
  * @page Configuration
- * 
  * The configuration is loaded from \$(HOME)/commandstation.cfg or
  * /etc/default/commandstation.cfg if \$(HOME) /commandstation.cfg does
- * not exist.
- *
- * @section GLOBAL The global config options include:
+ * not exist.  These configuration files are plain text files and the program 
+ * uses the LibConfig library (by Mark A. Lindner, https://hyperrealm.github.io/libconfig/).
  * 
- * @arg NodeID The node ID to use as a long long.  The default is 
- * 0x050101012200L (05:01:01:01:22:00).
- * @arg PersistentTrainFilePath The path of the presistent train file.  The
- * default is /tmp/persistent_train_file_\<Node Id in Hex\>.
- * @arg UseGCHost Connect to a GC host.  The default is false.
+ * The program's web interface can update the configuration or the 
+ * configuration files can be hand edited with a text editor.
+ *
+ * @section GLOBAL Global Configuration Options
+ * 
+ * There are a set of configuration options that are global in
+ * scope. The global configuration options include:
+ * 
+ * @arg NodeID The node ID to use as a 48-bit hexadecimal number.  The default 
+ * is 0x050101012200L (05:01:01:01:22:00).
+ * @arg PersistentTrainFilePath The path of the persistent train file.  This 
+ * file is used to store the command station's list of operating locomotives
+ * The default is /tmp/persistent_train_file_\<Node Id in Hex\>.
+ * @arg UseGCHost Connect to a GC hub.  If this option is true, the command 
+ * station will attempt to connect to a GC hub over Tcp/Ip. The default is 
+ * false.
  * @arg GCHost The GridConnect host. The default is a build option, normally 
  * "localhost".
  * @arg GCPort The GridConnect port. The default is a build option, normally
  * 12021.
  * @arg CanSocket The CAN socket to use. The default is a build option, 
- * normally "can0".
- * @arg GCHub Whether to start a GC hub.  The default is false.
+ * @arg GCHub Whether to start a GC hub.  If this option is true, the command
+ * station will start a GC hub server. The default is false. 
  * @arg GCHubPort the port the GC hub should listen on.  The default is a build
  * option, normally 12021.  The hub will listen on all interfaces (0.0.0.0).
- * @arg WebServerRoot The webserver document root.  The default is a build 
- * option.
- * @arg WebServerPort The webserver port to listen on.  The default is a build
+ * @arg WebServerRoot The web server document root.  This directory contains
+ * the root of the "static" files used by the command station's web server.
+ * It is possible to copy the stock file tree and alter it to change is look
+ * or even functionality to some extent. The default is a build option.
+ * @arg WebServerPort The web server port to listen on.  The default is a build
  * option, normally 9090. The Webserver will listen on all interfaces 
  * (0.0.0.0). 
- * @arg StartWiThrottle Start the WiThrottle. Default false.
+ * @arg StartWiThrottle Whether or not to start the WiThrottle server. Default
+ * false.
  * @arg WiThrottleName The name of the WiThrottle. The default is 
  * "PocketBeagle".
  * @arg WiThrottlePort The port number the WiThrottle server will listen on.
  * The default is 12090.  The server will listen on all interfaces (0.0.0.0).
- * @section DCCOUTPUT DCC output configurations.
+ * @section DCCOUTPUT DCC output configurations. 
  * 
  * There are two groups for the DCC output configurations: Main and 
- * Programming.
+ * Programming.  These option groups mostly have the LCC event numbers for
+ * DCC events.
  * 
  * The config options are:
  *
  * @arg PRUfirmware The path tail for the PRU firmware. The default is 
  * "MainTrackDCC.out" for the main and "ProgTrackDCC.out" for the programming 
  * track.
- * @arg EventShortOn The EventID to send when there is a short.  The default 
+ * @arg EventShortOn The Event ID to send when there is a short.  The default 
  * is formed from the NodeID shifted left 16 bits with 0x0000 (Main) or
  * 0x0004 (Programming) added.
- * @arg EventShortOff The EventID to send when the short clears.  The default
+ * @arg EventShortOff The Event ID to send when the short clears.  The default
  * is formed from the NodeID shifted left 16 bits with 0x0001 (Main) or
  * 0x0005 (Programming) added.
- * @arg EventShutdownOn The EventID to send when the track output power has 
+ * @arg EventShutdownOn The Event ID to send when the track output power has 
  * exceeded the safety threshold of the H-Bridge. The default is formed from 
  * the NodeID shifted left 16 bits with 0x0002 (Main) or 0x0006 (Programming) 
  * added.
- * @arg EventShutdownOff The EventID to send when the track output power has 
+ * @arg EventShutdownOff The Event ID to send when the track output power has 
  * returned to safe levels. The default is formed from 
  * the NodeID shifted left 16 bits with 0x0003 (Main) or 0x0007 (Programming) 
  * added.
@@ -207,24 +190,62 @@
  * @par
  * @section FANCONTROL Fan Control
  * 
- * The third section relates to temperature and fan control: FanControl
+ * The third section relates to temperature and fan control: Fan Control
+ * This contains the temperature thresholds and the event numbers that will
+ * produced when the temperature goes above or falls below these thresholds. 
  * 
  * @arg AlarmTempThresh Alarm Temperature threshold, in tenths of degrees 
- * Centitgrade. The default is 350.
- * @arg AlarmOn The event to send when the temperature excedes the threshold.
+ * Centigrade. The default is 350.
+ * @arg AlarmOn The event to send when the temperature exceeds the threshold.
  * The default is formed from the NodeID shifted left 16 bits with 0x0008 
  * added.
  * @arg AlarmOff he event to send when the temperature drops below the
  * threshold. The default is formed from the NodeID shifted left 16 bits with
  * 0x0009 added.
  * @arg FanTempThresh Fan Temperature threshold, in tenths of degrees
- * Centitgrade. The default is 250.
+ * Centigrade. The default is 250.
  * @arg FanOn The event to send when the fan is turned on. The default is 
  * formed from the NodeID shifted left 16 bits with 0x000A added.
  * @arg FanOff The event to send when the fan is turned off. The default is 
  * formed from the NodeID shifted left 16 bits with 0x000B added.
  * 
  * @par
+ * @page BBBCommandStationOpenMRN Beagle Board Command Station Command line
+ * 
+ * @section SYNOPSIS SYNOPSIS
+ * 
+ * BBBCommandStationOpenMRN
+ * 
+ * @section DESCRIPTION DESCRIPTION
+ * 
+ * This is the program for the Beagle Board LCC/DCC/Railcom command 
+ * station.  It uses OpenMRN to interface with the LCC/OpenLCB network
+ * to implement a LCC/OpenLCB aware command station node that can 
+ * operate DCC/Railcom locomotives.  It is designed to work with Rev C 
+ * of the Pocket Beagle SMD board, which is intended to use a 
+ * Pocket Beagle 2 processor board.  It uses the AM62x's
+ * PRUs to generate the DCC signals.  It uses a web-based interface
+ * for a "control panel" and an Adafruit .91" 128x32 OLED display for
+ * a status display.
+ * 
+ * The program is meant to run as a daemon process, started by systemd when the
+ * system starts.
+ * 
+ * @section OPTIONS OPTIONS
+ * 
+ * None.
+ * 
+ * @section PARAMETERS PARAMETERS
+ * 
+ * None.
+ * 
+ * @section FILES FILES
+ * @arg /etc/default/commandstation.cfg
+ * @arg \$(HOME)/commandstation.cfg 
+ * @section AUTHOR AUTHOR
+ * @author Robert Heller
+ * @date 29 Apr 2021
+ * 
  * 
  */
 
