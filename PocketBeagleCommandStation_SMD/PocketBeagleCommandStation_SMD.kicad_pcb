@@ -7892,7 +7892,7 @@
     (fp_line (start 5.588 -0.254) (end 5.588 0.127) (layer "F.SilkS") (width 0.3) (tstamp f93e1400-59f8-4112-b010-0fdb10039bfe))
     (fp_arc (start 5.08 -1.27) (mid 5.600263 -1.158545) (end 6.02921 -0.843742) (layer "F.SilkS") (width 0.3) (tstamp 256937b3-83c9-490f-aab4-f9abda788cac))
     (fp_arc (start 5.969 0.889) (mid 5.561123 1.161534) (end 5.08 1.257236) (layer "F.SilkS") (width 0.3) (tstamp 297cdd9a-9bb5-409c-b528-c97187a82cf3))
-    (fp_arc (start -5.08 0) (mid -4.66641 -0.937796) (end -3.69502 -1.264784) (layer "F.SilkS") (width 0.3) (tstamp 95a49e58-e61d-4dec-aa47-f4ccdd60930a))
+    (fp_arc (start -5.08 0) (mid -4.66641 -0.937797) (end -3.69502 -1.264784) (layer "F.SilkS") (width 0.3) (tstamp 95a49e58-e61d-4dec-aa47-f4ccdd60930a))
     (fp_arc (start -3.81 1.27) (mid -4.66641 0.937797) (end -5.074784 0.11498) (layer "F.SilkS") (width 0.3) (tstamp b60920e7-7dc3-456b-997b-6a64dc2aa774))
   )
 
@@ -8839,8 +8839,8 @@
       (net 4 "GND") (pinfunction "Pin_4") (pintype "passive") (tstamp 7091eed3-ba6e-4657-9d2a-d7c0a5151e0b))
     (pad "MP" smd roundrect (at 5.4 -1.75 90) (size 1.6 3) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.15625) (tstamp a0c21953-f03b-4ab9-8c23-eba5bcaaefb4))
     (pad "MP" smd roundrect (at -5.4 -1.75 90) (size 1.6 3) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.15625) (tstamp c261f90e-0f44-4452-830d-ef93805385a9))
-    (model "${KICAD6_3DMODEL_DIR}/Connector_JST.3dshapes/JST_PH_B4B-PH-SM4-TB_1x04-1MP_P2.00mm_Vertical.wrl"
-      (offset (xyz 0 0 0))
+    (model "${KIPRJMOD}/B4B-PH-SM4-TB_LF__SN_.stp"
+      (offset (xyz -3.5 -5 -7))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
