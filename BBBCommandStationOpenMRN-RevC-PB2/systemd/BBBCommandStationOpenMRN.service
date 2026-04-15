@@ -1,0 +1,15 @@
+[UNIT]
+Description=Pocket Beagle 2 Command Station
+After=network.target
+
+[Service]
+PIDFile=/run/BBBCommandStationOpenMRN.pid
+ExecStart=/usr/local/sbin/BBBCommandStationOpenMRN-RevC-PB2_PB2
+User=debian
+Group=debian
+
+
+[Install]
+WantedBy=default.target
+RequiredBy=network.target
+
