@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : 2026-02-23 12:02:35
-#  Last Modified : <260228.1035>
+#  Last Modified : <260527.1235>
 #
 #  Description	
 #
@@ -231,7 +231,7 @@ class Case(object):
     __ProgAAct = (194.9196-85.09, 105.51-(162.1175-58.42))
     __Power    = (123.2154-85.09, 105.51-( 59.4614-58.42))
     __LEDZOffset = 0.7
-    __LEDRodDiameter = 0.8
+    __LEDRodDiameter = 1.6 # AR-2 1/16" 1.6mm
     __FANXOffset = 76.781
     __FANYOffset = 41.1448
     __FANWidth =  25
