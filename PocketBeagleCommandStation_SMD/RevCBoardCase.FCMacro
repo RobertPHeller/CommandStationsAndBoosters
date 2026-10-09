@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : 2026-02-23 12:02:35
-#  Last Modified : <260527.1235>
+#  Last Modified : <261009.1434>
 #
 #  Description	
 #
@@ -828,6 +828,34 @@ class Case(object):
         #obj = doc.addObject("Part::Feature",self.name+"_t")
         #obj.Shape = self.t
         #obj.ViewObject.ShapeColor=(0.0,1.0,0.0)
+    def MakeSTL(self,basefilename="RevCBoardCase_"):
+        doc = App.newDocument("TempDoc")
+        obj = doc.addObject("Part::Feature","temp")
+        obj.Shape=self.top
+        objs = list()
+        objs.append(obj)
+        filename = basefilename+"Top.stl"
+        Mesh.export(objs,filename)
+        filename = basefilename+"Top.boundingbox"
+        bb = self.top.BoundBox
+        fp = open(filename,"w")
+        fp.write("%10.6g,%10.6g,%10.6g\n"%(bb.XLength,bb.YLength,bb.ZLength))
+        fp.close()
+        doc.removeObject(obj.Label)
+        obj = doc.addObject("Part::Feature","temp")
+        obj.Shape=self.bottom
+        objs = list()
+        objs.append(obj)
+        filename = basefilename+"Bottom.stl"
+        Mesh.export(objs,filename)
+        filename = basefilename+"Bottom.boundingbox"
+        bb = self.bottom.BoundBox
+        fp = open(filename,"w")
+        fp.write("%10.6g,%10.6g,%10.6g\n"%(bb.XLength,bb.YLength,bb.ZLength))
+        fp.close()
+        doc.removeObject(obj.Label)
+        App.closeDocument("TempDoc")
+                
         
         
 if __name__ == '__main__':
@@ -841,5 +869,5 @@ if __name__ == '__main__':
     case.show(doc)
     Gui.activeDocument().activeView().viewFront()
     Gui.SendMsgToActiveView("ViewFit")
-    
+    case.MakeSTL()    
 

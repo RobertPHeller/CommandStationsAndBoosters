@@ -6,8 +6,8 @@
 
   (title_block
     (title "Pocket Beagle DCC Command Station (SMD version)")
-    (date "2021-04-09")
-    (rev "A")
+    (date "2026-07-08")
+    (rev "C")
     (company "Deepwoods Software")
     (comment 1 "Prog and OpenLCB DCC drivers")
   )
