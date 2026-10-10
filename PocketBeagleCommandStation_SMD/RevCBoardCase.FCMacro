@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : 2026-02-23 12:02:35
-#  Last Modified : <261009.1434>
+#  Last Modified : <261010.0834>
 #
 #  Description	
 #
@@ -831,7 +831,7 @@ class Case(object):
     def MakeSTL(self,basefilename="RevCBoardCase_"):
         doc = App.newDocument("TempDoc")
         obj = doc.addObject("Part::Feature","temp")
-        obj.Shape=self.top
+        obj.Shape=self.top.copy().rotate(Base.Vector(0,0,0),Base.Vector(1,0,0),180)
         objs = list()
         objs.append(obj)
         filename = basefilename+"Top.stl"
