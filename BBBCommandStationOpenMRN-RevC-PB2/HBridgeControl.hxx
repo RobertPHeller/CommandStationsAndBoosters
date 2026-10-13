@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:15 2019
-//  Last Modified : <260305.1244>
+//  Last Modified : <261013.1453>
 //
 //  Description	
 //
@@ -69,7 +69,8 @@ public:
                    const char *sysFSShunt,
                    const char *sysFSShuntValue,
                    const uint32_t maxMilliAmps,
-                   const Gpio *enableGpio);
+                   const Gpio *enableGpio,
+                   uint16_t display_y);
     enum STATE : uint8_t
     {
         STATE_OVERCURRENT = BIT(0),
@@ -106,6 +107,7 @@ private:
     uint8_t state_{STATE_OFF};
     uint8_t overCurrentCheckCount_{0};
     uint32_t lastReading_{0};
+    uint16_t display_y_;
 };            
 
 class HBridgeControlSPI : public openlcb::Polling, public DRV8873_SPI {
@@ -118,7 +120,8 @@ public:
                       const char *sysFSShuntValue,
                       const uint32_t limitMilliAmps,
                       const uint32_t maxMilliAmps,
-                      const Gpio *enableGpio);
+                      const Gpio *enableGpio,
+                      uint16_t display_y);
     enum STATE : uint8_t
     {
         STATE_OVERCURRENT = BIT(0),
@@ -149,6 +152,7 @@ private:
     uint8_t state_{STATE_OFF};
     uint8_t overCurrentCheckCount_{0};
     uint32_t lastReading_{0};
+    uint16_t display_y_;
 };            
 
 #endif // __HBRIDGECONTROL_HXX

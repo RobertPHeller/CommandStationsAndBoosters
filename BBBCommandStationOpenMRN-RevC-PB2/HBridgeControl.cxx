@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:31 2019
-//  Last Modified : <260322.2023>
+//  Last Modified : <261013.1523>
 //
 //  Description	
 //
@@ -66,6 +66,7 @@ static const char rcsid[] = "@(#) : $Id$";
 
 #include <libconfig.h++>
 #include "DRV8873_SPI.hxx"
+#include <Adafruit_SSD1306.h>
 
 HBridgeControl::HBridgeControl(openlcb::Node *node, 
                                const libconfig::Setting &cfg, 
@@ -73,7 +74,8 @@ HBridgeControl::HBridgeControl(openlcb::Node *node,
                                const char *sysFSShunt,
                                const char *sysFSShuntValue,
                                const uint32_t maxMilliAmps,
-                               const Gpio *enableGpio)
+                               const Gpio *enableGpio,
+                               uint16_t display_y)
       : node_(node)
 , sysFSCurrent_(sysFSCurrent)
 , enableGpio_(enableGpio)
@@ -85,6 +87,7 @@ HBridgeControl::HBridgeControl(openlcb::Node *node,
 , shutdownBit_(node, cfg.lookup("EventShutdownOn"), cfg.lookup("EventShutdownOff"), &state_, STATE_SHUTDOWN)
 , shortProducer_(&shortBit_)
 , shutdownProducer_(&shortBit_)
+, display_y_(display_y)
 {
     char buffer[32];
     int fd = open(sysFSShunt,O_WRONLY);
@@ -126,7 +129,20 @@ void HBridgeControl::poll_33hz(openlcb::WriteHelper *helper, Notifiable *done)
     }
     
     uint8_t previous_state = state_;
-    
+    Adafruit_SSD1306 *d = Adafruit_SSD1306::instance();
+    d->setCursor(0,display_y_);
+    if (lastReading_ < 1.0)
+    {
+        d->print(lastReading_*1000,0);
+        d->print(" MA");
+    }
+    else
+    {
+        d->print(lastReading_,3);
+        d->print(" A");
+    }
+    while (d->getCursorX() < 132) d->print(" "); 
+    d->display();
     if (lastReading_ >= shutdownLimit_)
     {
         enableGpio_->clr();
@@ -181,7 +197,8 @@ HBridgeControlSPI::HBridgeControlSPI(openlcb::Node *node,
                                      const char *sysFSShuntValue,
                                      const uint32_t limitMilliAmps,
                                      const uint32_t maxMilliAmps, 
-                                     const Gpio *enableGpio)
+                                     const Gpio *enableGpio,
+                                     uint16_t display_y)
       : DRV8873_SPI(spidevice)
 , node_(node)
 , sysFSCurrent_(sysFSCurrent)
@@ -193,6 +210,7 @@ HBridgeControlSPI::HBridgeControlSPI(openlcb::Node *node,
 , shutdownBit_(node, cfg.lookup("EventShutdownOn"), cfg.lookup("EventShutdownOff"), &state_, STATE_SHUTDOWN)
 , shortProducer_(&shortBit_)
 , shutdownProducer_(&shortBit_)
+, display_y_(display_y)
 {
     char buffer[32];
     int fd = open(sysFSShunt,O_WRONLY);
@@ -229,6 +247,20 @@ void HBridgeControlSPI::poll_33hz(openlcb::WriteHelper *helper, Notifiable *done
     
     uint8_t previous_state = state_;
     
+    Adafruit_SSD1306 *d = Adafruit_SSD1306::instance();
+    d->setCursor(0,display_y_);
+    if (lastReading_ < 1.0)
+    {
+        d->print(lastReading_*1000,0);
+        d->print(" MA");
+    }
+    else
+    {
+        d->print(lastReading_,3);
+        d->print(" A");
+    }
+    while (d->getCursorX() < 132) d->print(" "); 
+    d->display();
     if (lastReading_ >= shutdownLimit_)
     {
         enableGpio_->clr();

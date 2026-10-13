@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:53 2019
-//  Last Modified : <260314.0910>
+//  Last Modified : <261013.1523>
 //
 //  Description	
 //
@@ -59,6 +59,9 @@ static const char rcsid[] = "@(#) : $Id$";
 #include <numeric>
 
 #include <libconfig.h++>
+#include <Adafruit_SSD1306.h>
+
+#define BOARDTEMP_DISPLAY_Y (0)
 
 FanControl::FanControl(openlcb::Node *node,
                        const libconfig::Setting &cfg,
@@ -118,6 +121,13 @@ void FanControl::poll_33hz(openlcb::WriteHelper *helper, Notifiable *done)
     lastReading_ = (uint16_t)round(TempFromAIN(std::accumulate(samples.begin(), samples.end(), 0)/32)*10);
     //LOG(INFO,"*** FanControl::poll_33hz(): hsTempTensC = %d",hsTempTensC);
     //LOG(INFO,"*** -: alarmthresh_ = %d, alarmon_ = %d",alarmthresh_,alarmon_);
+    Adafruit_SSD1306 *d = Adafruit_SSD1306::instance();
+    d->setCursor(0,BOARDTEMP_DISPLAY_Y);
+    d->print(lastReading_,2);
+    d->print(" C");
+    while (d->getCursorX() < 132) d->print(" "); 
+    d->display();
+
     bool async_event_req = false;
     if (lastReading_ > alarmthresh_ && alarmon_ == 0)
     {

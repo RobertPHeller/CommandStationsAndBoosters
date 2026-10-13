@@ -13,8 +13,9 @@ APP_PATH ?= $(realpath ../..)
 -include ../../config.mk
 INCLUDES += -I$(realpath ../../LCCTrainSearchProtocol/include)
 INCLUDES += -I$(realpath ../../httpd)
+INCLUDES += -I$(realpath ../../ScreenLib/include)
 INCLUDES += -I/usr/include/nlohmann
-SUBDIRS = LCCTrainSearchProtocol httpd
+SUBDIRS = LCCTrainSearchProtocol httpd ScreenLib
 include $(OPENMRNPATH)/etc/prog.mk
-SYSLIBRARIES += -lconfig++
+SYSLIBRARIES += -lconfig++ -li2c
 GITREPOS += $(realpath $(CURDIR)/../..)

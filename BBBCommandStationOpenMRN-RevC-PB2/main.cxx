@@ -283,6 +283,7 @@ OVERRIDE_CONST(num_memory_spaces, 7);
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <libconfig.h++>
+#include <Adafruit_SSD1306.h>
 
 // Changes the default behavior by adding a newline after each gridconnect
 // packet. Makes it easier for debugging the raw device.
@@ -642,6 +643,9 @@ static void ProcessConfiguration(libconfig::Config &config)
     }
 }
 
+Adafruit_SSD1306 Screen(SSD1306_WIDTH, SSD1306_HEIGHT);
+//DEFINE_SINGLETON_INSTANCE(Adafruit_SSD1306);
+
 /** Entry point to application.
  * @param argc number of command line arguments
  * @param argv array of command line arguments
@@ -657,6 +661,8 @@ int appl_main(int argc, char *argv[])
             sizeof(persistenttrainfile));
     // Initialize GPIO
     GpioInit::hw_init();
+    
+    Screen.begin();
     
     // Sets up a comprehensive OpenLCB stack for a single virtual node. This stack
     // contains everything needed for a usual peripheral node -- all

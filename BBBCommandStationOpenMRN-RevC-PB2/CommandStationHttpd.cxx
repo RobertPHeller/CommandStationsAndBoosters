@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Mar 17 13:52:59 2025
-//  Last Modified : <260325.1330>
+//  Last Modified : <261013.1451>
 //
 //  Description	
 //
@@ -277,6 +277,9 @@ CommandStationHttpd::CommandStationHttpd(openlcb::SimpleStackBase *stack,
                 },this);
 }
 
+#define MAIN_DISPLAY_Y (32/3)
+#define PROG_DISPLAY_Y ((32/3)*2)
+
 // Initialize all unique pointers.
 void CommandStationHttpd::Begin(openlcb::SimpleStackBase *stack, 
                                   openlcb::TrainService *tractionService,
@@ -287,17 +290,19 @@ void CommandStationHttpd::Begin(openlcb::SimpleStackBase *stack,
                                   const char *progPRUfirmware)
 {
     mains.reset(new HBridgeControlSPI(stack->node(), 
-                                   maincfg, 
-                                   MAINSPI,MAINCURRENT,MAINSHUNTRESISTOR,MAINSHUNTVALUE,
-                                   MAIN_MAX_MILLIAMPS, 
-                                   MAIN_LIMIT_MILLIAMPS, 
-                                   MainEN_Pin::instance()));
+                                      maincfg, 
+                                      MAINSPI,MAINCURRENT,MAINSHUNTRESISTOR,MAINSHUNTVALUE,
+                                      MAIN_MAX_MILLIAMPS, 
+                                      MAIN_LIMIT_MILLIAMPS, 
+                                      MainEN_Pin::instance(),
+                                      MAIN_DISPLAY_Y));
     LOG(INFO, "[CommandStationHttpd] Main track HBridgeControl setup...");
     progtrack.reset(new HBridgeControl(stack->node(),
                                        progcfg, 
                                        PROGCURRENT,PROGSHUNTRESISTOR,PROGSHUNTVALUE, 
                                        PROG_MAX_MILLIAMPS, 
-                                       ProgEN_Pin::instance()));
+                                       ProgEN_Pin::instance(),
+                                       PROG_DISPLAY_Y));
     LOG(INFO, "[CommandStationHttpd] Prog track HBridgeControl setup...");
     fan.reset(new FanControl(stack->node(),fancfg, 
                              TempsensorChannel,
