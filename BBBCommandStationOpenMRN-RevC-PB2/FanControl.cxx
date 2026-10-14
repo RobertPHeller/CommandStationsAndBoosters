@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:53 2019
-//  Last Modified : <261013.1523>
+//  Last Modified : <261014.0942>
 //
 //  Description	
 //
@@ -123,9 +123,12 @@ void FanControl::poll_33hz(openlcb::WriteHelper *helper, Notifiable *done)
     //LOG(INFO,"*** -: alarmthresh_ = %d, alarmon_ = %d",alarmthresh_,alarmon_);
     Adafruit_SSD1306 *d = Adafruit_SSD1306::instance();
     d->setCursor(0,BOARDTEMP_DISPLAY_Y);
-    d->print(lastReading_,2);
+    double tempC = lastReading_/10.0;
+    if (tempC < 100) d->print(" ");
+    if (tempC < 10) d->print(" ");
+    d->print(tempC,2);
     d->print(" C");
-    while (d->getCursorX() < 132) d->print(" "); 
+    while (d->getCursorX()+6 < 132) d->print(" "); 
     d->display();
 
     bool async_event_req = false;

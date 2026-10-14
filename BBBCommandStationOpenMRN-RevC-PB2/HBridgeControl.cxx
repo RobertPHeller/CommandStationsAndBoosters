@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Oct 28 13:33:31 2019
-//  Last Modified : <261013.1523>
+//  Last Modified : <261014.0943>
 //
 //  Description	
 //
@@ -131,17 +131,19 @@ void HBridgeControl::poll_33hz(openlcb::WriteHelper *helper, Notifiable *done)
     uint8_t previous_state = state_;
     Adafruit_SSD1306 *d = Adafruit_SSD1306::instance();
     d->setCursor(0,display_y_);
-    if (lastReading_ < 1.0)
+    if (lastReading_ < 1000)
     {
-        d->print(lastReading_*1000,0);
+        if (lastReading_ < 100) d->print(" ");
+        if (lastReading_ < 10) d->print(" ");
+        d->print(lastReading_);
         d->print(" MA");
     }
     else
     {
-        d->print(lastReading_,3);
+        d->print(lastReading_/1000.0,3);
         d->print(" A");
     }
-    while (d->getCursorX() < 132) d->print(" "); 
+    while (d->getCursorX()+6 < 132) d->print(" "); 
     d->display();
     if (lastReading_ >= shutdownLimit_)
     {
@@ -249,17 +251,19 @@ void HBridgeControlSPI::poll_33hz(openlcb::WriteHelper *helper, Notifiable *done
     
     Adafruit_SSD1306 *d = Adafruit_SSD1306::instance();
     d->setCursor(0,display_y_);
-    if (lastReading_ < 1.0)
+    if (lastReading_ < 1000)
     {
-        d->print(lastReading_*1000,0);
+        if (lastReading_ < 100) d->print(" ");
+        if (lastReading_ < 10) d->print(" ");
+        d->print(lastReading_);
         d->print(" MA");
     }
     else
     {
-        d->print(lastReading_,3);
+        d->print(lastReading_/1000.0,3);
         d->print(" A");
     }
-    while (d->getCursorX() < 132) d->print(" "); 
+    while (d->getCursorX()+6 < 132) d->print(" "); 
     d->display();
     if (lastReading_ >= shutdownLimit_)
     {
