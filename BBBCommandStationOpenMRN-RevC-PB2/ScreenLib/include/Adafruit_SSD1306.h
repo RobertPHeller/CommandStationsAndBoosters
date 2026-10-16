@@ -87,7 +87,7 @@
 
 #include <i2c.h>
 #include <i2c-dev.h>
-#define I2CDEVICE "/dev/i2c-1"
+#define I2CDEVICE "/dev/i2c-3"
 #define SSD1306_WIDTH 128
 #define SSD1306_HEIGHT 32
 #define SSD1306_I2CADDR 0x3C 
