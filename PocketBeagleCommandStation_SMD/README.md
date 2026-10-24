@@ -6,9 +6,7 @@ protocol node over LCC and converts that to DCC commands. It includes a
 booster and puts the DCC signal on the LCC bus (pins 4 and 5). It implements a
 programming track and implements Railcom. The Command Station uses a
 PocketBeagle as the processing element and uses the PRUs (Programmable
-Realtime Units) to generate the DCC signal. (See
-[PocketBeagleCommandStation](https://github.com/RobertPHeller/RPi-RRCircuits/tree/master/PocketBeagleCommandStation)
-for a through hole version.)
+Realtime Units) to generate the DCC signal.
 
 * [Schematic PDF](PocketBeagleCommandStation_SMD.pdf)
 * [Board Rendering](PocketBeagleCommandStation_SMD_iso3D.png)
